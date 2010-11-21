@@ -381,7 +381,7 @@ public class ENTDownloader extends Observable implements
 
 			browser.setUrl(urlBuilder(CoreConfig.goIntoDirectoryURL));
 			browser.setMethod(Browser.Method.POST);
-			browser.setParam("targetDirectory", HTMLEntities.htmlentities(name));
+			browser.setParam("targetDirectory", name);
 		}
 		browser.setFollowRedirects(false);
 		browser.setCookieField("JSESSIONID", sessionid);
