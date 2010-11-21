@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+
+<project basedir="." default="build" name="ENTDownloader">
+    <property environment="env" />
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+	<!-- Numéro de version au format libre (affiché dans la boîte de dialogue A propos)-->
+    <property name="output.freeVersion" value="1.0.0"/> 
+	<!-- Numéro de version au format x.x.x.x (inscrit dans l'executable)-->
+    <property name="output.version" value="1.0.0.0"/>
+	<!-- Dossier de destination du déploiement -->
+    <property name="output.publish.dir" location="${basedir}/../ENTDownloader_Publish"/>
+	<!-- Emplacement du logiciel Launch4J -->
+    <property name="launch4j.dir" location="C:\Program Files (x86)\launch4j" />
+	<!-- Emplacement du manuel -->
+    <!--<property name="output.manPath" location="${basedir}/../ENTDownloader.pdf" />-->
+	<taskdef name="launch4j"
+	    classname="net.sf.launch4j.ant.Launch4jTask"
+	    classpath="${launch4j.dir}/launch4j.jar
+	        :${launch4j.dir}/lib/xstream.jar" />
+    <path id="ENTDownloader.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/pac"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+    	<!-- Définition du numéro de version du logiciel-->
+    	<replaceregexp match="(ProductInfo.version)=(.*)" replace="\1=${output.freeVersion}" byline="true" >
+			<fileset file="${basedir}/src/entDownloader/ressources/configuration.properties" />
+		</replaceregexp>
+    	<!-- Compilation -->
+        <javac debug="false" destdir="bin" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="ENTDownloader.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${eclipse.home}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${eclipse.home}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="ENTDownloader - GUI">
+        <java classname="entDownloader.Main" failonerror="true" fork="yes">
+            <classpath refid="ENTDownloader.classpath"/>
+        </java>
+    </target>
+    <target name="ENTDownloader - Shell">
+        <java classname="entDownloader.Main" failonerror="true" fork="yes">
+            <arg line="-nogui"/>
+            <classpath refid="ENTDownloader.classpath"/>
+        </java>
+    </target>
+	<target name="deploy" depends="build">
+		<property name="targetdir" value="${output.freeVersion}"/>
+		<property name="jarName" value="ENTDownloader.jar"/>
+		<property name="jarPath" value="${output.publish.dir}/${targetdir}/${jarName}"/>
+
+		<mkdir dir="${output.publish.dir}/${targetdir}"/>
+	  <jar basedir="${basedir}/bin" jarfile="${jarPath}">
+	  	<manifest>
+	  		<attribute name="Manifest-Version" value="1.0" />
+	  		<attribute name="Main-Class" value="entDownloader.Main"/>
+	  	</manifest>
+	  	<fileset dir="${basedir}/lib/pac/"/>
+	  </jar>
+		<launch4j
+			configFile=".settings/launch4j_launcher.xml" outfile="${output.publish.dir}/${targetdir}/${ant.project.name}.exe"
+		    fileVersion="${output.version}" txtFileVersion="${output.freeVersion}"
+			productversion="${output.version}" txtproductversion="${output.freeVersion}"
+			jarPath="${jarName}" 
+		/>
+
+		<launch4j configFile=".settings/launch4j_builtin.xml" outfile="${output.publish.dir}/${targetdir}/${ant.project.name}_Win.exe"
+		    fileVersion="${output.version}" txtFileVersion="${output.freeVersion}" 
+			productversion="${output.version}" txtproductversion="${output.freeVersion}" 
+			jar="${jarPath}" />
+		
+		<zip destfile="${output.publish.dir}/${targetdir}/${ant.project.name}_${output.freeVersion}_Win.zip">
+			<fileset file="${output.publish.dir}/${targetdir}/${ant.project.name}_Win.exe" erroronmissingdir="true"/>
+			<fileset file="../license.txt" erroronmissingdir="true"/>
+			<fileset file="${output.manPath}" erroronmissingdir="true"/>
+		</zip>
+		<zip destfile="${output.publish.dir}/${targetdir}/${ant.project.name}_${output.freeVersion}.zip">
+			<fileset file="${output.publish.dir}/${targetdir}/${ant.project.name}.exe" erroronmissingdir="true"/>
+			<fileset file="../license.txt" erroronmissingdir="true"/>
+			<fileset file="../ENTDownloader.bin" erroronmissingdir="true"/>
+			<fileset file="${jarPath}" erroronmissingdir="true"/>
+			<fileset file="${output.manPath}" erroronmissingdir="true"/>
+		</zip>
+		<zip destfile="${output.publish.dir}/${targetdir}/${ant.project.name}_${output.freeVersion}_src.zip">
+			<fileset dir="${basedir}" excludes="bin/**, changelog.txt, *.jardesc, jarManifest, build.xml"/>
+			<fileset file="../license.txt" erroronmissingdir="true"/>
+		</zip>
+	</target>
+</project>

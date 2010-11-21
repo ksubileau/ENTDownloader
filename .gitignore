@@ -1,0 +1,5 @@
+bin
+*.class
+changelog.txt
+jarManifest
+jarCreator.jardesc
