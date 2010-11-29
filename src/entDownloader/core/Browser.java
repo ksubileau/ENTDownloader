@@ -458,7 +458,7 @@ public class Browser {
 	 *         field in the header.
 	 * @throws IllegalStateException
 	 *             if no request has been made
-	 * @see URLConnection#getHeaderField()
+	 * @see URLConnection#getHeaderField(String)
 	 */
 	public String getHeaderField(String name) { //Non débogué
 		if (headerFields == null)

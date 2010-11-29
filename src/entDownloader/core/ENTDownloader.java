@@ -110,7 +110,7 @@ public class ENTDownloader extends Observable implements
 	/**
 	 * Établit la connexion au serveur de l'ENT.
 	 * 
-	 * @param username
+	 * @param login
 	 *            Le nom d'utilisatateur pour la connexion
 	 * @param password
 	 *            Mot de passe de connexion
@@ -232,7 +232,7 @@ public class ENTDownloader extends Observable implements
 	/**
 	 * Change le répertoire courant
 	 * 
-	 * @param name
+	 * @param path
 	 *            Nom du dossier ou directive de parcours. Le dossier . est le
 	 *            dossier courant : appeler cette méthode avec ce paramètre ne
 	 *            change donc pas le dossier courant
@@ -510,7 +510,7 @@ public class ENTDownloader extends Observable implements
 	 * @throws IOException
 	 * @see ENTDownloader#getFile(String, String)
 	 * @return Le nombre de fichiers téléchargés
-	 * @deprecated Remplacé par getAllFile(String destination, int maxdepth)
+	 * @deprecated Remplacé par getAllFiles(String destination, int maxdepth)
 	 */
 	@Deprecated
 	public int getAllFiles(String destination) throws IOException {
