@@ -305,7 +305,7 @@ public class Browser {
 	}
 
 	/**
-	 * @return L'état actuelle du suivi des redirections
+	 * @return L'état actuel du suivi des redirections
 	 */
 	public boolean isFollowRedirects() {
 		return followRedirects;
