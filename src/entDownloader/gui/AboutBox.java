@@ -36,10 +36,25 @@ import javax.swing.WindowConstants;
 
 import entDownloader.core.CoreConfig;
 
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 public class AboutBox extends javax.swing.JDialog {
 	private static final long serialVersionUID = -3485384134597214576L;
 	private JLabel logo;
 	private JLabel author;
+	private JLabel productSite;
+	private JLabel website;
 	private JButton close;
 	private JLabel email;
 	private JLabel contact;
@@ -91,26 +106,26 @@ public class AboutBox extends javax.swing.JDialog {
 							+ ". "
 							+ CoreConfig.getString("ProductInfo.name")
 							+ " est un logiciel libre. Vous pouvez le redistribuez et/ou le modifiez sous les termes de la licence GNU General Public License.</html>");
-			copyright.setBounds(12, 118, 296, 43);
+			copyright.setBounds(12, 129, 296, 43);
 			copyright.setFont(new java.awt.Font("Segoe UI", 0, 10));
 		}
 		{
 			author = new JLabel();
 			getContentPane().add(author);
 			author.setText("Auteur  :");
-			author.setBounds(15, 72, 56, 16);
+			author.setBounds(15, 65, 77, 16);
 		}
 		{
 			authorName = new JLabel();
 			getContentPane().add(authorName);
 			authorName.setText(CoreConfig.getString("ProductInfo.author"));
-			authorName.setBounds(80, 72, 241, 16);
+			authorName.setBounds(112, 65, 241, 16);
 		}
 		{
 			contact = new JLabel();
 			getContentPane().add(contact);
 			contact.setText("Contact :");
-			contact.setBounds(15, 93, 59, 16);
+			contact.setBounds(15, 107, 77, 16);
 		}
 		{
 			email = new JLabel();
@@ -118,7 +133,7 @@ public class AboutBox extends javax.swing.JDialog {
 			email.setText("<html><a href=\"mailto:"
 					+ CoreConfig.getString("ProductInfo.email") + "\">"
 					+ CoreConfig.getString("ProductInfo.email") + "</a></html>");
-			email.setBounds(80, 93, 253, 16);
+			email.setBounds(112, 107, 250, 16);
 			email.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			email.addMouseListener(new MouseAdapter() {
 				@Override
@@ -143,7 +158,7 @@ public class AboutBox extends javax.swing.JDialog {
 			close = new JButton();
 			getContentPane().add(close);
 			close.setText("Fermer");
-			close.setBounds(253, 163, 80, 27);
+			close.setBounds(269, 176, 80, 27);
 			close.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -151,11 +166,39 @@ public class AboutBox extends javax.swing.JDialog {
 				}
 			});
 		}
+		{
+			website = new JLabel();
+			getContentPane().add(website);
+			website.setText("Site Internet :");
+			website.setBounds(15, 86, 91, 16);
+		}
+		{
+			productSite = new JLabel();
+			getContentPane().add(productSite);
+			productSite.setText("<html><a href=\"" + CoreConfig.getString("ProductInfo.website") + "\">"+ CoreConfig.getString("ProductInfo.website")+ "</a></html>");
+			productSite.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			productSite.setBounds(112, 86, 250, 16);
+			productSite.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					if (Desktop.isDesktopSupported()
+							&& Desktop.getDesktop().isSupported(
+									java.awt.Desktop.Action.BROWSE)) {
+						try {
+							java.awt.Desktop
+							.getDesktop()
+							.browse(new java.net.URI(CoreConfig
+									.getString("ProductInfo.website")));
+						} catch (Exception ex) {
+						}
+					}
+				}
+			});
+		}
 		Frame owner = (Frame) getOwner();
 		if (owner != null) {
 			setIconImage(owner.getIconImage());
 		}
-		this.setSize(350, 225);
+		this.setSize(380, 240);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setModal(true);
 		setLocationRelativeTo(owner);
