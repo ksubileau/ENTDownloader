@@ -53,6 +53,8 @@ public final class ShellMain {
 			.getString("ProductInfo.author");
 	private static final String productContact = CoreConfig
 			.getString("ProductInfo.email");
+	private static final String productSite = CoreConfig
+	.getString("ProductInfo.website");
 	private ProgressBar pg;
 	private ENTDownloader entd;
 
@@ -486,9 +488,10 @@ public final class ShellMain {
 	private void infos(ENTDownloader entd) {
 		System.out.println(productName
 				+ "  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
-		System.out.println("Version : " + productVersion);
-		System.out.println("Auteur  : " + productAuthor);
-		System.out.println("Contact : " + productContact);
+		System.out.println("Version 	  : " + productVersion);
+		System.out.println("Auteur  	  : " + productAuthor);
+		System.out.println("Site Internet	  : " + productSite);
+		System.out.println("Contact 	  : " + productContact);
 
 		System.out
 				.println("\nEspace de stockage _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
