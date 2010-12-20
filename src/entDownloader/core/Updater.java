@@ -47,16 +47,20 @@ public class Updater {
 	/**
 	 * Construit une nouvelle instance d'Updater et charge le fichier de version
 	 * indiqué en argument.
-	 * @param updateURL L'URL du fichier XML contenant les informations de version.
-	 * @throws Exception URL incorrecte, format de fichier invalide ...
+	 * 
+	 * @param updateURL
+	 *            L'URL du fichier XML contenant les informations de version.
+	 * @throws Exception
+	 *             URL incorrecte, format de fichier invalide ...
 	 */
 	public Updater(String updateURL) throws Exception {
 		available = false;
-		version =null;
+		version = null;
 		location = null;
 		InputStream stream = null;
-		try{
-			DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilderFactory fabrique = DocumentBuilderFactory
+					.newInstance();
 
 			DocumentBuilder constructeur = fabrique.newDocumentBuilder();
 
@@ -68,19 +72,23 @@ public class Updater {
 			NodeList liste = racine.getElementsByTagName("NeedToBeUpdated");
 
 			if (liste.getLength() != 0) {
-				Element e = (Element)liste.item(0);
-				if(e.getTextContent().equals("yes")) {
+				Element e = (Element) liste.item(0);
+				if (e.getTextContent().equals("yes")) {
 					available = true;
 				}
 			}
-		}catch(Exception e){
-			try{stream.close();}catch(Exception e1){}
+		} catch (Exception e) {
+			try {
+				stream.close();
+			} catch (Exception e1) {
+			}
 			throw e;
 		}
 	}
-	
+
 	/**
 	 * Détermine si le programme est à jour ou non.
+	 * 
 	 * @return True si le logiciel est à jour, false sinon.
 	 */
 	public boolean isUpToDate() {
@@ -88,134 +96,153 @@ public class Updater {
 	}
 
 	/**
-	 * Retourne le numéro de la nouvelle version, ou null si aucune mise à jour n'est disponible.
+	 * Retourne le numéro de la nouvelle version, ou null si aucune mise à jour
+	 * n'est disponible.
 	 */
 	public String version() {
-		if(!available)
+		if (!available)
 			return null;
-		if(version == null) {
+		if (version == null) {
 			version = getElementTextContentByTagName("Version");
-			if(version==null)
+			if (version == null) {
 				version = "";
+			}
 		}
 		return version;
 	}
 
 	/**
-	 * Retourne l'adresse de téléchargement de la mise à jour, ou null si le programme est à jour.
+	 * Retourne l'adresse de téléchargement de la mise à jour, ou null si le
+	 * programme est à jour.
 	 */
 	public String location() {
-		if(!available)
+		if (!available)
 			return null;
-		if(location == null) {
+		if (location == null) {
 			location = getElementTextContentByTagName("Location");
-			if(location==null)
+			if (location == null) {
 				location = "";
+			}
 		}
 		return location;
 	}
 
 	/**
-	 * Retourne la date de publication de la nouvelle version, ou null si aucune mise à jour n'est disponible.
+	 * Retourne la date de publication de la nouvelle version, ou null si aucune
+	 * mise à jour n'est disponible.
 	 */
 	public Calendar datePublication() {
-		if(!available)
+		if (!available)
 			return null;
-		if(datePub == null) {
-			long timestamp = Long.parseLong(getElementTextContentByTagName("Date"));
+		if (datePub == null) {
+			long timestamp = Long
+					.parseLong(getElementTextContentByTagName("Date"));
 			datePub = Calendar.getInstance();
-			datePub.setTimeInMillis(timestamp*1000);
+			datePub.setTimeInMillis(timestamp * 1000);
 		}
 		return datePub;
 	}
 
 	/**
-	 * Retourne les nouveautés de la mise à jour, ou null si le programme est à jour.
+	 * Retourne les nouveautés de la mise à jour, ou null si le programme est à
+	 * jour.
 	 */
 	public ArrayList<String> changelog_added() {
-		if(!available)
+		if (!available)
 			return null;
-		if(added == null)
+		if (added == null) {
 			added = getElementsTextContentByTagName("Add");
+		}
 
 		return added;
 	}
 
 	/**
-	 * Retourne les fonctionnalités modifiées dans la nouvelle version, ou null si aucune mise à jour n'est disponible.
+	 * Retourne les fonctionnalités modifiées dans la nouvelle version, ou null
+	 * si aucune mise à jour n'est disponible.
 	 */
 	public ArrayList<String> changelog_changed() {
-		if(!available)
+		if (!available)
 			return null;
-		if(changed == null)
+		if (changed == null) {
 			changed = getElementsTextContentByTagName("Change");
+		}
 
 		return changed;
 	}
 
 	/**
-	 * Retourne les bogues corrigés par la mise à jour, ou null si le programme est à jour.
+	 * Retourne les bogues corrigés par la mise à jour, ou null si le programme
+	 * est à jour.
 	 */
 	public ArrayList<String> changelog_fixed() {
-		if(!available)
+		if (!available)
 			return null;
-		if(fixed == null)
+		if (fixed == null) {
 			fixed = getElementsTextContentByTagName("Fix");
+		}
 
 		return fixed;
 	}
 
 	/**
-	 * Retourne les autres changements de la nouvelle version, ou null si aucune mise à jour n'est disponible.
+	 * Retourne les autres changements de la nouvelle version, ou null si aucune
+	 * mise à jour n'est disponible.
 	 */
 	public ArrayList<String> changelog_other() {
-		if(!available)
+		if (!available)
 			return null;
-		if(other == null)
+		if (other == null) {
 			other = getElementsTextContentByTagName("Other");
+		}
 
 		return other;
 	}
 
-
 	/**
-	 * Retourne le contenu textuel du premier noeud portant le nom indiqué en paramètre, ou null
+	 * Retourne le contenu textuel du premier noeud portant le nom indiqué en
+	 * paramètre, ou null
 	 * si aucun noeud correspondant n'est trouvé.
-	 * @param tagName Le nom du noeud désiré.
+	 * 
+	 * @param tagName
+	 *            Le nom du noeud désiré.
 	 * @throws DOMException
 	 */
-	private String getElementTextContentByTagName(String tagName) throws DOMException {
+	private String getElementTextContentByTagName(String tagName)
+			throws DOMException {
 		Element racine = xmlUpdateInformation.getDocumentElement();
 		NodeList liste = racine.getElementsByTagName(tagName);
 
 		if (liste.getLength() != 0) {
-			Element e = (Element)liste.item(0);
+			Element e = (Element) liste.item(0);
 			return e.getTextContent();
-		}
-		else
+		} else
 			return null;
 	}
 
 	/**
-	 * Retourne les contenus textuels des noeuds portant le nom indiqué en paramètre, ou null
+	 * Retourne les contenus textuels des noeuds portant le nom indiqué en
+	 * paramètre, ou null
 	 * si aucun noeud correspondant n'est trouvé.
-	 * @param tagName Le nom du noeud désiré.
+	 * 
+	 * @param tagName
+	 *            Le nom du noeud désiré.
 	 * @throws DOMException
 	 */
-	private ArrayList<String> getElementsTextContentByTagName(String tagName) throws DOMException {
+	private ArrayList<String> getElementsTextContentByTagName(String tagName)
+			throws DOMException {
 		Element racine = xmlUpdateInformation.getDocumentElement();
 		NodeList liste = racine.getElementsByTagName(tagName);
 
 		if (liste.getLength() != 0) {
 			ArrayList<String> list = new ArrayList<String>();
 			int nbElements = liste.getLength();
-			for(int i=0; i<nbElements; ++i){
-				Element e = (Element)liste.item(i);
+			for (int i = 0; i < nbElements; ++i) {
+				Element e = (Element) liste.item(i);
 				list.add(e.getTextContent());
 			}
 			return list;
-		}
-		else
+		} else
 			return null;
 	}
 }
