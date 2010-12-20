@@ -48,6 +48,19 @@ public class Updater {
 	 * Construit une nouvelle instance d'Updater et charge le fichier de version
 	 * indiqué en argument.
 	 * 
+	 * @throws Exception
+	 *             URL incorrecte, format de fichier invalide ...
+	 */
+	public Updater() throws Exception {
+		this("http://entdownloader.sourceforge.net/checkUpdate.php?v="
+				+ java.net.URLEncoder.encode(
+						CoreConfig.getString("ProductInfo.version"), "UTF-8"));
+	}
+
+	/**
+	 * Construit une nouvelle instance d'Updater et charge le fichier de version
+	 * indiqué en argument.
+	 * 
 	 * @param updateURL
 	 *            L'URL du fichier XML contenant les informations de version.
 	 * @throws Exception
