@@ -46,7 +46,7 @@ public class Updater {
 
 	/**
 	 * Construit une nouvelle instance d'Updater et charge le fichier de version
-	 * indiqué en argument.
+	 * par défaut.
 	 * 
 	 * @throws Exception
 	 *             URL incorrecte, format de fichier invalide ...
