@@ -25,6 +25,7 @@ import static entDownloader.core.CoreConfig.debug;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
+import entDownloader.core.CoreConfig;
 import entDownloader.gui.GuiMain;
 import entDownloader.shell.ShellMain;
 
@@ -49,6 +50,15 @@ public class Main {
 				System.setErr(pserr);
 			}
 		}
+
+		// Configuration de l'user-agent
+		System.setProperty(
+				"http.agent",
+				CoreConfig.getString("ProductInfo.name") + "/"
+						+ CoreConfig.getString("ProductInfo.version") + " ("
+						+ System.getProperty("os.name") + "; "
+						+ System.getProperty("os.version") + "; "
+						+ System.getProperty("os.arch") + ")");
 
 		boolean gui = true;
 		for (String arg : args) {
