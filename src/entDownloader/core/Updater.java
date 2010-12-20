@@ -78,6 +78,14 @@ public class Updater {
 			throw e;
 		}
 	}
+	
+	/**
+	 * Détermine si le programme est à jour ou non.
+	 * @return True si le logiciel est à jour, false sinon.
+	 */
+	public boolean isUpToDate() {
+		return !available;
+	}
 
 	/**
 	 * Retourne le numéro de la nouvelle version, ou null si aucune mise à jour n'est disponible.
