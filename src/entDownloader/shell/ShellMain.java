@@ -60,6 +60,7 @@ public final class ShellMain {
 
 	public ShellMain(String[] args) {
 		System.out.println(productName + " v" + productVersion);
+		checkUpdate();
 		entd = ENTDownloader.getInstance();
 		pg = new ProgressBar(false);
 		pg.setVisible(false);
@@ -357,6 +358,10 @@ public final class ShellMain {
 			System.out.print(login + "@ent.u-clermont1.fr:"
 					+ entd.getDirectoryPath() + ">");
 		}
+	}
+
+	private void checkUpdate() {
+		
 	}
 
 	private static String[] splitCommand(String command) throws ParseException {
