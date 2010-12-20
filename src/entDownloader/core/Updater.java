@@ -44,6 +44,12 @@ public class Updater {
 	private ArrayList<String> other;
 	private Calendar datePub;
 
+	/**
+	 * Construit une nouvelle instance d'Updater et charge le fichier de version
+	 * indiqué en argument.
+	 * @param updateURL L'URL du fichier XML contenant les informations de version.
+	 * @throws Exception URL incorrecte, format de fichier invalide ...
+	 */
 	public Updater(String updateURL) throws Exception {
 		available = false;
 		version =null;
@@ -73,6 +79,9 @@ public class Updater {
 		}
 	}
 
+	/**
+	 * Retourne le numéro de la nouvelle version, ou null si aucune mise à jour n'est disponible.
+	 */
 	public String version() {
 		if(!available)
 			return null;
@@ -84,6 +93,9 @@ public class Updater {
 		return version;
 	}
 
+	/**
+	 * Retourne l'adresse de téléchargement de la mise à jour, ou null si le programme est à jour.
+	 */
 	public String location() {
 		if(!available)
 			return null;
@@ -95,6 +107,9 @@ public class Updater {
 		return location;
 	}
 
+	/**
+	 * Retourne la date de publication de la nouvelle version, ou null si aucune mise à jour n'est disponible.
+	 */
 	public Calendar datePublication() {
 		if(!available)
 			return null;
@@ -106,6 +121,9 @@ public class Updater {
 		return datePub;
 	}
 
+	/**
+	 * Retourne les nouveautés de la mise à jour, ou null si le programme est à jour.
+	 */
 	public ArrayList<String> changelog_added() {
 		if(!available)
 			return null;
@@ -115,6 +133,9 @@ public class Updater {
 		return added;
 	}
 
+	/**
+	 * Retourne les fonctionnalités modifiées dans la nouvelle version, ou null si aucune mise à jour n'est disponible.
+	 */
 	public ArrayList<String> changelog_changed() {
 		if(!available)
 			return null;
@@ -124,6 +145,9 @@ public class Updater {
 		return changed;
 	}
 
+	/**
+	 * Retourne les bogues corrigés par la mise à jour, ou null si le programme est à jour.
+	 */
 	public ArrayList<String> changelog_fixed() {
 		if(!available)
 			return null;
@@ -133,6 +157,9 @@ public class Updater {
 		return fixed;
 	}
 
+	/**
+	 * Retourne les autres changements de la nouvelle version, ou null si aucune mise à jour n'est disponible.
+	 */
 	public ArrayList<String> changelog_other() {
 		if(!available)
 			return null;
