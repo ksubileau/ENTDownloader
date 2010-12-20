@@ -201,8 +201,7 @@ public class Updater {
 
 	/**
 	 * Retourne le contenu textuel du premier noeud portant le nom indiqué en
-	 * paramètre, ou null
-	 * si aucun noeud correspondant n'est trouvé.
+	 * paramètre, ou null si aucun noeud correspondant n'est trouvé.
 	 * 
 	 * @param tagName
 	 *            Le nom du noeud désiré.
@@ -222,8 +221,7 @@ public class Updater {
 
 	/**
 	 * Retourne les contenus textuels des noeuds portant le nom indiqué en
-	 * paramètre, ou null
-	 * si aucun noeud correspondant n'est trouvé.
+	 * paramètre, ou null si aucun noeud correspondant n'est trouvé.
 	 * 
 	 * @param tagName
 	 *            Le nom du noeud désiré.
