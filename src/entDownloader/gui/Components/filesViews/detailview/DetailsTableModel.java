@@ -83,8 +83,7 @@ public class DetailsTableModel extends AbstractTableModel {
 			GregorianCalendar dateModif = el.getDateModif();
 			v.addElement(addZeroBefore(dateModif.get(Calendar.DATE))
 					+ "/"
-					+ addZeroBefore(((dateModif.get(Calendar.MONTH) == 0) ? 12
-							: dateModif.get(Calendar.MONTH))) + "/"
+					+ addZeroBefore(dateModif.get(Calendar.MONTH)+1) + "/"
 					+ addZeroBefore(dateModif.get(Calendar.YEAR)) + " "
 					+ addZeroBefore(dateModif.get(Calendar.HOUR_OF_DAY)) + ":"
 					+ addZeroBefore(dateModif.get(Calendar.MINUTE)));

@@ -614,7 +614,7 @@ public class ENTDownloader extends Observable implements
 				file = new FS_Directory(HTMLEntities.unhtmlentities(fileInfos
 						.get(2)), new GregorianCalendar(
 						Integer.parseInt(fileInfos.get(6)),
-						Integer.parseInt(fileInfos.get(5)),
+						Integer.parseInt(fileInfos.get(5)) - 1,
 						Integer.parseInt(fileInfos.get(4)),
 						Integer.parseInt(fileInfos.get(7)),
 						Integer.parseInt(fileInfos.get(8))));
@@ -622,11 +622,11 @@ public class ENTDownloader extends Observable implements
 				file = new FS_File(
 						HTMLEntities.unhtmlentities(fileInfos.get(2)),
 						new GregorianCalendar(
-								Integer.parseInt(fileInfos.get(6)), Integer
-										.parseInt(fileInfos.get(5)), Integer
-										.parseInt(fileInfos.get(4)), Integer
-										.parseInt(fileInfos.get(7)), Integer
-										.parseInt(fileInfos.get(8))),
+								Integer.parseInt(fileInfos.get(6)),
+								Integer.parseInt(fileInfos.get(5)) - 1,
+								Integer.parseInt(fileInfos.get(4)), 
+								Integer.parseInt(fileInfos.get(7)), 
+								Integer.parseInt(fileInfos.get(8))),
 						fileInfos.get(3));
 			}
 			if (file == null)
