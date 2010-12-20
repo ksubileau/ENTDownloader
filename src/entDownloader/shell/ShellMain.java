@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -226,7 +227,12 @@ public final class ShellMain {
 		if (login == null) {
 			while (login == null || login.isEmpty()) {
 				System.out.print("Veuillez saisir votre login ENT : ");
+				try {
 				login = sc.nextLine();
+				} catch (NoSuchElementException e) {
+					System.out.println();
+					return;
+				}
 			}
 		} else {
 			System.out.println("Login ENT : " + login);
