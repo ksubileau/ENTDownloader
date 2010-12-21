@@ -25,6 +25,8 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -109,21 +111,21 @@ public class UpdaterGui {
 			return null;
 
 		// Turn anti-aliasing on
-		//System.setProperty("awt.useSystemAAFontSettings", "on");
+		System.setProperty("awt.useSystemAAFontSettings", "on");
 		JEditorPane changesPane = new JEditorPane();
 
 		// Enable use of custom set fonts
-		//				editorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);  
-		//editorPane.setFont(new Font("Arial", 13));
+		//changesPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);  
+		//changesPane.setFont(new Font("Arial", Font.PLAIN, 13));
 
 		changesPane.setEditable(false);
 		changesPane.setContentType("text/html");
 		changesPane.setText(changesText);
 
 		// TIP: Add Hyperlink listener to process hyperlinks
+		changesPane.addHyperlinkListener(getHyperlinkListener(changesPane));
 		changesPane.setOpaque(false);
 		//changesPane.setBackground(new Color(255, 255, 255, 0));
-		changesPane.addHyperlinkListener(getHyperlinkListener(changesPane));
 
 		JScrollPane changesScroll = new JScrollPane(changesPane);
 		changesScroll.setPreferredSize(new Dimension(450,100));
@@ -144,41 +146,37 @@ public class UpdaterGui {
 			return "";
 		
 		String changesText = "<html>"
-			+ "<body>";
+			+ "<body><dl>";
 
 		if(added != null) {
-			changesText += "	Nouveau :"
-				+ "		<ul>";
+			changesText += "		<dt>Nouveau :</dt>";
 			for (String add : added) {
-				changesText += "			<li>" +add + "</li>";
+				changesText += "			<dd>&ndash; " + add + "</dd>";
 			}
-			changesText += "		</ul>";
+			//changesText += "		</dl>";
 		}
 		if(fixed != null) {
-			changesText += "	Corrigé :"
-				+ "		<ul>";
+			changesText += "		<dt>Corrigé :</dt>";
 			for (String fix : fixed) {
-				changesText += "			<li>" +fix + "</li>";
+				changesText += "			<dd>&ndash; " + fix + "</dd>";
 			}
-			changesText += "		</ul>";
+			//changesText += "		</ul>";
 		}
 		if(changed != null) {
-			changesText += "	Modifié :"
-				+ "		<ul>";
+			changesText += "		<dt>Modifié :</dt>";
 			for (String change : changed) {
-				changesText += "			<li>" +change + "</li>";
+				changesText += "			<dd>&ndash; " + change + "</dd>";
 			}
-			changesText += "		</ul>";
+			//changesText += "		</ul>";
 		}
 		if(other != null) {
-			changesText += "	Autres :"
-				+ "		<ul>";
+			changesText += "		<dt>Autres :</dt>";
 			for (String other_change : other) {
-				changesText += "			<li>" +other_change + "</li>";
+				changesText += "			<dd>&ndash; " + other_change + "</dd>";
 			} 
-			changesText += "		</ul>";
+			//changesText += "		</ul>";
 		}
-		changesText += "</body>"
+		changesText += "</dl></body>"
 			+ "</html>";
 		return changesText;
 	}
