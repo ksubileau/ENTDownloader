@@ -124,6 +124,7 @@ public class UpdaterGui {
 		JScrollPane changesScroll = new JScrollPane(changesPane);
 		changesScroll.setPreferredSize(new Dimension(450,100));
 		changesScroll.setMaximumSize(new Dimension(450,1000));
+		changesPane.setCaretPosition(0); //Scroll au début de la liste
 		return changesScroll;
 	}
 
