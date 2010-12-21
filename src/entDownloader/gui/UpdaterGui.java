@@ -20,6 +20,7 @@
  */
 package entDownloader.gui;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dialog;
@@ -62,6 +63,7 @@ public class UpdaterGui {
 			//text.setAlignmentX( Component.RIGHT_ALIGNMENT);
 			text.setEditable(false);
 			text.setOpaque(false);
+			text.setBackground(new Color(255, 255, 255, 0));
 			//text.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE); 
 			text.addHyperlinkListener(getHyperlinkListener(text));
 			text.setMaximumSize(new Dimension(450,1000));
@@ -108,21 +110,22 @@ public class UpdaterGui {
 
 		// Turn anti-aliasing on
 		//System.setProperty("awt.useSystemAAFontSettings", "on");
-		JEditorPane editorPane = new JEditorPane();
+		JEditorPane changesPane = new JEditorPane();
 
 		// Enable use of custom set fonts
 		//				editorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);  
 		//editorPane.setFont(new Font("Arial", 13));
 
-		editorPane.setEditable(false);
-		editorPane.setContentType("text/html");
-		editorPane.setText(changesText);
+		changesPane.setEditable(false);
+		changesPane.setContentType("text/html");
+		changesPane.setText(changesText);
 
 		// TIP: Add Hyperlink listener to process hyperlinks
-		editorPane.setOpaque(false);
-		editorPane.addHyperlinkListener(getHyperlinkListener(editorPane));
+		changesPane.setOpaque(false);
+		//changesPane.setBackground(new Color(255, 255, 255, 0));
+		changesPane.addHyperlinkListener(getHyperlinkListener(changesPane));
 
-		JScrollPane changesScroll = new JScrollPane(editorPane);
+		JScrollPane changesScroll = new JScrollPane(changesPane);
 		changesScroll.setPreferredSize(new Dimension(450,100));
 		changesScroll.setMaximumSize(new Dimension(450,1000));
 		return changesScroll;
