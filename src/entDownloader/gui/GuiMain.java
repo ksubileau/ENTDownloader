@@ -59,7 +59,10 @@ public class GuiMain {
 				loginFrame.setVisible(true);
 				mainFrame = new MainFrame();
 				mainFrame.setLocationRelativeTo(null);
-
+				try {
+					new UpdaterGui(loginFrame);
+				} catch (Exception e2) {
+				}
 				//Analyse des arguments
 				for (int i = 0; i < args.length; i++) {
 					String argv = args[i];
