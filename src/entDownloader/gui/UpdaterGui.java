@@ -23,13 +23,7 @@ package entDownloader.gui;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.net.URI;
 import java.util.ArrayList;
 
