@@ -49,11 +49,12 @@ public class UpdaterGui {
 		this(owner, false);
 	}
 	
-	public UpdaterGui(JFrame owner, boolean showAlreadyUpToDateMessage) throws Exception {
+	public UpdaterGui(final JFrame owner, boolean showAlreadyUpToDateMessage) throws Exception {
 		updater = new Updater();
+		Runnable prompt = null;
 		if(!updater.isUpToDate()) {
 			JScrollPane editorPane = getChangeLogPane();
-			JPanel content = new JPanel();
+			final JPanel content = new JPanel();
 			content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
 			final JEditorPane text = new JEditorPane("text/html", "<html>Une nouvelle version de " + CoreConfig.getString("ProductInfo.name") + " est disponible ! La version <b>"+updater.version()+"</b> est téléchargeable sur <a href=\"" + updater.location() + "\">" + updater.location() + "</a>." + (editorPane==null?"":"<br><br>Principaux changements :"));
 			//text.setAlignmentX( Component.RIGHT_ALIGNMENT);
@@ -83,19 +84,35 @@ public class UpdaterGui {
 				content.add(editorPane);
 			} else
 				content.setPreferredSize(new Dimension(400,50));
-			
-			String[] options = new String[] {"Télécharger...", "Annuler"};
-			int choose = JOptionPane.showOptionDialog(null,	content,"ENTDownloader - Mise à jour disponible",JOptionPane.YES_NO_OPTION,	JOptionPane.INFORMATION_MESSAGE,null,options, options[0]);
-			if(choose == JOptionPane.YES_OPTION)
-				if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(java.awt.Desktop.Action.BROWSE)) {
-					try {
-						java.awt.Desktop.getDesktop().browse(new URI(updater.location()));
-					} catch (Exception ex) {
-					}
+
+			prompt = new Runnable() {
+				public void run() {
+					String[] options = new String[] {"Télécharger...", "Annuler"};
+					int choose = JOptionPane.showOptionDialog(null,	content,"ENTDownloader - Mise à jour disponible",JOptionPane.YES_NO_OPTION,	JOptionPane.INFORMATION_MESSAGE,null,options, options[0]);
+
+					if(choose == JOptionPane.YES_OPTION)
+						if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(java.awt.Desktop.Action.BROWSE)) {
+							try {
+								java.awt.Desktop.getDesktop().browse(new URI(updater.location()));
+							} catch (Exception ex) {
+							}
+						}
 				}
+			};
 		}
 		else if (showAlreadyUpToDateMessage) {
-			JOptionPane.showMessageDialog(owner, "Aucune mise à jour n'est disponible.", "ENTDownloader", JOptionPane.INFORMATION_MESSAGE);
+			prompt = new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(owner, "Aucune mise à jour n'est disponible.", "ENTDownloader", JOptionPane.INFORMATION_MESSAGE);
+				}
+			};
+		}
+		else
+			return;
+		if (SwingUtilities.isEventDispatchThread()) {
+			prompt.run();
+		} else {
+			SwingUtilities.invokeLater(prompt);
 		}
 	}
 
