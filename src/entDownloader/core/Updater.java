@@ -32,6 +32,9 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class Updater {
 	private boolean available;
@@ -76,6 +79,23 @@ public class Updater {
 					.newInstance();
 
 			DocumentBuilder constructeur = fabrique.newDocumentBuilder();
+			//Désactive l'affichage des erreurs sur la sortie d'erreur
+			constructeur.setErrorHandler(new ErrorHandler() {
+				@Override
+				public void warning(SAXParseException exception)
+						throws SAXException {
+				}
+
+				@Override
+				public void fatalError(SAXParseException exception)
+						throws SAXException {
+				}
+
+				@Override
+				public void error(SAXParseException exception)
+						throws SAXException {
+				}
+			});
 
 			URL url = new URL(updateURL);
 			stream = url.openStream();
