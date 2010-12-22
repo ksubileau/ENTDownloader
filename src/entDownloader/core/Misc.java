@@ -176,8 +176,8 @@ public final class Misc {
 	 * 
 	 * @param path
 	 *            the path to parse.
-	 * @return the path given in parameter after replacing the tilde character by
-	 *         the user's home directory, ending by the file separator
+	 * @return the path given in parameter after replacing the tilde character
+	 *         by the user's home directory, ending by the file separator
 	 *         character.
 	 */
 	public static String tildeToHome(String path) {
@@ -196,5 +196,18 @@ public final class Misc {
 		}
 
 		return newpath;
+	}
+
+	/**
+	 * Retourne le nombre passé en argument en le préfixant d'un zéro s'il est
+	 * inférieur à 10.
+	 */
+	public static String addZeroBefore(int nb) {
+		String nbs = "";
+		if (nb < 10) {
+			nbs += "0";
+		}
+		nbs += nb;
+		return nbs;
 	}
 }

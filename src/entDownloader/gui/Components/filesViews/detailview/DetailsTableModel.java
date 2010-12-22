@@ -20,6 +20,8 @@
  */
 package entDownloader.gui.Components.filesViews.detailview;
 
+import static entDownloader.core.Misc.addZeroBefore;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -154,14 +156,5 @@ public class DetailsTableModel extends AbstractTableModel {
 	public void setValueAt(Object value, int row, int column) {
 		((Vector<Object>) rowData.elementAt(row)).setElementAt(value, column);
 		fireTableCellUpdated(row, column);
-	}
-
-	private String addZeroBefore(int nb) {
-		String nbs = "";
-		if (nb < 10) {
-			nbs += "0";
-		}
-		nbs += nb;
-		return nbs;
 	}
 }

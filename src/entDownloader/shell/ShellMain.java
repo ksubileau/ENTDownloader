@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -33,10 +34,12 @@ import java.util.Observer;
 import java.util.Scanner;
 
 import entDownloader.core.CoreConfig;
+import static entDownloader.core.Misc.addZeroBefore;
 import entDownloader.core.ENTDownloader;
 import entDownloader.core.ENTPath;
 import entDownloader.core.FS_Element;
 import entDownloader.core.FS_File;
+import entDownloader.core.Updater;
 import entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import entDownloader.core.exceptions.ENTFileNotFoundException;
 import entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
@@ -55,7 +58,7 @@ public final class ShellMain {
 	private static final String productContact = CoreConfig
 			.getString("ProductInfo.email");
 	private static final String productSite = CoreConfig
-	.getString("ProductInfo.website");
+			.getString("ProductInfo.website");
 	private ProgressBar pg;
 	private ENTDownloader entd;
 
@@ -278,6 +281,7 @@ public final class ShellMain {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		checkUpdate();
 		//Effacer le mot de passe de la mémoire
 		//password = null; //TODO Choix à faire : reconnection automatique => stockage du mot de passe non sécurisé ; ou effacement du mot de passe
 		//Lecture des commandes
@@ -362,6 +366,22 @@ public final class ShellMain {
 			}
 			System.out.print(login + "@ent.u-clermont1.fr:"
 					+ entd.getDirectoryPath() + ">");
+		}
+	}
+
+	private void checkUpdate() {
+		try {
+			Updater updater = new Updater();
+			if (!updater.isUpToDate()) {
+				//Mise à jour disponible
+				System.out
+						.println("Une nouvelle version de " + productName + " est disponible. La version "
+								+ updater.version() + " du " + addZeroBefore(updater.datePublication().get(Calendar.DATE))
+								+ "/" + addZeroBefore(updater.datePublication().get(Calendar.MONTH ) + 1) + "/"
+								+ addZeroBefore(updater.datePublication().get(Calendar.YEAR))
+								+ " est téléchargeable sur " + updater.location() + ".");
+			}
+		} catch (Exception e) {
 		}
 	}
 

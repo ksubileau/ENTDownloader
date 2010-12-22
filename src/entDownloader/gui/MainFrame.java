@@ -54,6 +54,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -86,6 +87,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem dld;
 	private JMenuItem dldAll;
 	private JMenuItem guide;
+	private JMenuItem checkUpdate;
 	private JToggleButton detailsViewBtn;
 	private JToggleButton listViewBtn;
 	private JLabel userName;
@@ -568,6 +570,32 @@ public class MainFrame extends javax.swing.JFrame implements
 					help = new JMenu();
 					jMenuBar.add(help);
 					help.setText("Aide");
+					{
+						checkUpdate = new JMenuItem();
+						help.add(checkUpdate);
+						checkUpdate.setText("Rechercher des mises à jour...");
+						checkUpdate.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								//Lancement de l'updater dans un thread séparé.
+								new Thread(new Runnable() {
+									@Override
+									public void run() {
+										try {
+											new UpdaterGui(MainFrame.this, true);
+										} catch (final Exception e) {
+											SwingUtilities.invokeLater(new Runnable() {
+												@Override
+												public void run() {
+													JOptionPane.showMessageDialog(MainFrame.this, "<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>" + e.toString() + "</b></html>", "ENTDownloader - Erreur", JOptionPane.ERROR_MESSAGE);
+												}
+											});
+										}
+									}
+								}, "Updater").start();
+							}
+						});
+					}
 					/*{
 						guide = new JMenuItem();
 						help.add(guide);
@@ -577,6 +605,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						jSeparator2 = new JSeparator();
 						help.add(jSeparator2);
 					}*/
+
 					{
 						about = new JMenuItem();
 						help.add(about);

@@ -59,7 +59,6 @@ public class GuiMain {
 				loginFrame.setVisible(true);
 				mainFrame = new MainFrame();
 				mainFrame.setLocationRelativeTo(null);
-
 				//Analyse des arguments
 				for (int i = 0; i < args.length; i++) {
 					String argv = args[i];
@@ -131,7 +130,18 @@ public class GuiMain {
 						}
 					}
 				}
+				//Lancement de l'updater dans un thread séparé.
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							new UpdaterGui(mainFrame);
+						} catch (Exception e) {
+						}
+					}
+				}, "Updater").start();
 			}
+
 		});
 
 	}
