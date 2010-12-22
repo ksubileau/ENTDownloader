@@ -54,6 +54,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -582,7 +583,13 @@ public class MainFrame extends javax.swing.JFrame implements
 									public void run() {
 										try {
 											new UpdaterGui(MainFrame.this, true);
-										} catch (Exception e) {
+										} catch (final Exception e) {
+											SwingUtilities.invokeLater(new Runnable() {
+												@Override
+												public void run() {
+													JOptionPane.showMessageDialog(MainFrame.this, "<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>" + e.toString() + "</b></html>", "ENTDownloader - Erreur", JOptionPane.ERROR_MESSAGE);
+												}
+											});
 										}
 									}
 								}, "Updater").start();
