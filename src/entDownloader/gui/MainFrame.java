@@ -86,6 +86,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem dld;
 	private JMenuItem dldAll;
 	private JMenuItem guide;
+	private JMenuItem checkUpdate;
 	private JToggleButton detailsViewBtn;
 	private JToggleButton listViewBtn;
 	private JLabel userName;
@@ -568,6 +569,26 @@ public class MainFrame extends javax.swing.JFrame implements
 					help = new JMenu();
 					jMenuBar.add(help);
 					help.setText("Aide");
+					{
+						checkUpdate = new JMenuItem();
+						help.add(checkUpdate);
+						checkUpdate.setText("Rechercher des mises à jour...");
+						checkUpdate.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								//Lancement de l'updater dans un thread séparé.
+								new Thread(new Runnable() {
+									@Override
+									public void run() {
+										try {
+											new UpdaterGui(MainFrame.this, true);
+										} catch (Exception e) {
+										}
+									}
+								}, "Updater").start();
+							}
+						});
+					}
 					/*{
 						guide = new JMenuItem();
 						help.add(guide);
@@ -577,6 +598,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						jSeparator2 = new JSeparator();
 						help.add(jSeparator2);
 					}*/
+
 					{
 						about = new JMenuItem();
 						help.add(about);
