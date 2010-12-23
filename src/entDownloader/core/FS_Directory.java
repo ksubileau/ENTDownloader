@@ -22,20 +22,29 @@ package entDownloader.core;
 
 import java.util.GregorianCalendar;
 
+/**
+ * Représente un dossier stocké sur l'ENT.
+ */
 public class FS_Directory extends FS_Element {
 
 	/**
-	 * @param name
-	 *            Nom du dossier
-	 * @param dateModif
-	 *            Date de modification du dossier
+	 * Construit un nouveau dossier.
+	 * 
+	 * @param name Nom du dossier
+	 * @param dateModif Date de modification du dossier
 	 */
 	public FS_Directory(String name, GregorianCalendar dateModif) {
 		super(name, dateModif);
 	}
 
+	/**
+	 * Retourne le type d'élément représenté par cette instance. En l'occurence,
+	 * il s'agit d'un dossier.
+	 * 
+	 * @see FS_Element#getType()
+	 */
 	@Override
-	short getType() {
+	public short getType() {
 		return DIRECTORY;
 	}
 

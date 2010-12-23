@@ -36,6 +36,12 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+/**
+ * Gestionnaire de mise à jour. Obtient les informations de mise à jour à partir
+ * du site Internet du logiciel.
+ * 
+ * @since ENTDownloader 1.0.1
+ */
 public class Updater {
 	private boolean available;
 	private String version;
@@ -51,8 +57,7 @@ public class Updater {
 	 * Construit une nouvelle instance d'Updater et charge le fichier de version
 	 * par défaut.
 	 * 
-	 * @throws Exception
-	 *             URL incorrecte, format de fichier invalide ...
+	 * @throws Exception URL incorrecte, format de fichier invalide ...
 	 */
 	public Updater() throws Exception {
 		this("http://entdownloader.sourceforge.net/checkUpdate.php?v="
@@ -64,10 +69,9 @@ public class Updater {
 	 * Construit une nouvelle instance d'Updater et charge le fichier de version
 	 * indiqué en argument.
 	 * 
-	 * @param updateURL
-	 *            L'URL du fichier XML contenant les informations de version.
-	 * @throws Exception
-	 *             URL incorrecte, format de fichier invalide ...
+	 * @param updateURL L'URL du fichier XML contenant les informations de
+	 *            version.
+	 * @throws Exception URL incorrecte, format de fichier invalide ...
 	 */
 	public Updater(String updateURL) throws Exception {
 		available = false;
@@ -236,8 +240,7 @@ public class Updater {
 	 * Retourne le contenu textuel du premier noeud portant le nom indiqué en
 	 * paramètre, ou null si aucun noeud correspondant n'est trouvé.
 	 * 
-	 * @param tagName
-	 *            Le nom du noeud désiré.
+	 * @param tagName Le nom du noeud désiré.
 	 * @throws DOMException
 	 */
 	private String getElementTextContentByTagName(String tagName)
@@ -256,8 +259,7 @@ public class Updater {
 	 * Retourne les contenus textuels des noeuds portant le nom indiqué en
 	 * paramètre, ou null si aucun noeud correspondant n'est trouvé.
 	 * 
-	 * @param tagName
-	 *            Le nom du noeud désiré.
+	 * @param tagName Le nom du noeud désiré.
 	 * @throws DOMException
 	 */
 	private ArrayList<String> getElementsTextContentByTagName(String tagName)

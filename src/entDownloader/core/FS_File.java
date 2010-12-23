@@ -22,19 +22,47 @@ package entDownloader.core;
 
 import java.util.GregorianCalendar;
 
+/**
+ * Représente un fichier stocké sur l'ENT.
+ */
 public class FS_File extends FS_Element {
 
 	long size;
 
+	/**
+	 * Construit un nouveau fichier.
+	 * 
+	 * @param name Nom du fichier.
+	 * @param dateModif Date de modification du fichier
+	 * @param size Taille du fichier en octets.
+	 */
 	public FS_File(String name, GregorianCalendar dateModif, long size) {
 		super(name, dateModif);
 		setSize(size);
 	}
 
+	/**
+	 * Construit un nouveau fichier.
+	 * 
+	 * @param name Nom du fichier.
+	 * @param dateModif Date de modification du fichier
+	 * @param size Taille du fichier suivi de son unité (Ex: 20 Mo).
+	 */
 	public FS_File(String name, GregorianCalendar dateModif, String ssize) {
 		this(name, dateModif, size_StringToNumber(ssize));
 	}
 
+	/**
+	 * Convertit une représentation textuelle de la taille du fichier (Ex: 58
+	 * Ko) en octets.
+	 * 
+	 * @param ssize La taille sous forme d'une chaîne de caractère.
+	 * @return La taille convertit en octets.
+	 * @throws FileSizeFormatException Le format de la chaîne de caractère est
+	 *             invalide.
+	 * @throws UnsupportedOperationException Dépassement de capacité du
+	 *             {@link Long}.
+	 */
 	public static long size_StringToNumber(String ssize)
 			throws FileSizeFormatException, UnsupportedOperationException {
 		float fsize;
@@ -69,6 +97,13 @@ public class FS_File extends FS_Element {
 		return Math.round((double) fsize);
 	}
 
+	/**
+	 * Formate une taille en octets pour l'affichage.
+	 * 
+	 * @param size La taille en octets à formatter.
+	 * @return La taille dans une unité appropriée pour l'affichage, suivi de
+	 *         cette unité.
+	 */
 	public static String size_Formatted(long size) {
 		float fsize;
 		int range;
@@ -89,25 +124,26 @@ public class FS_File extends FS_Element {
 	}
 
 	/**
-	 * @return La taille du fichier sous sa représentation en chaîne de
-	 *         caractères.
+	 * @return La taille du fichier sous sa représentation textuelle formaté.
 	 */
 	public String getFormattedSize() {
 		return size_Formatted(size);
 	}
 
 	/**
-	 * @param ssize
-	 *            La taille du fichier sous sa représentation en chaîne de
-	 *            caractères.
+	 * Définit la taille du fichier à partir d'une représentation textuelle
+	 * formaté.
+	 * 
+	 * @param ssize La taille du fichier sous sa représentation textuelle.
 	 */
 	public void setSize(String ssize) {
 		setSize(size_StringToNumber(ssize));
 	}
 
 	/**
-	 * @param size
-	 *            La taille du fichier en octets.
+	 * Définit la taille du fichier en octets.
+	 * 
+	 * @param size La taille du fichier en octets.
 	 */
 	public void setSize(long size) {
 		if (size < 0)
@@ -121,6 +157,12 @@ public class FS_File extends FS_Element {
 		//return "\n" + getName() + " " + dateModif.get(Calendar.DATE) + "-" + dateModif.get(Calendar.MONTH) + "-" + dateModif.get(Calendar.YEAR) + " " + dateModif.get(Calendar.HOUR) + ":" + dateModif.get(Calendar.MINUTE);
 	}*/
 
+	/**
+	 * Retourne le type d'élément représenté par cette instance. En l'occurence,
+	 * il s'agit d'un fichier.
+	 * 
+	 * @see FS_Element#getType()
+	 */
 	@Override
 	short getType() {
 		return FILE;

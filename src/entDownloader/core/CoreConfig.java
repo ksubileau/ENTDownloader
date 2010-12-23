@@ -25,6 +25,10 @@ import java.awt.Font;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/**
+ * Définition de constantes de configuration.
+ *
+ */
 public final class CoreConfig {
 	// {tag}, {uP_root} seront remplacés par les valeurs des variables correspondantes;
 	

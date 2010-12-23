@@ -54,6 +54,13 @@ import entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 /* Bug possible :
  * Statut incorrect après une exception quelconque : cela peut poser problème.
  */
+/**
+ * Classe principale de l'application, interface entre les classe externe et
+ * l'ENT.<br>
+ * <b>Classe singleton</b> : utilisez {@link ENTDownloader#getInstance()
+ * getInstance()} pour
+ * obtenir l'instance de la classe.
+ */
 public class ENTDownloader extends Observable implements
 		DownloadedBytesListener {
 
@@ -92,7 +99,7 @@ public class ENTDownloader extends Observable implements
 	private ENTStatus status = ENTStatus.DISCONNECTED;
 
 	/**
-	 * Récupère l'instance unique de la class ENTDownloader.<br>
+	 * Récupère l'instance unique de la classe ENTDownloader.<br>
 	 * Remarque : le constructeur est rendu inaccessible
 	 */
 	public static ENTDownloader getInstance() {
@@ -110,13 +117,11 @@ public class ENTDownloader extends Observable implements
 	/**
 	 * Établit la connexion au serveur de l'ENT.
 	 * 
-	 * @param login
-	 *            Le nom d'utilisatateur pour la connexion
-	 * @param password
-	 *            Mot de passe de connexion
-	 * @return True en cas de réussite, ou false si l'authentification a échoué
-	 * @throws ParseException
-	 *             Voir {@link ENTDownloader#setStockageUrlParams(String)}
+	 * @param login Le nom d'utilisatateur pour la connexion.
+	 * @param password Mot de passe de connexion.
+	 * @return True en cas de réussite, ou false si l'authentification a échoué.
+	 * @throws ParseException Voir
+	 *             {@link ENTDownloader#setStockageUrlParams(String)}
 	 */
 	public boolean login(String login, String password)
 			throws java.io.IOException, ParseException {
@@ -189,11 +194,10 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Obtient et définie les propriétés de l'espace de stockage (espace total
+	 * Obtient et définit les propriétés de l'espace de stockage (espace total
 	 * et utilisé)
 	 * 
-	 * @param pageContent
-	 *            Code HTML d'une page de stockage.
+	 * @param pageContent Code HTML d'une page de stockage.
 	 * @return true si les propriétés ont été trouvés, false sinon
 	 */
 	private boolean setStorageProperties(String pageContent) {
@@ -216,8 +220,7 @@ public class ENTDownloader extends Observable implements
 	 * Détermine le nom complet de l'utilisateur à partir du code HTML de la
 	 * page.
 	 * 
-	 * @param pageContent
-	 *            Code HTML d'une page de stockage.
+	 * @param pageContent Code HTML d'une page de stockage.
 	 * @return true si le nom a été trouvé, false sinon
 	 */
 	private boolean setUserName(String pageContent) {
@@ -230,10 +233,9 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Change le répertoire courant
+	 * Change le répertoire courant.
 	 * 
-	 * @param path
-	 *            Nom du dossier ou directive de parcours. Le dossier . est le
+	 * @param path Nom du dossier ou directive de parcours. Le dossier . est le
 	 *            dossier courant : appeler cette méthode avec ce paramètre ne
 	 *            change donc pas le dossier courant
 	 *            mais permet de rafraîchir son contenu. Le dossier .. est le
@@ -372,7 +374,6 @@ public class ENTDownloader extends Observable implements
 			browser.setMethod(Browser.Method.GET);
 			browser.setUrl(urlBuilder(CoreConfig.directoryBackURL));
 		} else {
-			//CRITICAL Bug critique avec les noms de dossiers portant un nom contenant un ou plusieurs accents
 			int pos = indexOf(name);
 			if (pos == -1)
 				throw new ENTDirectoryNotFoundException(name);
@@ -622,11 +623,11 @@ public class ENTDownloader extends Observable implements
 				file = new FS_File(
 						HTMLEntities.unhtmlentities(fileInfos.get(2)),
 						new GregorianCalendar(
-								Integer.parseInt(fileInfos.get(6)),
-								Integer.parseInt(fileInfos.get(5)) - 1,
-								Integer.parseInt(fileInfos.get(4)), 
-								Integer.parseInt(fileInfos.get(7)), 
-								Integer.parseInt(fileInfos.get(8))),
+								Integer.parseInt(fileInfos.get(6)), Integer
+										.parseInt(fileInfos.get(5)) - 1,
+								Integer.parseInt(fileInfos.get(4)), Integer
+										.parseInt(fileInfos.get(7)), Integer
+										.parseInt(fileInfos.get(8))),
 						fileInfos.get(3));
 			}
 			if (file == null)
@@ -749,20 +750,18 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Returns the index of the first occurrence of the specified element in the
-	 * {@link entDownloader.core.ENTDownloader#directoryContent
-	 * directoryContent} list, or -1 if this list does not contain the element.
-	 * More formally, returns the lowest index i such that (o==null ?
-	 * get(i)==null : get(i).equals(o)), or -1 if there is no such index.
+	 * Retourne l'index de la première occurrence de l'élément spécifié dans la
+	 * liste {@link entDownloader.core.ENTDownloader#directoryContent
+	 * directoryContent}, ou -1 si la liste ne contient pas cet élément. Plus
+	 * formellement, retourne le plus petit index i tel que (o==null ?
+	 * get(i)==null : get(i).equals(o)), ou -1 si cet index n'existe pas.
 	 * 
-	 * @param o
-	 *            element to search for
-	 * @return the index of the first occurrence of the specified element in the
-	 *         {@link entDownloader.core.ENTDownloader#directoryContent
-	 *         directoryContent} list, or -1 if this list does not contain the
-	 *         element.
-	 * @throws IllegalStateException
-	 *             if the directory content hasn't been initialized.
+	 * @param o L'élément à rechercher
+	 * @return L'index de la première occurrence de l'élément spécifié dans la
+	 *         liste {@link entDownloader.core.ENTDownloader#directoryContent
+	 *         directoryContent}, ou -1 si la liste ne contient pas cet élément.
+	 * @throws IllegalStateException Si le répertoire courant n'a pas été
+	 *             chargé.
 	 */
 	public int indexOf(Object o) throws IllegalStateException {
 		if (directoryContent == null)
@@ -778,7 +777,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @deprecated Depuis la version 1.0.0 Release, utiliser les événements du
+	 * @deprecated Depuis la version 1.0.0, utilisez les événements du
 	 *             package <code>entDownloader.core.events</code>
 	 */
 	@Deprecated
@@ -787,7 +786,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @deprecated Depuis la version 1.0.0 Release, utiliser les événements du
+	 * @deprecated Depuis la version 1.0.0, utilisez les événements du
 	 *             package <code>entDownloader.core.events</code>
 	 */
 	@Deprecated
@@ -806,7 +805,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @deprecated Depuis la version 1.0.0 Release, utiliser les événements du
+	 * @deprecated Depuis la version 1.0.0, utilisez les événements du
 	 *             package <code>entDownloader.core.events</code>
 	 */
 	@Deprecated
@@ -821,53 +820,50 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Set a proxy to use for the ENT connection
+	 * Installe un proxy HTTP à utiliser pour la connection à l'ENT.
 	 * 
-	 * @param host
-	 *            the proxy hostname or address
-	 * @param port
-	 *            the port of the proxy
+	 * @param host Le nom d'hôte ou l'adresse du proxy.
+	 * @param port Le port du proxy.
 	 */
 	public void setProxy(String host, int port) {
 		browser.setHttpProxy(host, port);
 	}
 
 	/**
-	 * Set a proxy to use for the ENT connection.
+	 * Installe un proxy HTTP à utiliser pour la connection à l'ENT.
 	 * 
-	 * @param proxy
-	 *            The proxy instance to use.
+	 * @param proxy L'instance de {@link Proxy} à utiliser.
+	 * @see java.net.Proxy
 	 */
 	public void setProxy(Proxy proxy) {
 		browser.setHttpProxy(proxy);
 	}
 
 	/**
-	 * Return the proxy used for the ENT connection.
+	 * Retourne le proxy HTTP utilisé pour la connection à l'ENT.
 	 * 
-	 * @return the proxy used for the ENT connection
+	 * @return Le proxy HTTP utilisé pour la connection à l'ENT.
 	 */
 	public Proxy getProxy() {
 		return browser.getProxy();
 	}
 
 	/**
-	 * Clear the proxy configuration
+	 * Supprime la configuration de proxy précédemment installé.
 	 */
 	public void removeProxy() {
 		browser.removeHttpProxy();
 	}
 
 	/**
-	 * Set a proxy using a PAC (Proxy auto-configuration) file.
+	 * Installe un proxy HTTP à utiliser pour la connection à l'ENT en utilisant
+	 * un fichier PAC (Proxy auto-configuration).
 	 * 
-	 * @param pacFile
-	 *            PAC file location
+	 * @param pacFile Emplacement du fichier PAC
 	 * @throws URISyntaxException
 	 * @throws MalformedURLException
 	 * @throws IOException
-	 * @see <a href="http://en.wikipedia.org/wiki/Proxy_auto-config"> PAC File
-	 *      on Wikipedia</a>
+	 * @see <a href="http://en.wikipedia.org/wiki/Proxy_auto-config"> PAC File on Wikipedia</a>
 	 */
 	public void setProxy(String pacFile) throws Exception {
 		//Efface la configuration précédente pour ne pas interférer avec l'accès au fichier PAC

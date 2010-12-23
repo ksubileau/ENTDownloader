@@ -46,8 +46,15 @@ import java.util.StringTokenizer;
 import entDownloader.core.events.Broadcaster;
 import entDownloader.core.events.DownloadedBytesEvent;
 
+/**
+ * Gère les connections HTTP et permet des utilisations avancées tels que
+ * l'obtention des sources HTML
+ * et le téléchargement de fichiers.
+ * 
+ * @author Kévin Subileau
+ * 
+ */
 public class Browser {
-	// TODO Configuration de l'user-agent
 	/**
 	 * TODO Amélioration de la gestion des cookies : attribut path et secure,
 	 * ...
@@ -94,20 +101,18 @@ public class Browser {
 	}
 
 	/**
-	 * Ajoute un paramètre. Si le paramètre a déjà été défini, l'ancienne valeur
-	 * sera écrasé.
+	 * Ajoute un argument à la requête. Si l'argument a déjà été défini,
+	 * l'ancienne valeur sera écrasé.
 	 * 
-	 * @param name
-	 *            Nom du champ du paramètre
-	 * @param value
-	 *            Valeur du champ
+	 * @param name Nom du champ de l'argument.
+	 * @param value Valeur de l'argument.
 	 */
 	public void setParam(String name, String value) {
 		argv.put(name, value);
 	}
 
 	/**
-	 * Supprime tous les paramètres précédemment définis
+	 * Supprime tous les arguments de requête précédemment définis
 	 */
 	public void clearParam() {
 		argv.clear();
@@ -132,6 +137,13 @@ public class Browser {
 		}
 	}
 
+	/**
+	 * Effectue la requête précédemment configuré et retourne le texte renvoyé
+	 * par le serveur (code HTML par exemple).
+	 * 
+	 * @return Le texte renvoyé par le serveur (code HTML ou XML par exemple).
+	 * @throws IOException La connexion a échoué.
+	 */
 	public String perform() throws IOException {
 		OutputStreamWriter writer = null;
 		BufferedReader reader = null;
@@ -197,8 +209,18 @@ public class Browser {
 		return response;
 	}
 
+	/**
+	 * Télécharge le fichier défini par {@link #setUrl(String)} et l'enregistre
+	 * à l'emplacement désigné par <code>destinationPath</code>.
+	 * 
+	 * @param destinationPath Le chemin où le fichier sera enregistrer
+	 * @throws FileNotFoundException Voir le constructeur de
+	 *             {@link FileOutputStream#FileOutputStream(String)
+	 *             FileOutputStream}
+	 */
 	public void downloadFile(String destinationPath)
 			throws FileNotFoundException {
+		//TODO Factorisation avec perform et lancement d'exception.
 		OutputStreamWriter writer = null;
 		InputStream reader = null;
 		FileOutputStream writeFile = null;
@@ -279,8 +301,7 @@ public class Browser {
 	}
 
 	/**
-	 * @param url
-	 *            URL à définir
+	 * @param url URL à définir
 	 */
 	public void setUrl(String url) {
 		this.url = url;
@@ -365,10 +386,9 @@ public class Browser {
 	}
 
 	/**
-	 * @param fieldname
-	 *            Le nom du champ de cookie souhaité
+	 * @param fieldname Le nom du champ de cookie souhaité
 	 * @return La valeur du champ de cookie demandé, ou null si le champ n'est
-	 *         pas définit.
+	 *         pas défini.
 	 */
 	public String getCookieField(String fieldname) {
 		return cookies.get(fieldname);
@@ -377,17 +397,15 @@ public class Browser {
 	/**
 	 * Ajoute ou redéfinit la valeur du champ de cookie spécifié
 	 * 
-	 * @param fieldname
-	 *            Le nom du champ de cookie à définir
-	 * @param value
-	 *            La valeur du champ de cookie <i>fieldname</i>.
+	 * @param fieldname Le nom du champ de cookie à définir
+	 * @param value La valeur du champ de cookie <i>fieldname</i>.
 	 */
 	public void setCookieField(String fieldname, String value) {
 		cookies.put(fieldname, value);
 	}
 
 	/**
-	 * Supprime tous les cookies actuellement définis
+	 * Supprime tous les cookies actuellement défini
 	 */
 	public void delCookie() {
 		cookies.clear();
@@ -396,19 +414,17 @@ public class Browser {
 	/**
 	 * Supprime le champ de cookie spécifié
 	 * 
-	 * @param fieldname
-	 *            le champ à supprimer
+	 * @param fieldname Le champ à supprimer
 	 */
 	public void delCookie(String fieldname) {
 		cookies.remove(fieldname);
 	}
 
 	/**
-	 * Redéfinit les cookies envoyés dans les requêtes suivantes. Les précédents
+	 * Définit les cookies envoyés dans les requêtes suivantes. Les précédents
 	 * cookies sont écrasés
 	 * 
-	 * @param cookie
-	 *            Cookies à définir
+	 * @param cookie Cookies à définir
 	 */
 	public void setCookies(String cookie) {
 		if (cookie != null && !cookie.isEmpty()) {
@@ -434,11 +450,11 @@ public class Browser {
 	}
 
 	/**
-	 * Gets the status code from an HTTP response message.
+	 * Obtient le code de statut du message de réponse HTTP
 	 * 
-	 * @return the HTTP Status-Code, or -1 if no code can be discerned from the
-	 *         response (i.e., the response is not valid HTTP), or if no request
-	 *         has been made.
+	 * @return Le code de statut HTTP, ou -1 si aucun code ne peut être discerné
+	 *         de la réponse (la réponse n'est pas valide) ou si aucune requête
+	 *         n'a été effectué.
 	 * @see HttpURLConnection#getResponseCode()
 	 */
 	public int getResponseCode() {
@@ -446,7 +462,8 @@ public class Browser {
 	}
 
 	/**
-	 * @return a Map of header fields, or null if no request has been made.
+	 * @return Une Map contenant l'ensemble des entêtes de la réponse HTTP, ou
+	 *         null si aucune requête n'a été effectué.
 	 * @see URLConnection#getHeaderFields()
 	 */
 	public Map<String, List<String>> getHeaderFields() {
@@ -454,10 +471,9 @@ public class Browser {
 	}
 
 	/**
-	 * @return the value of the named header field, or null if there is no such
-	 *         field in the header.
-	 * @throws IllegalStateException
-	 *             if no request has been made
+	 * @return La valeur du champ d'entête portant le nom désigné, or null s'il
+	 *         n'y a pas ce champ dans la réponse.
+	 * @throws IllegalStateException Si aucune requête n'a été effectué.
 	 * @see URLConnection#getHeaderField(String)
 	 */
 	public String getHeaderField(String name) { //Non débogué
@@ -475,22 +491,20 @@ public class Browser {
 	}
 
 	/**
-	 * Set an HTTP proxy to use for the Internet connection
+	 * Installe un proxy HTTP à utiliser pour la connection à Internet.
 	 * 
-	 * @param host
-	 *            the proxy hostname or address
-	 * @param port
-	 *            the port of the proxy
+	 * @param host Le nom d'hôte ou l'adresse du proxy.
+	 * @param port Le port du proxy.
 	 */
 	public void setHttpProxy(String host, int port) {
 		proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
 	}
 
 	/**
-	 * Set an HTTP proxy to use for the Internet connection.
+	 * Installe un proxy HTTP à utiliser pour la connection à Internet.
 	 * 
-	 * @param proxy
-	 *            The proxy instance to use.
+	 * @param proxy L'instance de {@link Proxy} à utiliser.
+	 * @see java.net.Proxy
 	 */
 	public void setHttpProxy(Proxy proxy) {
 		if (proxy == null) {
@@ -500,16 +514,16 @@ public class Browser {
 	}
 
 	/**
-	 * Return the HTTP proxy used for the Internet connection.
+	 * Retourne le proxy HTTP utilisé pour la connection à Internet.
 	 * 
-	 * @return the HTTP proxy used for the Internet connection
+	 * @return Le proxy HTTP utilisé pour la connection à Internet.
 	 */
 	public Proxy getProxy() {
 		return proxy;
 	}
 
 	/**
-	 * Clear the HTTP proxy configuration
+	 * Supprime la configuration de proxy précédemment installé.
 	 */
 	public void removeHttpProxy() {
 		setHttpProxy(null);

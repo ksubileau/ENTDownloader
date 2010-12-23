@@ -158,34 +158,77 @@ public class ENTPath implements Iterable<String> {
 		return nbdiff;
 	}
 
+	/**
+	 * Détermine si un chemin est absolu ou relatif.
+	 * 
+	 * @param path Le chemin à analyser.
+	 * @return True si le chemin est absolu, false sinon.
+	 */
 	public static boolean isAbsolute(String path) {
 		return path.charAt(0) == '/';
 	}
 
+	/**
+	 * Détermine si un chemin est absolu ou relatif.
+	 * 
+	 * @param path Le chemin à analyser.
+	 * @return True si le chemin est absolu, false sinon.
+	 */
 	public static boolean isAbsolute(String[] path) {
 		return path[0].equals("/");
 	}
 
+	/**
+	 * Détermine le nombre de requêtes nécessaires pour atteindre
+	 * le dossier définit par cette instance en partant de la racine (/).
+	 * 
+	 * @return Le nombre de requêtes nécessaires pour atteindre le dossier en
+	 *         partant de la racine (/).
+	 */
 	public int getNbRequests() {
 		return getNbRequests(this);
 	}
 
+	/**
+	 * Détermine le nombre de requêtes nécessaires pour atteindre
+	 * le dossier représenté par <code>path</code> en partant de la racine (/).
+	 * 
+	 * @param path Le chemin à analyser.
+	 * @return Le nombre de requêtes nécessaires pour atteindre le dossier en
+	 *         partant de la racine (/).
+	 */
 	public static int getNbRequests(ENTPath path) {
 		return path.path.size();
 	}
 
+	/**
+	 * Détermine le nombre de requêtes nécessaires pour atteindre
+	 * le dossier représenté par <code>path</code> en partant de la racine (/).
+	 * 
+	 * @param path Le chemin à analyser.
+	 * @return Le nombre de requêtes nécessaires pour atteindre le dossier en
+	 *         partant de la racine (/).
+	 */
 	public static int getNbRequests(String path) {
 		return getNbRequests(path.split("/"));
 	}
 
+	/**
+	 * Détermine le nombre de requêtes nécessaires pour atteindre
+	 * le dossier représenté par <code>path</code> en partant de la racine (/).
+	 * 
+	 * @param path Le chemin à analyser.
+	 * @return Le nombre de requêtes nécessaires pour atteindre le dossier en
+	 *         partant de la racine (/).
+	 */
 	public static int getNbRequests(String[] path) {
 		return path.length;
 	}
 
 	/**
-	 * Returns a string representation of the absolute path.
+	 * Retourne une représentation textuelle du chemin absolu.
 	 * 
-	 * @return a string representation of the absolute path.
+	 * @return Une représentation textuelle du chemin absolu.
 	 */
 	@Override
 	public String toString() {
@@ -200,9 +243,10 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Retourne un itérateur sur les éléments du chemin, partant de la racine.
+	 * Retourne un itérateur sur les éléments du chemin, en partant de la
+	 * racine.
 	 * 
-	 * @return un itérateur sur les éléments du chemin, partant de la racine.
+	 * @return Un itérateur sur les éléments du chemin, en partant de la racine.
 	 */
 	@Override
 	public Iterator<String> iterator() {
@@ -210,10 +254,10 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Retourne un itérateur sur les éléments du chemin, partant du dossier
+	 * Retourne un itérateur sur les éléments du chemin, en partant du dossier
 	 * courant jusqu'à la racine.
 	 * 
-	 * @return un itérateur sur les éléments du chemin, partant du dossier
+	 * @return Un itérateur sur les éléments du chemin, en partant du dossier
 	 *         courant jusqu'à la racine.
 	 */
 	public Iterator<String> descendingIterator() {
@@ -230,7 +274,7 @@ public class ENTPath implements Iterable<String> {
 	/**
 	 * Retourne le nombre d'éléments constituant ce chemin.
 	 * 
-	 * @return le nombre d'éléments constituant ce chemin.
+	 * @return Le nombre d'éléments constituant ce chemin.
 	 */
 	public int size() {
 		return path.size();
@@ -239,14 +283,14 @@ public class ENTPath implements Iterable<String> {
 	/**
 	 * Retourne vrai si le chemin actuel désigne la racine.
 	 * 
-	 * @return true si le chemin actuel désigne la racine
+	 * @return True si le chemin actuel désigne la racine
 	 */
 	public boolean isRoot() {
 		return size() == 1;
 	}
 
 	/**
-	 * @return Le nom du répertoire courant
+	 * @return Le nom du répertoire courant.
 	 */
 	public String getDirectoryName() {
 		return path.peek();
