@@ -51,8 +51,6 @@ import entDownloader.core.events.DownloadedBytesEvent;
  * l'obtention des sources HTML
  * et le téléchargement de fichiers.
  * 
- * @author Kévin Subileau
- * 
  */
 public class Browser {
 	/**
@@ -294,13 +292,15 @@ public class Browser {
 	}
 
 	/**
-	 * @return L'url courante de l'objet
+	 * Retourne l'url courante de l'objet.
 	 */
 	public String getUrl() {
 		return url;
 	}
 
 	/**
+	 * Définit l'url cible de la requête.
+	 * 
 	 * @param url URL à définir
 	 */
 	public void setUrl(String url) {
@@ -308,15 +308,17 @@ public class Browser {
 	}
 
 	/**
-	 * @return Méthode HTTP actuellement utilisée
+	 * Retourne la méthode HTTP actuellement utilisée.
+	 * 
 	 */
 	public Method getMethod() {
 		return method;
 	}
 
 	/**
-	 * @param method
-	 *            Méthode HTTP à utiliser
+	 * Configure la méthode HTTP à utiliser (POST ou GET).
+	 * 
+	 * @param method Méthode HTTP à utiliser.
 	 */
 	public void setMethod(Method method) {
 		if (method == Method.POST || method == Method.GET) {
@@ -326,7 +328,9 @@ public class Browser {
 	}
 
 	/**
-	 * @return L'état actuel du suivi des redirections
+	 * Retourne l'état actuel du suivi des redirections.
+	 * 
+	 * @return True si le suivi des redirections est activé, false sinon.
 	 */
 	public boolean isFollowRedirects() {
 		return followRedirects;
@@ -343,7 +347,7 @@ public class Browser {
 	}
 
 	/**
-	 * @return Les cookies actuellement définis dans une Map
+	 * Retourne les cookies actuellement définis dans une Map
 	 */
 	public Map<String, String> getCookieMap() {
 		return cookies;
@@ -362,8 +366,8 @@ public class Browser {
 	}
 
 	/**
-	 * @return Les cookies actuellement définis tel qu'il sont envoyés dans la
-	 *         requête HTTP
+	 * Retourne les cookies actuellement définis tel qu'il sont envoyés dans la
+	 * requête HTTP.
 	 */
 	public String getCookie() {
 		String cookie = "";
@@ -386,6 +390,9 @@ public class Browser {
 	}
 
 	/**
+	 * Retourne la valeur du champ de cookie portant le nom
+	 * <code>fieldname</code>, ou null si ce champ n'existe pas.
+	 * 
 	 * @param fieldname Le nom du champ de cookie souhaité
 	 * @return La valeur du champ de cookie demandé, ou null si le champ n'est
 	 *         pas défini.
@@ -462,8 +469,9 @@ public class Browser {
 	}
 
 	/**
-	 * @return Une Map contenant l'ensemble des entêtes de la réponse HTTP, ou
-	 *         null si aucune requête n'a été effectué.
+	 * Retourne une Map contenant l'ensemble des entêtes de la réponse HTTP, ou
+	 * null si aucune requête n'a été effectué.
+	 * 
 	 * @see URLConnection#getHeaderFields()
 	 */
 	public Map<String, List<String>> getHeaderFields() {
@@ -471,8 +479,9 @@ public class Browser {
 	}
 
 	/**
-	 * @return La valeur du champ d'entête portant le nom désigné, or null s'il
-	 *         n'y a pas ce champ dans la réponse.
+	 * Retourne la valeur du champ d'entête portant le nom désigné, or null s'il
+	 * n'y a pas ce champ dans la réponse.
+	 * 
 	 * @throws IllegalStateException Si aucune requête n'a été effectué.
 	 * @see URLConnection#getHeaderField(String)
 	 */

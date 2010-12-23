@@ -46,7 +46,7 @@ public class FS_File extends FS_Element {
 	 * 
 	 * @param name Nom du fichier.
 	 * @param dateModif Date de modification du fichier
-	 * @param size Taille du fichier suivi de son unité (Ex: 20 Mo).
+	 * @param ssize Taille du fichier suivi de son unité (Ex: 20 Mo).
 	 */
 	public FS_File(String name, GregorianCalendar dateModif, String ssize) {
 		this(name, dateModif, size_StringToNumber(ssize));
@@ -117,14 +117,14 @@ public class FS_File extends FS_Element {
 	}
 
 	/**
-	 * @return La taille du fichier en octets.
+	 * Retourne la taille du fichier en octets.
 	 */
 	public long getSize() {
 		return size;
 	}
 
 	/**
-	 * @return La taille du fichier sous sa représentation textuelle formaté.
+	 * Retourne la taille du fichier sous sa représentation textuelle formaté.
 	 */
 	public String getFormattedSize() {
 		return size_Formatted(size);

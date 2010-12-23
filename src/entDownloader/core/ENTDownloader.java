@@ -653,7 +653,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @return Le contenu du répertoire courant
+	 * Retourne le contenu du répertoire courant.
 	 */
 	public List<FS_Element> getDirectoryContent() {
 		if (directoryContent == null)
@@ -663,14 +663,14 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @return Le nom du répertoire courant
+	 * Obtient le nom du répertoire courant.
 	 */
 	public String getDirectoryName() {
 		return path.getDirectoryName();
 	}
 
 	/**
-	 * @return Le nombre de dossiers dans le dossier courant.
+	 * Retourne le nombre de dossiers dans le dossier courant.
 	 */
 	public int getNbDossiers() {
 		int i = 0;
@@ -683,7 +683,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @return Le nombre de fichiers dans le dossier courant.
+	 * Retourne le nombre de fichiers dans le dossier courant.
 	 */
 	public int getNbFiles() {
 		int i = 0;
@@ -696,7 +696,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @return La taille totale des fichiers dans le dossier courant en octets.
+	 * Retourne la taille totale des fichiers dans le dossier courant en octets.
 	 */
 	public long getFilesSize() {
 		long s = 0;
@@ -709,7 +709,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @return Le chemin absolu permettant d'atteindre le répertoire courant
+	 * Obtient le chemin absolu permettant d'atteindre le répertoire courant.
 	 */
 	public String getDirectoryPath() {
 		if (path == null)
@@ -718,32 +718,32 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @return Le nom complet de l'utilisateur, ou null si ce dernier est
-	 *         inconnu
+	 * Retourne le nom complet de l'utilisateur, ou null si ce dernier est
+	 * inconnu.
 	 */
 	public String getUsername() {
 		return username;
 	}
 
 	/**
-	 * @return L'espace disque utilisé sur le service de stockage en Mo, ou -1
-	 *         si ce dernier est inconnu
+	 * Retourne l'espace disque utilisé sur le service de stockage en Mo, ou -1
+	 * si ce dernier est inconnu
 	 */
 	public int getUsedSpace() {
 		return usedSpace;
 	}
 
 	/**
-	 * @return L'espace disque total sur le service de stockage en Mo, ou -1 si
-	 *         ce dernier est inconnu
+	 * Retourne l'espace disque total sur le service de stockage en Mo, ou -1 si
+	 * ce dernier est inconnu.
 	 */
 	public int getCapacity() {
 		return capacity;
 	}
 
 	/**
-	 * @return le login utilisé pour la connexion, ou null si ce dernier est
-	 *         inconnu
+	 * Retourne le login utilisé pour la connexion, ou null si ce dernier est
+	 * inconnu.
 	 */
 	public String getLogin() {
 		return login;

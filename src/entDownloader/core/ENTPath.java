@@ -290,7 +290,7 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * @return Le nom du répertoire courant.
+	 * Retourne le nom du répertoire courant.
 	 */
 	public String getDirectoryName() {
 		return path.peek();

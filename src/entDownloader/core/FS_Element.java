@@ -35,10 +35,10 @@ public abstract class FS_Element {
 	public static final short FILE = 1;
 
 	/**
-	 * Construit un nouvel élément de système de fichiers (dossier ou fichier)
+	 * Construit un nouvel élément de système de fichiers (dossier ou fichier).
 	 * 
-	 * @param name Nom de l'élément
-	 * @param dateModif Date de modification de l'élément
+	 * @param name Nom de l'élément.
+	 * @param dateModif Date de modification de l'élément.
 	 */
 	FS_Element(String name, GregorianCalendar dateModif) {
 		this.name = name;
@@ -46,28 +46,30 @@ public abstract class FS_Element {
 	}
 
 	/**
-	 * @return La date de modification de l'élément
+	 * Retourne la date de modification de l'élément.
 	 */
 	public GregorianCalendar getDateModif() {
 		return dateModif;
 	}
 
 	/**
-	 * @param dateModif Définit la date de modification de l'élément.
+	 * Définit la date de modification de l'élément.
+	 * @param dateModif La date de modification de l'élément.
 	 */
 	public void setDateModif(GregorianCalendar dateModif) {
 		this.dateModif = dateModif;
 	}
 
 	/**
-	 * @return Le nom de l'élément
+	 * Retourne le nom de l'élément.
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @param name Le nouveau nom de l'élément
+	 * Définit le nom de l'élément.
+	 * @param name Le nouveau nom de l'élément.
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -102,7 +104,7 @@ public abstract class FS_Element {
 	}
 
 	/**
-	 * @see java.lang.Object#hashCode()
+	 * @see Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
@@ -115,7 +117,7 @@ public abstract class FS_Element {
 	}
 
 	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
+	 * @see Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {

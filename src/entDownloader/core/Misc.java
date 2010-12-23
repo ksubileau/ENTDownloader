@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Collection de méthodes utilitaires.
+ * Collection de méthodes utilitaires static.
  *
  */
 public final class Misc {
