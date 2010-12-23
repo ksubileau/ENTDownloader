@@ -25,5 +25,10 @@ package entDownloader.core.events;
  */
 public interface DirectoryChangingListener extends BroadcastListener {
 
+	/**
+	 * Appelée lors d'un changement de répertoire courant. Voir la documentation
+	 * de {@link DirectoryChangingEvent} pour plus d'informations à propos de
+	 * cet événement.
+	 */
 	public void onDirectoryChanging(DirectoryChangingEvent event);
 }

@@ -20,33 +20,51 @@
  */
 package entDownloader.core.events;
 
-/** Classe de base pour tous les événements */
+/** Classe de base pour tous les événements. */
 public abstract class Event {
 
 	protected Object source;
 	protected Object userObj;
 
+	/**
+	 * Type d'événement inconnu.
+	 */
 	public static final int UNKNOWN_TYPE = 0;
+	/**
+	 * Indique un changement de répertoire en cours.
+	 */
 	public static final int CHANGING_DIR_TYPE = 1;
+	/**
+	 * Indique un changement de répertoire terminé.
+	 */
 	public static final int CHANGED_DIR_TYPE = 2;
+	/**
+	 * Indique que des octets ont été reçus durant un téléchargement.
+	 */
 	public static final int DOWNLOADED_BYTES_TYPE = 3;
+	/**
+	 * Indique le début d'un téléchargement.
+	 */
 	public static final int START_DOWNLOAD_TYPE = 4;
+	/**
+	 * Indique la fin d'un téléchargement.
+	 */
 	public static final int END_DOWNLOAD_TYPE = 5;
 
 	protected Event() {
 	}
 
-	/** Constructs an event with the specified source. */
+	/** Construit un événement avec la source spécifié. */
 	public Event(Object source) {
 		this.source = source;
 	}
 
-	/** Returns the source. */
+	/** Retourne la source de l'événement. */
 	public Object getSource() {
 		return source;
 	}
 
-	/** Sets the source who generated the event. */
+	/** Définit la source de l'événement. */
 	public void setSource(Object newSource) {
 		source = newSource;
 	}
@@ -62,7 +80,7 @@ public abstract class Event {
 	}
 
 	/**
-	 * @return Returns the type of the event.
+	 * @return Retourne le type de l'événement.
 	 */
 	public abstract int getType();
 

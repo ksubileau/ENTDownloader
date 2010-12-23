@@ -23,8 +23,9 @@ package entDownloader.core.events;
 public class DownloadedBytesEvent extends Event {
 	private long bytesDownloaded = 0;
 
-	/* (non-Javadoc)
-	 * @see entDownloader.core.events.BroadcastEvent#getType()
+	/**
+	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * {@link Event#DOWNLOADED_BYTES_TYPE}
 	 */
 	@Override
 	public int getType() {
@@ -41,22 +42,22 @@ public class DownloadedBytesEvent extends Event {
 	/**
 	 * Construit un nouvel évènement DownloadedBytesEvent
 	 * 
-	 * @param bytesDownloaded
-	 *            Nombre d'octets du fichier téléchargés depuis le dernier
-	 *            DownloadedBytesEvent.
+	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le dernier DownloadedBytesEvent.
 	 */
 	public DownloadedBytesEvent(long bytesDownloaded) {
 		setBytesDownloaded(bytesDownloaded);
 	}
 
+	/**
+	 * Retourne le nombre d'octets du fichier téléchargés depuis le dernier DownloadedBytesEvent.
+	 */
 	public long getBytesDownloaded() {
 		return bytesDownloaded;
 	}
 
 	/**
-	 * @param bytesDownloaded
-	 *            Nombre d'octets du fichier téléchargés depuis le dernier
-	 *            DownloadedBytesEvent.
+	 * Définit le nombre d'octets du fichier téléchargés depuis le dernier DownloadedBytesEvent.
+	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le dernier DownloadedBytesEvent.
 	 */
 	public void setBytesDownloaded(long bytesDownloaded) {
 		this.bytesDownloaded = bytesDownloaded;

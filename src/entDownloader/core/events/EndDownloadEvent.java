@@ -26,22 +26,40 @@ public class EndDownloadEvent extends Event {
 
 	private FS_File file;
 
+	/**
+	 * Construit un nouvel évènement EndDownloadEvent.
+	 */
 	public EndDownloadEvent() {
 		this(null);
 	}
-
+	
+	/**
+	 * Construit un nouvel évènement EndDownloadEvent.
+	 * @param file Le fichier dont le téléchargement s'est terminé.
+	 */
 	public EndDownloadEvent(FS_File file) {
 		setFile(file);
 	}
 
+	/**
+	 * Définit le fichier pour lequel le téléchargement s'est terminé.
+	 * @param file
+	 */
 	public void setFile(FS_File file) {
 		this.file = file;
 	}
 
+	/**
+	 * Retourne le fichier dont le téléchargement s'est terminé.
+	 */
 	public FS_File getFile() {
 		return file;
 	}
 
+	/**
+	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * {@link Event#END_DOWNLOAD_TYPE}
+	 */
 	@Override
 	public int getType() {
 		return END_DOWNLOAD_TYPE;

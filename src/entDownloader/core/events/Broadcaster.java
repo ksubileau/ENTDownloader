@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * Enregistre et supprime les observateurs, et les avertit lorsqu'un certain
- * événement se produit.
+ * Enregistre et supprime les observateurs, et les averti lorsqu'un événement se
+ * produit.
  */
 public class Broadcaster {
 

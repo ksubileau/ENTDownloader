@@ -26,22 +26,40 @@ public class StartDownloadEvent extends Event {
 
 	private FS_File file;
 
+	/**
+	 * Construit un nouvel évènement StartDownloadEvent.
+	 */
 	public StartDownloadEvent() {
 		this(null);
 	}
 
+	/**
+	 * Construit un nouvel évènement StartDownloadEvent.
+	 * @param file Le fichier dont le téléchargement débute.
+	 */
 	public StartDownloadEvent(FS_File file) {
 		setFile(file);
 	}
 
+	/**
+	 * Définit le fichier pour lequel le téléchargement débute.
+	 * @param file
+	 */
 	public void setFile(FS_File file) {
 		this.file = file;
 	}
 
+	/**
+	 * Retourne le fichier dont le téléchargement débute.
+	 */
 	public FS_File getFile() {
 		return file;
 	}
 
+	/**
+	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * {@link Event#START_DOWNLOAD_TYPE}
+	 */
 	@Override
 	public int getType() {
 		return START_DOWNLOAD_TYPE;

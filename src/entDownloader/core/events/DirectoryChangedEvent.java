@@ -21,29 +21,47 @@
 package entDownloader.core.events;
 
 /**
- * Informe les observateurs que le répertoire courant a changé
+ * Un événement qui indique que le répertoire courant a changé.
  */
 public class DirectoryChangedEvent extends Event {
 
+	/**
+	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * {@link Event#CHANGED_DIR_TYPE}
+	 */
 	@Override
 	public int getType() {
 		return Event.CHANGED_DIR_TYPE;
 	}
 
+	/**
+	 * Construit un nouvel évènement DirectoryChangedEvent.
+	 */
 	public DirectoryChangedEvent() {
 		this(null);
 	}
 
+	/**
+	 * Construit un nouvel évènement DirectoryChangedEvent.
+	 * 
+	 * @param targetPath Le chemin vers lequel on a migré.
+	 */
 	public DirectoryChangedEvent(String targetPath) {
 		setDirectory(targetPath);
 	}
 
 	private String targetPath;
 
+	/**
+	 * Retourne le chemin vers lequel on a migré.
+	 */
 	public String getDirectory() {
 		return targetPath;
 	}
 
+	/**
+	 * Définit le chemin vers lequel on a migré.
+	 */
 	public void setDirectory(String targetPath) {
 		this.targetPath = targetPath;
 	}

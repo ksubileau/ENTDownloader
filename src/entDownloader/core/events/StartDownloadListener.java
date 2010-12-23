@@ -20,7 +20,15 @@
  */
 package entDownloader.core.events;
 
+/**
+ * Informe les observateurs que le téléchargement d'un fichier débute.
+ */
 public interface StartDownloadListener extends BroadcastListener {
 
+	/**
+	 * Appelée lorsque le téléchargement d'un fichier débute. Voir la
+	 * documentation de {@link StartDownloadEvent} pour plus d'informations à
+	 * propos de cet événement.
+	 */
 	public void onStartDownload(StartDownloadEvent e);
 }

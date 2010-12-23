@@ -20,8 +20,17 @@
  */
 package entDownloader.core.events;
 
+/**
+ * Informe les observateurs que des octets ont été reçus lors d'un
+ * téléchargement de fichier(s).
+ */
 public interface DownloadedBytesListener extends BroadcastListener {
 
+	/**
+	 * Appelée lorsque des octets ont été reçus lors d'un téléchargement de
+	 * fichier(s). Voir la documentation de {@link DownloadedBytesEvent} pour
+	 * plus d'informations à propos de cet événement.
+	 */
 	public void onDownloadedBytes(DownloadedBytesEvent e);
 
 }
