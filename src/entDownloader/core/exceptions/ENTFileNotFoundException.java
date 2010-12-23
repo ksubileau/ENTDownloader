@@ -23,30 +23,28 @@ package entDownloader.core.exceptions;
 import java.io.FileNotFoundException;
 
 /**
- * Signals that an attempt to open the file denoted by a specified pathname has
- * failed.
+ * Signal qu'une tentative d'ouverture d'un fichier stocké sur l'ENT a échoué.
  */
 public class ENTFileNotFoundException extends FileNotFoundException {
 	private static final long serialVersionUID = 2543153762500385784L;
 
 	/**
-	 * Constructs an ENTFileNotFoundException with null as its error detail
-	 * message.
+	 * Construit une exception ENTFileNotFoundException sans message
+	 * d'information.
 	 */
-	ENTFileNotFoundException() {
+	public ENTFileNotFoundException() {
 		super();
 	}
 
 	/**
-	 * Constructs an ENTFileNotFoundException with the specified detail message.
-	 * The error message string s can later be retrieved by the
-	 * {@link java.lang.Throwable#getMessage() Throwable.getMessage()} method of
-	 * class java.lang.Throwable.
+	 * Construit une exception ENTDirectoryNotFoundException avec le message
+	 * d'information spécifié. Le message d'erreur peut ensuite être retrouvé
+	 * grâce à la méthode {@link java.lang.Throwable#getMessage()
+	 * Throwable.getMessage()} de la classe {@link java.lang.Throwable}.
 	 * 
-	 * @param s
-	 *            the detail message
+	 * @param message Le message d'erreur.
 	 */
-	public ENTFileNotFoundException(String s) {
-		super(s);
+	public ENTFileNotFoundException(String message) {
+		super(message);
 	}
 }

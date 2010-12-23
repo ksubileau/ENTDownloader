@@ -23,30 +23,28 @@ package entDownloader.core.exceptions;
 import java.io.IOException;
 
 /**
- * Signals that an attempt to open the directory denoted by a specified name has
- * failed
+ * Signal qu'une tentative d'ouverture d'un dossier stocké sur l'ENT a échoué.
  */
 public class ENTDirectoryNotFoundException extends IOException {
 	private static final long serialVersionUID = 2543153762500385784L;
 
 	/**
-	 * Constructs an ENTDirectoryNotFoundException with null as its error detail
-	 * message.
+	 * Construit une exception ENTDirectoryNotFoundException sans message
+	 * d'information.
 	 */
-	ENTDirectoryNotFoundException() {
+	public ENTDirectoryNotFoundException() {
 		super();
 	}
 
 	/**
-	 * Constructs an ENTDirectoryNotFoundException with the specified detail
-	 * message. The error message string s can later be retrieved by the
-	 * {@link java.lang.Throwable#getMessage() Throwable.getMessage()} method of
-	 * class java.lang.Throwable.
+	 * Construit une exception ENTDirectoryNotFoundException avec le message
+	 * d'information spécifié. Le message d'erreur peut ensuite être retrouvé
+	 * grâce à la méthode {@link Throwable#getMessage()} de la classe
+	 * {@link Throwable}.
 	 * 
-	 * @param s
-	 *            the detail message
+	 * @param message Le message d'erreur.
 	 */
-	public ENTDirectoryNotFoundException(String s) {
-		super(s);
+	public ENTDirectoryNotFoundException(String message) {
+		super(message);
 	}
 }

@@ -23,30 +23,30 @@ package entDownloader.core.exceptions;
 import java.io.IOException;
 
 /**
- * Thrown to indicate that a method has been passed a directory instead of a
- * file, or reciprocally.
+ * Lancé pour indiquer qu'un répertoire a été passé en argument à une méthode
+ * qui attendait un fichier, ou réciproquement.
+ * 
  */
 public class ENTInvalidFS_ElementTypeException extends IOException {
 	private static final long serialVersionUID = 763310137094181767L;
 
 	/**
-	 * Constructs an ENTInvalidFS_ElementTypeException with null as its error
-	 * detail message.
+	 * Construit une exception ENTInvalidFS_ElementTypeException sans message
+	 * d'information.
 	 */
 	public ENTInvalidFS_ElementTypeException() {
 		super();
 	}
 
 	/**
-	 * Constructs an ENTInvalidFS_ElementTypeException with the specified detail
-	 * message. The error message string s can later be retrieved by the
-	 * {@link java.lang.Throwable#getMessage() Throwable.getMessage()} method of
-	 * class java.lang.Throwable.
+	 * Construit une exception ENTInvalidFS_ElementTypeException avec le message
+	 * d'information spécifié. Le message d'erreur peut ensuite être retrouvé
+	 * grâce à la méthode {@link java.lang.Throwable#getMessage()
+	 * Throwable.getMessage()} de la classe {@link java.lang.Throwable}.
 	 * 
-	 * @param s
-	 *            the detail message
+	 * @param message Le message d'erreur.
 	 */
-	public ENTInvalidFS_ElementTypeException(String s) {
-		super(s);
+	public ENTInvalidFS_ElementTypeException(String message) {
+		super(message);
 	}
 }

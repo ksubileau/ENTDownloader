@@ -21,61 +21,69 @@
 package entDownloader.core.exceptions;
 
 /**
- * Thrown to indicate that a user's authentication control has failed (i.e. user
- * isn't authenticated or session has expired).
+ * Lancé pour indiqué qu'un contrôle d'authentification de l'utilisateur a
+ * échoué (c'est à dire que l'utilisateur n'est pas connecté ou que sa session a
+ * expiré).
  */
 public class ENTUnauthenticatedUserException extends IllegalStateException {
 
 	private static final long serialVersionUID = -6029089402020384239L;
+	/**
+	 * Indique que l'utilisateur ne s'est pas authentifié.
+	 */
 	public static final int UNAUTHENTICATED = 0;
+	/**
+	 * Indique que la session de l'utilisateur a expiré.
+	 */
 	public static final int SESSION_EXPIRED = 1;
 	private int type = UNAUTHENTICATED;
 
 	/**
-	 * Constructs an ENTUnauthenticatedUserException with null as its error
-	 * detail message and unauthenticated as its detail code.
+	 * Construit une exception ENTUnauthenticatedUserException sans message
+	 * d'information et avec un code d'erreur indiquant que l'utilisateur ne
+	 * s'est pas authentifié.
 	 */
 	public ENTUnauthenticatedUserException() {
 		super();
 	}
 
 	/**
-	 * Constructs an ENTUnauthenticatedUserException with the specified detail
-	 * message and unauthenticated as its detail code. The error message string
-	 * s can later be retrieved by the {@link java.lang.Throwable#getMessage()
-	 * Throwable.getMessage()} method of class java.lang.Throwable.
+	 * Construit une exception ENTUnauthenticatedUserException avec le message
+	 * d'information spécifié et un code d'erreur indiquant que l'utilisateur ne
+	 * s'est pas authentifié. Le message d'erreur peut ensuite être retrouvé
+	 * grâce à la méthode {@link java.lang.Throwable#getMessage()
+	 * Throwable.getMessage()} de la classe {@link java.lang.Throwable}.
 	 * 
-	 * @param s
-	 *            the detail message
+	 * @param message Le message d'erreur.
 	 */
-	public ENTUnauthenticatedUserException(String s) {
-		super(s);
+	public ENTUnauthenticatedUserException(String message) {
+		super(message);
 	}
 
 	/**
-	 * Constructs an ENTUnauthenticatedUserException with the specified detail
-	 * message and detail code. The error message string s can later be
-	 * retrieved by the {@link java.lang.Throwable#getMessage()
-	 * Throwable.getMessage()} method of class java.lang.Throwable.
+	 * Construit une exception ENTUnauthenticatedUserException avec le message
+	 * d'information et le code d'erreur spécifié. Le message d'erreur peut
+	 * ensuite être retrouvé grâce à la méthode
+	 * {@link java.lang.Throwable#getMessage() Throwable.getMessage()} de la
+	 * classe {@link java.lang.Throwable}.
 	 * 
-	 * @param s
-	 *            the detail message
-	 * @param type
-	 *            the detail code
+	 * @param message Le message d'erreur.
+	 * @param type Le code d'erreur, qui indique s'il s'agit d'une expiration de
+	 *            session ou si l'utilisateur ne s'est pas authentifié.
 	 */
-	public ENTUnauthenticatedUserException(String s, int type) {
-		super(s);
+	public ENTUnauthenticatedUserException(String message, int type) {
+		super(message);
 		if (type == SESSION_EXPIRED) {
 			this.type = type;
 		}
 	}
 
 	/**
-	 * Constructs an ENTUnauthenticatedUserException with null as its error
-	 * detail message and the specified detail code.
+	 * Construit une exception ENTUnauthenticatedUserException sans message
+	 * d'information et avec le code d'erreur spécifié.
 	 * 
-	 * @param type
-	 *            the detail code
+	 * @param type Le code d'erreur, qui indique s'il s'agit d'une expiration de
+	 *            session ou si l'utilisateur ne s'est pas authentifié.
 	 */
 	public ENTUnauthenticatedUserException(int type) {
 		super();
@@ -85,7 +93,11 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 	}
 
 	/**
-	 * @return The detail code of the exception
+	 * Retourne le code d'erreur indiquant la nature de l'échec
+	 * d'authentificataion.
+	 * 
+	 * @see ENTUnauthenticatedUserException#UNAUTHENTICATED
+	 * @see ENTUnauthenticatedUserException#SESSION_EXPIRED
 	 */
 	public int getType() {
 		return type;
