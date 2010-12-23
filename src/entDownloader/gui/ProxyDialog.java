@@ -29,8 +29,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URISyntaxException;
 
@@ -310,25 +312,48 @@ public class ProxyDialog extends javax.swing.JDialog {
 									pacLocation.grabFocus();
 									return;
 								}
-								//TODO Valider formulaire (gestion des exceptions)
+								//TODO Valider formulaire (gestion des exceptions), Relire l'existant (fautes français et correspondance exception/message)
 								try {
 									ENTDownloader.getInstance().setProxy(
 											pacLocation.getText());
+									ProxyDialog.this.setVisible(false);
+								} catch (MalformedURLException e) {
+									JOptionPane
+									.showMessageDialog(
+											ProxyDialog.this,
+											"Impossible d'accéder au fichier PAC : chemin incorrect." +
+											"\nSi vous indiquez un chemin local, pensez à le faire précéder de \"file:///\".\n" +
+											"Ex : file:///C:/Config/proxy.pac",
+											"Paramètre invalide",
+											JOptionPane.ERROR_MESSAGE);
 								} catch (URISyntaxException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
+								} catch (FileNotFoundException e) {
+									JOptionPane
+									.showMessageDialog(
+											ProxyDialog.this,
+											"Le fichier indiqué n'existe pas.",
+											"Paramètre invalide",
+											JOptionPane.ERROR_MESSAGE);
 								} catch (IOException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								} catch (IllegalArgumentException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
+								} catch (org.mozilla.javascript.EvaluatorException e) {
+									JOptionPane
+									.showMessageDialog(
+											ProxyDialog.this,
+											"Ce fichier n'est pas un fichier de configuration de proxy automatique (PAC) valide.",
+											"Fichier invalide",
+											JOptionPane.ERROR_MESSAGE);
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 							}
-							ProxyDialog.this.setVisible(false);
 						}
 					});
 				}
