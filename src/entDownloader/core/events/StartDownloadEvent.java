@@ -22,6 +22,10 @@ package entDownloader.core.events;
 
 import entDownloader.core.FS_File;
 
+/**
+ * Un événement qui indique que le téléchargement d'un 
+ * fichier débute.
+ */
 public class StartDownloadEvent extends Event {
 
 	private FS_File file;

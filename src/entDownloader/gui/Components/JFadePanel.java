@@ -25,6 +25,9 @@ import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
 
+/**
+ * A {@link JPanel} with fade-in and fade-out effects.
+ */
 public class JFadePanel extends JPanel {
 	private static final long serialVersionUID = -8973008279297176112L;
 	private boolean fadein, fadeout;
@@ -182,6 +185,10 @@ public class JFadePanel extends JPanel {
 				current.getBlue(), 255 * opacityPercent / 100));
 	}
 
+	/**
+	 * Sets the maximum opacity of this JFadePanel.
+	 * @param maxOpacityPercent The maximum opacity of this JFadePanel.
+	 */
 	public void setMaxOpacity(int maxOpacityPercent) {
 		if (maxOpacityPercent < 0 || maxOpacityPercent > 100)
 			throw new IllegalArgumentException();

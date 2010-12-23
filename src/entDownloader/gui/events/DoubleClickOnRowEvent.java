@@ -23,32 +23,48 @@ package entDownloader.gui.events;
 import entDownloader.core.FS_Element;
 
 /**
- * Informe les observateurs que le répertoire courant est en train de changer
+ * Un événement qui indique que l'utilisateur a double-cliqué
+ * sur une ligne de l'affichage Détail.
  */
 public class DoubleClickOnRowEvent extends GuiEvent {
 
-	/* (non-Javadoc)
-	 * @see entDownloader.core.events.Event#getType()
+	/**
+	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * {@link GuiEvent#DOUBLE_CLICK_ON_ROW_TYPE}
 	 */
 	@Override
 	public int getType() {
 		return GuiEvent.DOUBLE_CLICK_ON_ROW_TYPE;
 	}
 
+	/**
+	 * Construit un nouvel évènement DoubleClickOnRowEvent.
+	 */
 	public DoubleClickOnRowEvent() {
 		this(null);
 	}
 
+	/**
+	 * Construit un nouvel évènement DoubleClickOnRowEvent.
+	 * 
+	 * @param target Le {@link FS_Element} sur lequel on a double-cliqué.
+	 */
 	public DoubleClickOnRowEvent(FS_Element target) {
 		setTarget(target);
 	}
 
 	private FS_Element target;
 
+	/**
+	 * Retourne le {@link FS_Element} sur lequel on a double-cliqué.
+	 */
 	public FS_Element getTarget() {
 		return target;
 	}
 
+	/**
+	 * Définit le {@link FS_Element} sur lequel on a double-cliqué.
+	 */
 	public void setTarget(FS_Element target) {
 		this.target = target;
 	}

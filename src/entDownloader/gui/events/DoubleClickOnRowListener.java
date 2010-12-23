@@ -23,9 +23,16 @@ package entDownloader.gui.events;
 import entDownloader.core.events.BroadcastListener;
 
 /**
- * Informe les observateurs que le répertoire courant a changé
+ * Informe les observateurs que l'utilisateur a double-cliqué
+ * sur une ligne de l'affichage Détail.
  */
 public interface DoubleClickOnRowListener extends BroadcastListener {
 
+	/**
+	 * Appelée lorsque l'utilisateur a double-cliqué sur une ligne de
+	 * l'affichage Détail. Voir la documentation de
+	 * {@link DoubleClickOnRowEvent} pour plus d'informations à propos de cet
+	 * événement.
+	 */
 	public void onDoubleClickOnRow(DoubleClickOnRowEvent event);
 }

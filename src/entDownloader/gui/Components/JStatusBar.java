@@ -27,9 +27,15 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+/**
+ * Une barre de statut. Dommage que ce composant si basique ne soit pas inclus dans Swing...
+ */
 public class JStatusBar extends JPanel {
 	private static final long serialVersionUID = -3850702427642770674L;
 
+	/**
+	 * Créé une nouvelle barre de statut.
+	 */
 	public JStatusBar() {
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(10, 23));

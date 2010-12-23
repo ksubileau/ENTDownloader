@@ -20,6 +20,10 @@
  */
 package entDownloader.core.events;
 
+/**
+ * Un événement qui indique que des octets ont été reçu durant 
+ * le téléchargement d'un fichier.
+ */
 public class DownloadedBytesEvent extends Event {
 	private long bytesDownloaded = 0;
 

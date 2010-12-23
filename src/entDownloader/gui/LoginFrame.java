@@ -47,6 +47,9 @@ import entDownloader.core.CoreConfig;
 import entDownloader.core.ENTDownloader;
 import entDownloader.gui.Components.JFadePanel;
 
+/**
+ * Fenêtre de connexion.
+ */
 public class LoginFrame extends javax.swing.JFrame {
 	private static final long serialVersionUID = 6012478520927856073L;
 	/**
