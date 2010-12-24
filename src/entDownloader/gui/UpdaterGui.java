@@ -50,7 +50,10 @@ public class UpdaterGui {
 	}
 	
 	public UpdaterGui(final JFrame owner, boolean showAlreadyUpToDateMessage) throws Exception {
-		updater = new Updater();
+		if(showAlreadyUpToDateMessage)
+			updater = new Updater(CoreConfig.updaterURL + "&manu");
+		else
+			updater = new Updater();
 		Runnable prompt = null;
 		if(!updater.isUpToDate()) {
 			JScrollPane editorPane = getChangeLogPane();
