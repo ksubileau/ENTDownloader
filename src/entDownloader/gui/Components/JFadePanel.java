@@ -187,6 +187,7 @@ public class JFadePanel extends JPanel {
 
 	/**
 	 * Sets the maximum opacity of this JFadePanel.
+	 * 
 	 * @param maxOpacityPercent The maximum opacity of this JFadePanel.
 	 */
 	public void setMaxOpacity(int maxOpacityPercent) {

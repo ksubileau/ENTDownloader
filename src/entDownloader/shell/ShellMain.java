@@ -20,6 +20,8 @@
  */
 package entDownloader.shell;
 
+import static entDownloader.core.Misc.addZeroBefore;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,7 +36,6 @@ import java.util.Observer;
 import java.util.Scanner;
 
 import entDownloader.core.CoreConfig;
-import static entDownloader.core.Misc.addZeroBefore;
 import entDownloader.core.ENTDownloader;
 import entDownloader.core.ENTPath;
 import entDownloader.core.FS_Element;
@@ -231,7 +232,7 @@ public final class ShellMain {
 			while (login == null || login.isEmpty()) {
 				System.out.print("Veuillez saisir votre login ENT : ");
 				try {
-				login = sc.nextLine();
+					login = sc.nextLine();
 				} catch (NoSuchElementException e) {
 					System.out.println();
 					return;
@@ -374,12 +375,20 @@ public final class ShellMain {
 			Updater updater = new Updater();
 			if (!updater.isUpToDate()) {
 				//Mise à jour disponible
-				System.out
-						.println("Une nouvelle version de " + productName + " est disponible. La version "
-								+ updater.version() + " du " + addZeroBefore(updater.datePublication().get(Calendar.DATE))
-								+ "/" + addZeroBefore(updater.datePublication().get(Calendar.MONTH ) + 1) + "/"
-								+ addZeroBefore(updater.datePublication().get(Calendar.YEAR))
-								+ " est téléchargeable sur " + updater.location() + ".");
+				System.out.println("Une nouvelle version de "
+						+ productName
+						+ " est disponible. La version "
+						+ updater.version()
+						+ " du "
+						+ addZeroBefore(updater.datePublication().get(
+								Calendar.DATE))
+						+ "/"
+						+ addZeroBefore(updater.datePublication().get(
+								Calendar.MONTH) + 1)
+						+ "/"
+						+ addZeroBefore(updater.datePublication().get(
+								Calendar.YEAR)) + " est téléchargeable sur "
+						+ updater.location() + ".");
 			}
 		} catch (Exception e) {
 		}

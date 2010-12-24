@@ -20,8 +20,13 @@
  */
 package entDownloader.gui;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -169,5 +174,62 @@ public class Misc {
 			v.addElement(convertToVector(anArray[i]));
 		}
 		return v;
+	}
+
+	/**
+	 * Ouvre le navigateur par défaut à l'adresse indiquée. Les exceptions
+	 * lancées par {@link Desktop#browse(java.net.URI)} sont rattrapés sans
+	 * action.
+	 * 
+	 * @param url L'adresse à visiter.
+	 * @return True si l'action est supportée et a réussi sans exceptions, false
+	 *         sinon
+	 */
+	public static boolean browse(String url) {
+		try {
+			return browse(new URL(url));
+		} catch (MalformedURLException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Ouvre le navigateur par défaut à l'adresse indiquée. Les exceptions
+	 * lancées par {@link Desktop#browse(java.net.URI)} sont rattrapés sans
+	 * action.
+	 * 
+	 * @param url L'URL à visiter.
+	 * @return True si l'action est supportée et a réussi sans exceptions, false
+	 *         sinon
+	 */
+	public static boolean browse(URL url) {
+		try {
+			return browse(url.toURI());
+		} catch (URISyntaxException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Ouvre le navigateur par défaut à l'adresse indiquée. Les exceptions
+	 * lancées par {@link Desktop#browse(java.net.URI)} sont rattrapés sans
+	 * action.
+	 * 
+	 * @param uri L'URI à visiter.
+	 * @return True si l'action est supportée et a réussi sans exceptions, false
+	 *         sinon
+	 */
+	public static boolean browse(URI uri) {
+		if (Desktop.isDesktopSupported()
+				&& Desktop.getDesktop().isSupported(
+						java.awt.Desktop.Action.BROWSE)) {
+			try {
+				java.awt.Desktop.getDesktop().browse(uri);
+				return true;
+			} catch (Exception ex) {
+				return false;
+			}
+		} else
+			return false;
 	}
 }

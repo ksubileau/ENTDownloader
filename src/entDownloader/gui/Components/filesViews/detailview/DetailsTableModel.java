@@ -83,9 +83,8 @@ public class DetailsTableModel extends AbstractTableModel {
 				v.addElement(FS_File.size_Formatted(((FS_File) el).getSize()));
 			}
 			GregorianCalendar dateModif = el.getDateModif();
-			v.addElement(addZeroBefore(dateModif.get(Calendar.DATE))
-					+ "/"
-					+ addZeroBefore(dateModif.get(Calendar.MONTH)+1) + "/"
+			v.addElement(addZeroBefore(dateModif.get(Calendar.DATE)) + "/"
+					+ addZeroBefore(dateModif.get(Calendar.MONTH) + 1) + "/"
 					+ addZeroBefore(dateModif.get(Calendar.YEAR)) + " "
 					+ addZeroBefore(dateModif.get(Calendar.HOUR_OF_DAY)) + ":"
 					+ addZeroBefore(dateModif.get(Calendar.MINUTE)));

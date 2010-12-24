@@ -28,7 +28,8 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 /**
- * Une barre de statut. Dommage que ce composant si basique ne soit pas inclus dans Swing...
+ * Une barre de statut. Dommage que ce composant si basique ne soit pas inclus
+ * dans Swing...
  */
 public class JStatusBar extends JPanel {
 	private static final long serialVersionUID = -3850702427642770674L;

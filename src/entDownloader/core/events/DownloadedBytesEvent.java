@@ -21,7 +21,7 @@
 package entDownloader.core.events;
 
 /**
- * Un événement qui indique que des octets ont été reçu durant 
+ * Un événement qui indique que des octets ont été reçu durant
  * le téléchargement d'un fichier.
  */
 public class DownloadedBytesEvent extends Event {
@@ -46,22 +46,27 @@ public class DownloadedBytesEvent extends Event {
 	/**
 	 * Construit un nouvel évènement DownloadedBytesEvent
 	 * 
-	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le dernier DownloadedBytesEvent.
+	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le
+	 *            dernier DownloadedBytesEvent.
 	 */
 	public DownloadedBytesEvent(long bytesDownloaded) {
 		setBytesDownloaded(bytesDownloaded);
 	}
 
 	/**
-	 * Retourne le nombre d'octets du fichier téléchargés depuis le dernier DownloadedBytesEvent.
+	 * Retourne le nombre d'octets du fichier téléchargés depuis le dernier
+	 * DownloadedBytesEvent.
 	 */
 	public long getBytesDownloaded() {
 		return bytesDownloaded;
 	}
 
 	/**
-	 * Définit le nombre d'octets du fichier téléchargés depuis le dernier DownloadedBytesEvent.
-	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le dernier DownloadedBytesEvent.
+	 * Définit le nombre d'octets du fichier téléchargés depuis le dernier
+	 * DownloadedBytesEvent.
+	 * 
+	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le
+	 *            dernier DownloadedBytesEvent.
 	 */
 	public void setBytesDownloaded(long bytesDownloaded) {
 		this.bytesDownloaded = bytesDownloaded;

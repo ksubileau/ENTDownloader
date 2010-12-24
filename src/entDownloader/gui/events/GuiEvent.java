@@ -25,7 +25,8 @@ import entDownloader.core.events.Event;
 public abstract class GuiEvent extends Event {
 
 	/**
-	 * Indique que l'utilisateur a double-cliqué sur une ligne de l'affichage Détail.
+	 * Indique que l'utilisateur a double-cliqué sur une ligne de l'affichage
+	 * Détail.
 	 */
 	public static final int DOUBLE_CLICK_ON_ROW_TYPE = 101;
 

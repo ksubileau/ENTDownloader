@@ -54,6 +54,7 @@ public abstract class FS_Element {
 
 	/**
 	 * Définit la date de modification de l'élément.
+	 * 
 	 * @param dateModif La date de modification de l'élément.
 	 */
 	public void setDateModif(GregorianCalendar dateModif) {
@@ -69,6 +70,7 @@ public abstract class FS_Element {
 
 	/**
 	 * Définit le nom de l'élément.
+	 * 
 	 * @param name Le nouveau nom de l'élément.
 	 */
 	public void setName(String name) {

@@ -23,7 +23,7 @@ package entDownloader.core.events;
 import entDownloader.core.FS_File;
 
 /**
- * Un événement qui indique que le téléchargement d'un 
+ * Un événement qui indique que le téléchargement d'un
  * fichier s'est terminé.
  */
 public class EndDownloadEvent extends Event {
@@ -36,9 +36,10 @@ public class EndDownloadEvent extends Event {
 	public EndDownloadEvent() {
 		this(null);
 	}
-	
+
 	/**
 	 * Construit un nouvel évènement EndDownloadEvent.
+	 * 
 	 * @param file Le fichier dont le téléchargement s'est terminé.
 	 */
 	public EndDownloadEvent(FS_File file) {
@@ -47,6 +48,7 @@ public class EndDownloadEvent extends Event {
 
 	/**
 	 * Définit le fichier pour lequel le téléchargement s'est terminé.
+	 * 
 	 * @param file
 	 */
 	public void setFile(FS_File file) {

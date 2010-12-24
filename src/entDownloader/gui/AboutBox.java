@@ -36,10 +36,9 @@ import javax.swing.WindowConstants;
 
 import entDownloader.core.CoreConfig;
 
-
 /**
-* Boîte de dialogue A propos de...
-*/
+ * Boîte de dialogue A propos de...
+ */
 public class AboutBox extends javax.swing.JDialog {
 	private static final long serialVersionUID = -3485384134597214576L;
 	private JLabel logo;
@@ -56,6 +55,7 @@ public class AboutBox extends javax.swing.JDialog {
 
 	/**
 	 * Affiche la boîte de dialogue A propos.
+	 * 
 	 * @param frame La fenêtre propriétaire de cette boîte de dialogue.
 	 */
 	public AboutBox(JFrame frame) {
@@ -166,22 +166,16 @@ public class AboutBox extends javax.swing.JDialog {
 		{
 			productSite = new JLabel();
 			getContentPane().add(productSite);
-			productSite.setText("<html><a href=\"" + CoreConfig.getString("ProductInfo.website") + "\">"+ CoreConfig.getString("ProductInfo.website")+ "</a></html>");
+			productSite.setText("<html><a href=\""
+					+ CoreConfig.getString("ProductInfo.website") + "\">"
+					+ CoreConfig.getString("ProductInfo.website")
+					+ "</a></html>");
 			productSite.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			productSite.setBounds(112, 86, 250, 16);
 			productSite.addMouseListener(new MouseAdapter() {
+				@Override
 				public void mouseClicked(MouseEvent e) {
-					if (Desktop.isDesktopSupported()
-							&& Desktop.getDesktop().isSupported(
-									java.awt.Desktop.Action.BROWSE)) {
-						try {
-							java.awt.Desktop
-							.getDesktop()
-							.browse(new java.net.URI(CoreConfig
-									.getString("ProductInfo.website")));
-						} catch (Exception ex) {
-						}
-					}
+					Misc.browse(CoreConfig.getString("ProductInfo.website"));
 				}
 			});
 		}

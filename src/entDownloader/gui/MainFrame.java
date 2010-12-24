@@ -60,6 +60,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import entDownloader.core.CoreConfig;
 import entDownloader.core.ENTDownloader;
 import entDownloader.core.FS_Element;
 import entDownloader.core.events.Broadcaster;
@@ -86,7 +87,7 @@ public class MainFrame extends javax.swing.JFrame implements
 
 	private JMenuItem dld;
 	private JMenuItem dldAll;
-	private JMenuItem guide;
+	private JMenuItem website;
 	private JMenuItem checkUpdate;
 	private JToggleButton detailsViewBtn;
 	private JToggleButton listViewBtn;
@@ -571,6 +572,18 @@ public class MainFrame extends javax.swing.JFrame implements
 					jMenuBar.add(help);
 					help.setText("Aide");
 					{
+						website = new JMenuItem();
+						help.add(website);
+						website.setText("Site Web");
+						website.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								Misc.browse(CoreConfig
+										.getString("ProductInfo.website"));
+							}
+						});
+					}
+					{
 						checkUpdate = new JMenuItem();
 						help.add(checkUpdate);
 						checkUpdate.setText("Rechercher des mises à jour...");
@@ -584,12 +597,20 @@ public class MainFrame extends javax.swing.JFrame implements
 										try {
 											new UpdaterGui(MainFrame.this, true);
 										} catch (final Exception e) {
-											SwingUtilities.invokeLater(new Runnable() {
-												@Override
-												public void run() {
-													JOptionPane.showMessageDialog(MainFrame.this, "<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>" + e.toString() + "</b></html>", "ENTDownloader - Erreur", JOptionPane.ERROR_MESSAGE);
-												}
-											});
+											SwingUtilities
+													.invokeLater(new Runnable() {
+														@Override
+														public void run() {
+															JOptionPane
+																	.showMessageDialog(
+																			MainFrame.this,
+																			"<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>"
+																					+ e.toString()
+																					+ "</b></html>",
+																			"ENTDownloader - Erreur",
+																			JOptionPane.ERROR_MESSAGE);
+														}
+													});
 										}
 									}
 								}, "Updater").start();
@@ -600,11 +621,11 @@ public class MainFrame extends javax.swing.JFrame implements
 						guide = new JMenuItem();
 						help.add(guide);
 						guide.setText("Guide de l'utilisateur");
-					}
+					}*/
 					{
 						jSeparator2 = new JSeparator();
 						help.add(jSeparator2);
-					}*/
+					}
 
 					{
 						about = new JMenuItem();
