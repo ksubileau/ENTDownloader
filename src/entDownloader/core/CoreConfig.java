@@ -30,6 +30,11 @@ import java.util.ResourceBundle;
  *
  */
 public final class CoreConfig {
+	private static final String BUNDLE_NAME = "entDownloader.ressources.configuration";
+
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+		.getBundle(BUNDLE_NAME);
+
 	// {tag}, {uP_root} seront remplacés par les valeurs des variables correspondantes;
 	
 	/**URL de la racine du service */
@@ -50,16 +55,16 @@ public final class CoreConfig {
 	public static final String refreshDirURL = rootURL + "tag.{tag}.render.userLayoutRootNode.target.{uP_root}.uP?modeDav=show_current_dir_mode#{uP_root}";
 	/**Active ou désactive la reconnection automatique après l'expiration de la session*/
 	public static final boolean autoLogin = true;
+	
+	/**
+	 * Adresse de téléchargement des informations de mise à jour.
+	 */
+	public static final String updaterURL = getString("ProductInfo.website") + "/checkUpdate.php?v={version}";
+	
 	public static boolean optimizePath = true;
 	
 	public static final boolean debug = false;
 	
-
-	private static final String BUNDLE_NAME = "entDownloader.ressources.configuration";
-
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
-
 	public CoreConfig() {
 	}
 

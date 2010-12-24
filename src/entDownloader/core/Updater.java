@@ -60,9 +60,7 @@ public class Updater {
 	 * @throws Exception URL incorrecte, format de fichier invalide ...
 	 */
 	public Updater() throws Exception {
-		this("http://entdownloader.sourceforge.net/checkUpdate.php?v="
-				+ java.net.URLEncoder.encode(
-						CoreConfig.getString("ProductInfo.version"), "UTF-8"));
+		this(CoreConfig.updaterURL);
 	}
 
 	/**
@@ -101,7 +99,10 @@ public class Updater {
 				}
 			});
 
-			URL url = new URL(updateURL);
+			URL url = new URL(updateURL.replaceAll("\\{version\\}",
+					java.net.URLEncoder.encode(
+							CoreConfig.getString("ProductInfo.version"),
+							"UTF-8")));
 			stream = url.openStream();
 			xmlUpdateInformation = constructeur.parse(stream);
 
