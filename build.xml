@@ -17,7 +17,7 @@
 	<!-- Dossier de destination du déploiement -->
     <property name="output.publish.dir" location="${basedir}/../ENTDownloader_Publish"/>
 	<!-- Emplacement du logiciel Launch4J -->
-    <property name="launch4j.dir" location="/home/kevin/shareVM/launch4j" />
+    <property name="launch4j.dir" location="C:\Program Files (x86)\launch4j" />
 	<!-- Emplacement du manuel -->
     <!--<property name="output.manPath" location="${basedir}/../ENTDownloader.pdf" />-->
 	<taskdef name="launch4j"
@@ -82,7 +82,7 @@
     </target>
 
 	<target name="javadoc_for_website">
-		<property name="targetdir" value="/home/kevin/shareVM/ENTDSite/webdoc"/>
+		<property name="targetdir" value="webdoc"/>
 		<property name="include_path" value="${targetdir}/javadoc.php"/>
 	  <antcall target="javadoc">
 	    <param name="php" value="&lt;?php include '${include_path}' ?&gt;"/>
@@ -110,7 +110,6 @@
 			docencoding="UTF-8"
 			noqualifier="java.*:javax.*"
 			header="&lt;h4&gt;${ant.project.name} ${output.freeVersion}&lt;/h4&gt;"
-			additionalparam="-keywords "
 			author="true" 
 			doctitle="${ant.project.name} ${output.freeVersion}" 
 			classpath="lib/pac" 
@@ -131,7 +130,7 @@
 		</javadoc>
 	</target>
 	
-	<target name="deploy" depends="build, javadoc">
+	<target name="deploy" depends="build">
 		<property name="targetdir" value="${output.freeVersion}"/>
 		<property name="jarName" value="ENTDownloader.jar"/>
 		<property name="jarPath" value="${output.publish.dir}/${targetdir}/${jarName}"/>
@@ -144,17 +143,17 @@
 	  	</manifest>
 	  	<fileset dir="${basedir}/lib/pac/"/>
 	  </jar>
+
+		<launch4j configFile=".settings/launch4j_builtin.xml" outfile="${output.publish.dir}/${targetdir}/${ant.project.name}_Win.exe"
+		    fileVersion="${output.version}" txtFileVersion="${output.freeVersion}" 
+			productversion="${output.version}" txtproductversion="${output.freeVersion}" 
+			jar="${jarPath}" />
 		<launch4j
 			configFile=".settings/launch4j_launcher.xml" outfile="${output.publish.dir}/${targetdir}/${ant.project.name}.exe"
 		    fileVersion="${output.version}" txtFileVersion="${output.freeVersion}"
 			productversion="${output.version}" txtproductversion="${output.freeVersion}"
 			jarPath="${jarName}" 
 		/>
-
-		<launch4j configFile=".settings/launch4j_builtin.xml" outfile="${output.publish.dir}/${targetdir}/${ant.project.name}_Win.exe"
-		    fileVersion="${output.version}" txtFileVersion="${output.freeVersion}" 
-			productversion="${output.version}" txtproductversion="${output.freeVersion}" 
-			jar="${jarPath}" />
 		
 		<zip destfile="${output.publish.dir}/${targetdir}/${ant.project.name}_${output.freeVersion}_Win.zip">
 			<fileset file="${output.publish.dir}/${targetdir}/${ant.project.name}_Win.exe" erroronmissingdir="true"/>
