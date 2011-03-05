@@ -14,7 +14,7 @@ import java.util.Hashtable;
  * License: http://www.gnu.org/copyleft/lesser.html LGPL
  * 
  * @author Nicola Asuni [www.tecnick.com].
- * @version 1.0.004 (edit by Kevin Subileau for removing warnings.)
+ * @version 1.0.004 (edited by Kevin Subileau to remove warnings.)
  */
 public class HTMLEntities {
 
