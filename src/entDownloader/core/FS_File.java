@@ -27,7 +27,7 @@ import java.util.GregorianCalendar;
  */
 public class FS_File extends FS_Element {
 
-	long size;
+	private long size;
 
 	/**
 	 * Construit un nouveau fichier.

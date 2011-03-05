@@ -64,11 +64,11 @@ public class Browser {
 	 */
 
 	private Map<String, String> argv;
-	Map<String, String> cookies = new HashMap<String, String>(8);
-	Map<String, List<String>> headerFields = null;
+	private Map<String, String> cookies = new HashMap<String, String>(8);
+	private Map<String, List<String>> headerFields = null;
 	private String url;
 	private String encodedParam;
-	Method method;
+	private Method method;
 	private boolean followRedirects = true;
 	private int responseCode = -1;
 	private Proxy proxy = Proxy.NO_PROXY;

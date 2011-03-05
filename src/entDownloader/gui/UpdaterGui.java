@@ -41,7 +41,7 @@ import entDownloader.core.Updater;
 
 public class UpdaterGui {
 
-	Updater updater;
+	private Updater updater;
 
 	public UpdaterGui(JFrame owner) throws Exception {
 		this(owner, false);

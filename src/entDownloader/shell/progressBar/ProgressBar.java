@@ -22,7 +22,7 @@ package entDownloader.shell.progressBar;
 
 public class ProgressBar implements IProgressBar {
 	private IProgressBar progBar = null;
-	boolean isDeterminate = true;
+	private boolean isDeterminate = true;
 
 	public ProgressBar(boolean isDeterminate) {
 		setDeterminate(isDeterminate);

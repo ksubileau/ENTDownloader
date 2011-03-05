@@ -30,7 +30,8 @@ import javax.swing.JPanel;
  */
 public class JFadePanel extends JPanel {
 	private static final long serialVersionUID = -8973008279297176112L;
-	private boolean fadein, fadeout;
+	private boolean fadein;
+	private boolean fadeout;
 	private int maxOpacity = 100;
 
 	/**
