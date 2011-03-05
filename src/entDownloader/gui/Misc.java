@@ -43,7 +43,7 @@ public class Misc {
 
 	/**
 	 * Retrieves the icon to associate with this file. If the icon returned by
-	 * the file is <code>null</null> then
+	 * the file is <code>null</code> then
 	 * ask the UIManager to give us an icon (from the LookAndFeel)
 	 * 
 	 * @param file
