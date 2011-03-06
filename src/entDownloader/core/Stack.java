@@ -32,8 +32,8 @@ import java.util.LinkedList;
  * well as a method to <code>peek</code> at the top item on the stack, a method
  * to test for whether the stack is <code>empty</code>.<br>
  * <br>
- * This implementation uses an {@link LinkedList} instance to store the elements
- * of the stack, where the last element of the {@link LinkedList} is the top of
+ * This implementation uses a LinkedList instance to store the elements
+ * of the stack, where the last element of the LinkedList is the top of
  * the <code>Stack</code>.
  * 
  * @param T
@@ -86,8 +86,7 @@ class Stack<T> extends java.util.LinkedList<T> implements Iterable<T> {
 	 * Pops an element from this stack. In other words, removes and returns the
 	 * first element of this stack.<br>
 	 * <br>
-	 * This method is equivalent to {@link java.util.LinkedList#removeFirst()
-	 * removeFirst()}.
+	 * This method is equivalent to java.util.LinkedList.removeFirst().
 	 * 
 	 * @return the element at the front of this stack (which is the top of the
 	 *         stack represented by this stack), or null if this stack is empty.
@@ -103,8 +102,7 @@ class Stack<T> extends java.util.LinkedList<T> implements Iterable<T> {
 	 * Pushes an element onto this list. In other words, inserts the element at
 	 * the front of this stack.<br>
 	 * <br>
-	 * This method is equivalent to
-	 * {@link java.util.LinkedList#addFirst(Object) addFirst(T)}.
+	 * This method is equivalent to java.util.LinkedList.addFirst(T).
 	 * 
 	 * @param item
 	 *            the element to push

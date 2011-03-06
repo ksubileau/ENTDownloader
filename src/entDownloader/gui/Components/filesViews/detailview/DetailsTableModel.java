@@ -51,9 +51,11 @@ public class DetailsTableModel extends AbstractTableModel {
 	}
 
 	/**
-	 * Returns the {@link FS_Element} found at the specific index.
+	 * Returns the {@link entDownloader.core.FS_Element FS_Element} 
+	 * found at the specific index.
 	 * 
-	 * @return The {@link FS_Element} found at the specific index.
+	 * @return The {@link entDownloader.core.FS_Element FS_Element} 
+	 * found at the specific index.
 	 */
 	public FS_Element getFileAt(int index) {
 		FS_Element file = null;

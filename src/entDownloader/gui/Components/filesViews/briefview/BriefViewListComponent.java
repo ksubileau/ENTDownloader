@@ -52,7 +52,6 @@ public class BriefViewListComponent extends JList {
 	 * 
 	 * @return an integer indicating the preferred number of rows to display
 	 *         without using a scroll bar
-	 * @see #setVisibleRowCount
 	 */
 	@Override
 	public int getVisibleRowCount() {

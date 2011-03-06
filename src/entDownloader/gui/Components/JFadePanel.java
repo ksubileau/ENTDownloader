@@ -26,7 +26,7 @@ import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
 /**
- * A {@link JPanel} with fade-in and fade-out effects.
+ * A JPanel with fade-in and fade-out effects.
  */
 public class JFadePanel extends JPanel {
 	private static final long serialVersionUID = -8973008279297176112L;

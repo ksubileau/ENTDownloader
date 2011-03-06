@@ -60,8 +60,7 @@ public class FS_File extends FS_Element {
 	 * @return La taille convertit en octets.
 	 * @throws FileSizeFormatException Le format de la chaîne de caractère est
 	 *             invalide.
-	 * @throws UnsupportedOperationException Dépassement de capacité du
-	 *             {@link Long}.
+	 * @throws UnsupportedOperationException Dépassement de capacité du Long.
 	 */
 	public static long size_StringToNumber(String ssize)
 			throws FileSizeFormatException, UnsupportedOperationException {

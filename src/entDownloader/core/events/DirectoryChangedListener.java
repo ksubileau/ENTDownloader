@@ -27,8 +27,9 @@ public interface DirectoryChangedListener extends BroadcastListener {
 
 	/**
 	 * Appelée après un changement de répertoire courant. Voir la documentation
-	 * de {@link DirectoryChangedEvent} pour plus d'informations à propos de
-	 * cet événement.
+	 * de la classe 
+	 * {@link entDownloader.core.events.DirectoryChangedEvent DirectoryChangedEvent} 
+	 * pour plus d'informations à propos de cet événement.
 	 */
 	public void onDirectoryChanged(DirectoryChangedEvent event);
 }

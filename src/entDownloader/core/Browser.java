@@ -213,8 +213,7 @@ public class Browser {
 	 * 
 	 * @param destinationPath Le chemin où le fichier sera enregistrer
 	 * @throws FileNotFoundException Voir le constructeur de
-	 *             {@link FileOutputStream#FileOutputStream(String)
-	 *             FileOutputStream}
+	 *             java.io.FileOutputStream}
 	 */
 	public void downloadFile(String destinationPath)
 			throws FileNotFoundException {
@@ -512,7 +511,7 @@ public class Browser {
 	/**
 	 * Installe un proxy HTTP à utiliser pour la connection à Internet.
 	 * 
-	 * @param proxy L'instance de {@link Proxy} à utiliser.
+	 * @param proxy L'instance de java.net.Proxy à utiliser.
 	 * @see java.net.Proxy
 	 */
 	public void setHttpProxy(Proxy proxy) {

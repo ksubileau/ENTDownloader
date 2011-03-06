@@ -120,8 +120,7 @@ public class ENTDownloader extends Observable implements
 	 * @param login Le nom d'utilisatateur pour la connexion.
 	 * @param password Mot de passe de connexion.
 	 * @return True en cas de réussite, ou false si l'authentification a échoué.
-	 * @throws ParseException Voir
-	 *             {@link ENTDownloader#setStockageUrlParams(String)}
+	 * @throws ParseException Impossible d'obtenir les paramètres de requête.
 	 */
 	public boolean login(String login, String password)
 			throws java.io.IOException, ParseException {
@@ -763,7 +762,7 @@ public class ENTDownloader extends Observable implements
 	 * @throws IllegalStateException Si le répertoire courant n'a pas été
 	 *             chargé.
 	 */
-	public int indexOf(Object o) throws IllegalStateException {
+	private int indexOf(Object o) throws IllegalStateException {
 		if (directoryContent == null)
 			throw new IllegalStateException(
 					"Directory content hasn't been initialized");
@@ -832,7 +831,7 @@ public class ENTDownloader extends Observable implements
 	/**
 	 * Installe un proxy HTTP à utiliser pour la connection à l'ENT.
 	 * 
-	 * @param proxy L'instance de {@link Proxy} à utiliser.
+	 * @param proxy L'instance de java.net.Proxy à utiliser.
 	 * @see java.net.Proxy
 	 */
 	public void setProxy(Proxy proxy) {

@@ -39,8 +39,7 @@ public class ENTDirectoryNotFoundException extends IOException {
 	/**
 	 * Construit une exception ENTDirectoryNotFoundException avec le message
 	 * d'information spécifié. Le message d'erreur peut ensuite être retrouvé
-	 * grâce à la méthode {@link Throwable#getMessage()} de la classe
-	 * {@link Throwable}.
+	 * grâce à la méthode getMessage().
 	 * 
 	 * @param message Le message d'erreur.
 	 */

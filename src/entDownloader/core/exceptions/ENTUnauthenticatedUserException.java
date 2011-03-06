@@ -51,8 +51,7 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 	 * Construit une exception ENTUnauthenticatedUserException avec le message
 	 * d'information spécifié et un code d'erreur indiquant que l'utilisateur ne
 	 * s'est pas authentifié. Le message d'erreur peut ensuite être retrouvé
-	 * grâce à la méthode {@link java.lang.Throwable#getMessage()
-	 * Throwable.getMessage()} de la classe {@link java.lang.Throwable}.
+	 * grâce à la méthode getMessage().
 	 * 
 	 * @param message Le message d'erreur.
 	 */
@@ -63,9 +62,7 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 	/**
 	 * Construit une exception ENTUnauthenticatedUserException avec le message
 	 * d'information et le code d'erreur spécifié. Le message d'erreur peut
-	 * ensuite être retrouvé grâce à la méthode
-	 * {@link java.lang.Throwable#getMessage() Throwable.getMessage()} de la
-	 * classe {@link java.lang.Throwable}.
+	 * ensuite être retrouvé grâce à la méthode getMessage().
 	 * 
 	 * @param message Le message d'erreur.
 	 * @param type Le code d'erreur, qui indique s'il s'agit d'une expiration de

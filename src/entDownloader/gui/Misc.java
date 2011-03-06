@@ -178,7 +178,7 @@ public class Misc {
 
 	/**
 	 * Ouvre le navigateur par défaut à l'adresse indiquée. Les exceptions
-	 * lancées par {@link Desktop#browse(java.net.URI)} sont rattrapés sans
+	 * lancées par java.awt.Desktop.browse(java.net.URI) sont rattrapés sans
 	 * action.
 	 * 
 	 * @param url L'adresse à visiter.
@@ -195,7 +195,7 @@ public class Misc {
 
 	/**
 	 * Ouvre le navigateur par défaut à l'adresse indiquée. Les exceptions
-	 * lancées par {@link Desktop#browse(java.net.URI)} sont rattrapés sans
+	 * lancées par java.awt.Desktop.browse(java.net.URI) sont rattrapés sans
 	 * action.
 	 * 
 	 * @param url L'URL à visiter.
@@ -212,7 +212,7 @@ public class Misc {
 
 	/**
 	 * Ouvre le navigateur par défaut à l'adresse indiquée. Les exceptions
-	 * lancées par {@link Desktop#browse(java.net.URI)} sont rattrapés sans
+	 * lancées par java.awt.Desktop.browse(java.net.URI) sont rattrapés sans
 	 * action.
 	 * 
 	 * @param uri L'URI à visiter.

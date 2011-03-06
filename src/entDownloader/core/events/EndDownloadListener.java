@@ -27,8 +27,9 @@ public interface EndDownloadListener extends BroadcastListener {
 
 	/**
 	 * Appelée lorsque le téléchargement d'un fichier s'est terminé. Voir la
-	 * documentation de {@link EndDownloadEvent} pour plus d'informations à
-	 * propos de cet événement.
+	 * documentation de la classe
+	 * {@link entDownloader.core.events.EndDownloadEvent EndDownloadEvent}
+	 * pour plus d'informations à propos de cet événement.
 	 */
 	public void onEndDownload(EndDownloadEvent e);
 }
