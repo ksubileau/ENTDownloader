@@ -1,7 +1,7 @@
 /*
  *  GuiBroadcaster.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -27,19 +27,19 @@ import entDownloader.core.events.Broadcaster;
 
 public class GuiBroadcaster {
 
-	/** Ajoute un observateur sur l'événement DoubleClickOnRow */
+	/** Ajoute un observateur sur l'Ã©vÃ©nement DoubleClickOnRow */
 	public static void addDoubleClickOnRowListener(
 			DoubleClickOnRowListener listener) {
 		Broadcaster.addListener(DoubleClickOnRowListener.class, listener);
 	}
 
-	/** Supprime un observateur sur l'événement DoubleClickOnRow */
+	/** Supprime un observateur sur l'Ã©vÃ©nement DoubleClickOnRow */
 	public static void removeDoubleClickOnRowListener(
 			DoubleClickOnRowListener listener) {
 		Broadcaster.removeListener(DoubleClickOnRowListener.class, listener);
 	}
 
-	/** Avertit tous les observateurs de l'événement DoubleClickOnRow */
+	/** Avertit tous les observateurs de l'Ã©vÃ©nement DoubleClickOnRow */
 	public static void fireDoubleClickOnRow(DoubleClickOnRowEvent event) {
 		Iterator<BroadcastListener> it = Broadcaster
 				.getListenerIterator(DoubleClickOnRowListener.class);

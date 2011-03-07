@@ -1,7 +1,7 @@
 /*
  *  MainFrame.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -134,9 +134,9 @@ public class MainFrame extends javax.swing.JFrame implements
 	private int historyPos;
 
 	/**
-	 * Demande de téléchargement de un ou plusieurs fichiers
+	 * Demande de tÃ©lÃ©chargement de un ou plusieurs fichiers
 	 * 
-	 * @author Kévin Subileau
+	 * @author KÃ©vin Subileau
 	 * @see Action
 	 */
 	private class DownloadAction extends AbstractAction {
@@ -153,7 +153,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		 * @param name
 		 *            Le nom de l'action
 		 * @param icon
-		 *            La petite icône pour cette action
+		 *            La petite icÃ´ne pour cette action
 		 */
 		public DownloadAction(String name, Icon icon) {
 			this(SELECTED, name, icon);
@@ -163,12 +163,12 @@ public class MainFrame extends javax.swing.JFrame implements
 		 * Initialise un nouvel objet DownloadAction
 		 * 
 		 * @param mode
-		 *            Définit la source de la liste des fichiers à téléchargé
-		 *            (sélection ou tous les fichiers)
+		 *            DÃ©finit la source de la liste des fichiers Ã  tÃ©lÃ©chargÃ©
+		 *            (sÃ©lection ou tous les fichiers)
 		 * @param name
 		 *            Le nom de l'action
 		 * @param icon
-		 *            La petite icône pour cette action
+		 *            La petite icÃ´ne pour cette action
 		 */
 		public DownloadAction(short mode, String name, Icon icon) {
 			super(name, icon);
@@ -207,15 +207,15 @@ public class MainFrame extends javax.swing.JFrame implements
 	public MainFrame() {
 		super();
 		dldAllAction = new DownloadAction(DownloadAction.ALL,
-				"Télécharger le dossier courant", loadIcon("downall16.png"));
-		dldAction = new DownloadAction("Télécharger la sélection",
+				"TÃ©lÃ©charger le dossier courant", loadIcon("downall16.png"));
+		dldAction = new DownloadAction("TÃ©lÃ©charger la sÃ©lection",
 				loadIcon("down16.png"));
 		dldAction.putValue(Action.SHORT_DESCRIPTION,
-				"Télécharger le(s) dossier(s) et fichier(s) sélectionné(s)");
+				"TÃ©lÃ©charger le(s) dossier(s) et fichier(s) sÃ©lectionnÃ©(s)");
 		dldAction.putValue(Action.LARGE_ICON_KEY, loadIcon("down.png"));
 		dldAllAction.putValue(Action.LARGE_ICON_KEY, loadIcon("downall.png"));
 		dldAllAction.putValue(Action.SHORT_DESCRIPTION,
-				"Télécharger tous les dossiers et fichiers du dossier courant");
+				"TÃ©lÃ©charger tous les dossiers et fichiers du dossier courant");
 		historyList = new LinkedList<String>();
 		historyPos = 0;
 		initGUI();
@@ -275,7 +275,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 							GridBagConstraints.VERTICAL,
 							new Insets(0, 10, 0, 3), 0, 0));
-					storageInfosLabel.setText("Espace disque utilisé :");
+					storageInfosLabel.setText("Espace disque utilisÃ© :");
 					storageInfosLabel.setVisible(false);
 				}
 				{
@@ -321,7 +321,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					prevBtn.setMaximumSize(new java.awt.Dimension(24, 24));
 					prevBtn.setFocusable(false);
 					prevBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					prevBtn.setToolTipText("Précédent");
+					prevBtn.setToolTipText("PrÃ©cÃ©dent");
 					prevBtn.setEnabled(false);
 					prevBtn.addActionListener(new ActionListener() {
 						@Override
@@ -330,13 +330,13 @@ public class MainFrame extends javax.swing.JFrame implements
 									false);
 							--historyPos;
 							nextBtn.setEnabled(true);
-							nextBtn.setToolTipText("Avancer à "
+							nextBtn.setToolTipText("Avancer Ã  "
 									+ historyList.get(historyPos + 1));
 							if (historyPos < 1) {
 								prevBtn.setEnabled(false);
-								prevBtn.setToolTipText("Précédent");
+								prevBtn.setToolTipText("PrÃ©cÃ©dent");
 							} else {
-								prevBtn.setToolTipText("Retour à "
+								prevBtn.setToolTipText("Retour Ã  "
 										+ historyList.get(historyPos - 1));
 							}
 						}
@@ -365,7 +365,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							if (historyPos >= historyList.size() - 1) {
 								nextBtn.setEnabled(false);
 							} else {
-								nextBtn.setToolTipText("Avancer à "
+								nextBtn.setToolTipText("Avancer Ã  "
 										+ historyList.get(historyPos + 1));
 							}
 							prevBtn.setEnabled(true);
@@ -479,7 +479,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							0));
 					setIcon(detailsViewBtn, "detailsview.png");
 					detailsViewBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					detailsViewBtn.setToolTipText("Vue détails");
+					detailsViewBtn.setToolTipText("Vue dÃ©tails");
 					detailsViewBtn
 							.setMinimumSize(new java.awt.Dimension(24, 24));
 					detailsViewBtn.setPreferredSize(new java.awt.Dimension(24,
@@ -546,7 +546,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							DetailItem = new JRadioButtonMenuItem();
 							affichMenu.add(DetailItem);
 							setIcon(DetailItem, "detailsview.png");
-							DetailItem.setText("Détails");
+							DetailItem.setText("DÃ©tails");
 							DetailItem.addActionListener(new ActionListener() {
 								@Override
 								public void actionPerformed(ActionEvent e) {
@@ -586,11 +586,11 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						checkUpdate = new JMenuItem();
 						help.add(checkUpdate);
-						checkUpdate.setText("Rechercher des mises à jour...");
+						checkUpdate.setText("Rechercher des mises Ã  jour...");
 						checkUpdate.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
-								//Lancement de l'updater dans un thread séparé.
+								//Lancement de l'updater dans un thread sÃ©parÃ©.
 								new Thread(new Runnable() {
 									@Override
 									public void run() {
@@ -604,7 +604,7 @@ public class MainFrame extends javax.swing.JFrame implements
 															JOptionPane
 																	.showMessageDialog(
 																			MainFrame.this,
-																			"<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>"
+																			"<html>Les informations de mise Ã  jour n'ont pas pu Ãªtre obtenues Ã  cause de l'erreur suivante : <br><b>"
 																					+ e.toString()
 																					+ "</b></html>",
 																			"ENTDownloader - Erreur",
@@ -732,16 +732,16 @@ public class MainFrame extends javax.swing.JFrame implements
 						historyPush(entd.getDirectoryPath());
 					}
 				} catch (ENTUnauthenticatedUserException e1) {
-					// TODO Gestion Utilisateur non connecté
+					// TODO Gestion Utilisateur non connectÃ©
 					e1.printStackTrace();
 				} catch (ENTDirectoryNotFoundException e1) {
 					statusInfo.setText(dirInfos());
 					JOptionPane
 							.showMessageDialog(
 									MainFrame.this,
-									"ENTDownloader ne parvient pas à trouver \""
+									"ENTDownloader ne parvient pas Ã  trouver \""
 											+ path
-											+ "\". Vérifiez l'orthographe et réessayez.",
+											+ "\". VÃ©rifiez l'orthographe et rÃ©essayez.",
 									"ENTDownloader", JOptionPane.ERROR_MESSAGE);
 					adressField.setText(prevDir);
 					return null;
@@ -757,7 +757,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					JOptionPane
 							.showMessageDialog(
 									MainFrame.this,
-									"Votre connexion Internet semble rencontrer un problème.\nAssurez-vous que votre ordinateur est connecté à Internet et que votre pare-feu est correctement configuré.",
+									"Votre connexion Internet semble rencontrer un problÃ¨me.\nAssurez-vous que votre ordinateur est connectÃ© Ã  Internet et que votre pare-feu est correctement configurÃ©.",
 									"ENTDownloader - Service indisponible",
 									JOptionPane.ERROR_MESSAGE);
 					adressField.setText(prevDir);
@@ -969,15 +969,15 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	/**
-	 * Ajoute le chemin <code>path</code> à l'historique de navigation, et
-	 * définit le curseur de
-	 * position dans l'historique à la fin de celui-ci. Désactive par conséquent
+	 * Ajoute le chemin <code>path</code> Ã  l'historique de navigation, et
+	 * dÃ©finit le curseur de
+	 * position dans l'historique Ã  la fin de celui-ci. DÃ©sactive par consÃ©quent
 	 * le bouton suivant.
-	 * Doit généralement être appelé suite à un changement de dossier initié par
+	 * Doit gÃ©nÃ©ralement Ãªtre appelÃ© suite Ã  un changement de dossier initiÃ© par
 	 * l'utilisateur
 	 * 
 	 * @param path
-	 *            Le chemin à ajouter à l'historique
+	 *            Le chemin Ã  ajouter Ã  l'historique
 	 */
 	private void historyPush(String path) {
 		if (path.isEmpty()
@@ -1007,7 +1007,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		nextBtn.setToolTipText("Suivant");
 		if (histSize > 1) {
 			prevBtn.setEnabled(true);
-			prevBtn.setToolTipText("Retour à "
+			prevBtn.setToolTipText("Retour Ã  "
 					+ historyList.get(historyPos - 1));
 		}
 	}

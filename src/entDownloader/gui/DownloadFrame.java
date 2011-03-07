@@ -1,7 +1,7 @@
 /*
  *  DownloadFrame.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -36,7 +36,7 @@ import javax.swing.WindowConstants;
 import entDownloader.core.FS_File;
 
 public class DownloadFrame extends javax.swing.JDialog {
-	//TODO checkbox fermer après téléchargement
+	//TODO checkbox fermer aprÃ¨s tÃ©lÃ©chargement
 	private static final long serialVersionUID = -2404112024501545610L;
 	private JProgressBar downProgress;
 	private JLabel jLabel3;
@@ -65,12 +65,12 @@ public class DownloadFrame extends javax.swing.JDialog {
 	public static final int UNKNOWN = -1;
 
 	/**
-	 * Crée une fenêtre de téléchargement modale, avec la JFrame spécifiée comme
-	 * propriétaire.
+	 * CrÃ©e une fenÃªtre de tÃ©lÃ©chargement modale, avec la JFrame spÃ©cifiÃ©e comme
+	 * propriÃ©taire.
 	 * 
 	 * @param owner
-	 *            La JFrame à partir duquel la fenêtre de téléchargement est
-	 *            affiché
+	 *            La JFrame Ã  partir duquel la fenÃªtre de tÃ©lÃ©chargement est
+	 *            affichÃ©
 	 */
 	public DownloadFrame(JFrame owner) {
 		super(owner);
@@ -82,7 +82,7 @@ public class DownloadFrame extends javax.swing.JDialog {
 	}
 
 	private void initGUI() {
-		this.setTitle("Téléchargement en cours...");
+		this.setTitle("TÃ©lÃ©chargement en cours...");
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		new GridBagLayout();
 		getContentPane().setLayout(null);
@@ -123,7 +123,7 @@ public class DownloadFrame extends javax.swing.JDialog {
 		{
 			jLabel3 = new JLabel();
 			getContentPane().add(jLabel3);
-			jLabel3.setText("Téléchargé(s) :");
+			jLabel3.setText("TÃ©lÃ©chargÃ©(s) :");
 			jLabel3.setBounds(8, 51, 83, 16);
 		}
 		{
@@ -146,7 +146,7 @@ public class DownloadFrame extends javax.swing.JDialog {
 			openWhenFinished = new JCheckBox();
 			getContentPane().add(openWhenFinished);
 			openWhenFinished
-					.setText("Ouvrir le dossier à la fin du téléchargement");
+					.setText("Ouvrir le dossier Ã  la fin du tÃ©lÃ©chargement");
 			openWhenFinished.setBounds(10, 100, 269, 18);
 			openWhenFinished.setVisible(false);
 		}
@@ -183,7 +183,7 @@ public class DownloadFrame extends javax.swing.JDialog {
 			globalProgress.setText("Aucun");
 		} else {
 			globalProgress.setText(this.nbFilesDownloaded
-					+ " fichier(s) téléchargés ("
+					+ " fichier(s) tÃ©lÃ©chargÃ©s ("
 					+ FS_File.size_Formatted(this.sizeDownloaded) + ")");
 		}
 	}

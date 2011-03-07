@@ -1,7 +1,7 @@
 /*
  *  DownloadedBytesEvent.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -21,14 +21,14 @@
 package entDownloader.core.events;
 
 /**
- * Un événement qui indique que des octets ont été reçu durant
- * le téléchargement d'un fichier.
+ * Un Ã©vÃ©nement qui indique que des octets ont Ã©tÃ© reÃ§u durant
+ * le tÃ©lÃ©chargement d'un fichier.
  */
 public class DownloadedBytesEvent extends Event {
 	private long bytesDownloaded = 0;
 
 	/**
-	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * Retourne le type d'Ã©vÃ©nement portÃ© par cette instance. Ici, retourne
 	 * {@link Event#DOWNLOADED_BYTES_TYPE}
 	 */
 	@Override
@@ -37,16 +37,16 @@ public class DownloadedBytesEvent extends Event {
 	}
 
 	/**
-	 * Construit un nouvel évènement DownloadedBytesEvent
+	 * Construit un nouvel Ã©vÃ¨nement DownloadedBytesEvent
 	 */
 	public DownloadedBytesEvent() {
 		this(-1);
 	}
 
 	/**
-	 * Construit un nouvel évènement DownloadedBytesEvent
+	 * Construit un nouvel Ã©vÃ¨nement DownloadedBytesEvent
 	 * 
-	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le
+	 * @param bytesDownloaded Nombre d'octets du fichier tÃ©lÃ©chargÃ©s depuis le
 	 *            dernier DownloadedBytesEvent.
 	 */
 	public DownloadedBytesEvent(long bytesDownloaded) {
@@ -54,7 +54,7 @@ public class DownloadedBytesEvent extends Event {
 	}
 
 	/**
-	 * Retourne le nombre d'octets du fichier téléchargés depuis le dernier
+	 * Retourne le nombre d'octets du fichier tÃ©lÃ©chargÃ©s depuis le dernier
 	 * DownloadedBytesEvent.
 	 */
 	public long getBytesDownloaded() {
@@ -62,10 +62,10 @@ public class DownloadedBytesEvent extends Event {
 	}
 
 	/**
-	 * Définit le nombre d'octets du fichier téléchargés depuis le dernier
+	 * DÃ©finit le nombre d'octets du fichier tÃ©lÃ©chargÃ©s depuis le dernier
 	 * DownloadedBytesEvent.
 	 * 
-	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le
+	 * @param bytesDownloaded Nombre d'octets du fichier tÃ©lÃ©chargÃ©s depuis le
 	 *            dernier DownloadedBytesEvent.
 	 */
 	public void setBytesDownloaded(long bytesDownloaded) {

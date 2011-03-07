@@ -1,7 +1,7 @@
 /*
  *  Misc.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -177,12 +177,12 @@ public class Misc {
 	}
 
 	/**
-	 * Ouvre le navigateur par défaut à l'adresse indiquée. Les exceptions
-	 * lancées par java.awt.Desktop.browse(java.net.URI) sont rattrapés sans
+	 * Ouvre le navigateur par dÃ©faut Ã  l'adresse indiquÃ©e. Les exceptions
+	 * lancÃ©es par java.awt.Desktop.browse(java.net.URI) sont rattrapÃ©s sans
 	 * action.
 	 * 
-	 * @param url L'adresse à visiter.
-	 * @return True si l'action est supportée et a réussi sans exceptions, false
+	 * @param url L'adresse Ã  visiter.
+	 * @return True si l'action est supportÃ©e et a rÃ©ussi sans exceptions, false
 	 *         sinon
 	 */
 	public static boolean browse(String url) {
@@ -194,12 +194,12 @@ public class Misc {
 	}
 
 	/**
-	 * Ouvre le navigateur par défaut à l'adresse indiquée. Les exceptions
-	 * lancées par java.awt.Desktop.browse(java.net.URI) sont rattrapés sans
+	 * Ouvre le navigateur par dÃ©faut Ã  l'adresse indiquÃ©e. Les exceptions
+	 * lancÃ©es par java.awt.Desktop.browse(java.net.URI) sont rattrapÃ©s sans
 	 * action.
 	 * 
-	 * @param url L'URL à visiter.
-	 * @return True si l'action est supportée et a réussi sans exceptions, false
+	 * @param url L'URL Ã  visiter.
+	 * @return True si l'action est supportÃ©e et a rÃ©ussi sans exceptions, false
 	 *         sinon
 	 */
 	public static boolean browse(URL url) {
@@ -211,12 +211,12 @@ public class Misc {
 	}
 
 	/**
-	 * Ouvre le navigateur par défaut à l'adresse indiquée. Les exceptions
-	 * lancées par java.awt.Desktop.browse(java.net.URI) sont rattrapés sans
+	 * Ouvre le navigateur par dÃ©faut Ã  l'adresse indiquÃ©e. Les exceptions
+	 * lancÃ©es par java.awt.Desktop.browse(java.net.URI) sont rattrapÃ©s sans
 	 * action.
 	 * 
-	 * @param uri L'URI à visiter.
-	 * @return True si l'action est supportée et a réussi sans exceptions, false
+	 * @param uri L'URI Ã  visiter.
+	 * @return True si l'action est supportÃ©e et a rÃ©ussi sans exceptions, false
 	 *         sinon
 	 */
 	public static boolean browse(URI uri) {

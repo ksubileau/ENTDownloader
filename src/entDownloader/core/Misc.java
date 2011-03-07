@@ -1,7 +1,7 @@
 /*
  *  Misc.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -26,29 +26,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Collection de méthodes utilitaires static.
+ * Collection de mÃ©thodes utilitaires static.
  * 
  */
 public final class Misc {
 
 	/**
-	 * Analyse <i>subject</i> pour trouver l'expression qui correspond à
-	 * <i>pattern</i> et stocke les résultats dans <i>matches</i>.
+	 * Analyse <i>subject</i> pour trouver l'expression qui correspond Ã 
+	 * <i>pattern</i> et stocke les rÃ©sultats dans <i>matches</i>.
 	 * 
 	 * @param pattern
-	 *            Le masque à chercher, sous la forme d'une chaîne de
-	 *            caractères.
+	 *            Le masque Ã  chercher, sous la forme d'une chaÃ®ne de
+	 *            caractÃ¨res.
 	 * @param subject
-	 *            La chaîne d'entrée.
+	 *            La chaÃ®ne d'entrÃ©e.
 	 * @param matches
-	 *            Si différent de null, contient les résultats de la recherche.
+	 *            Si diffÃ©rent de null, contient les rÃ©sultats de la recherche.
 	 *            <i>matches[0]</i> contiendra le texte qui satisfait le masque
 	 *            complet, <i>matches[1]</i> contiendra le texte qui satisfait
-	 *            la première parenthèse capturante, etc. Le contenu de
-	 *            <i>matches</i> précédent l'appel à cette méthode est écrasé.
-	 * @return <b>preg_match()</b> retourne un booléen indiquant si le masque
-	 *         <i>pattern</i> a été trouvé : false si aucune solution n'a été
-	 *         trouvé, true dans le cas contraire.
+	 *            la premiÃ¨re parenthÃ¨se capturante, etc. Le contenu de
+	 *            <i>matches</i> prÃ©cÃ©dent l'appel Ã  cette mÃ©thode est Ã©crasÃ©.
+	 * @return <b>preg_match()</b> retourne un boolÃ©en indiquant si le masque
+	 *         <i>pattern</i> a Ã©tÃ© trouvÃ© : false si aucune solution n'a Ã©tÃ©
+	 *         trouvÃ©, true dans le cas contraire.
 	 */
 	public static boolean preg_match(String pattern, String subject,
 			List<String> matches) {
@@ -69,17 +69,17 @@ public final class Misc {
 	}
 
 	/**
-	 * Analyse <i>subject</i> pour trouver l'expression qui correspond à
+	 * Analyse <i>subject</i> pour trouver l'expression qui correspond Ã 
 	 * <i>pattern</i>.
 	 * 
 	 * @param pattern
-	 *            Le masque à chercher, sous la forme d'une chaîne de
-	 *            caractères.
+	 *            Le masque Ã  chercher, sous la forme d'une chaÃ®ne de
+	 *            caractÃ¨res.
 	 * @param subject
-	 *            La chaîne d'entrée.
-	 * @return <b>preg_match()</b> retourne un booléen indiquant si le masque
-	 *         <i>pattern</i> a été trouvé : false si aucune solution n'a été
-	 *         trouvé, true dans le cas contraire.
+	 *            La chaÃ®ne d'entrÃ©e.
+	 * @return <b>preg_match()</b> retourne un boolÃ©en indiquant si le masque
+	 *         <i>pattern</i> a Ã©tÃ© trouvÃ© : false si aucune solution n'a Ã©tÃ©
+	 *         trouvÃ©, true dans le cas contraire.
 	 */
 	public static boolean preg_match(String pattern, String subject) {
 		return preg_match(pattern, subject, null);
@@ -87,33 +87,33 @@ public final class Misc {
 
 	/**
 	 * Analyse <i>subject</i> pour trouver l'expression <i>pattern</i> et met
-	 * les résultats dans <i>matches</i>, dans l'ordre spécifié par
+	 * les rÃ©sultats dans <i>matches</i>, dans l'ordre spÃ©cifiÃ© par
 	 * <i>flags</i>.<br>
-	 * Après avoir trouvé un premier résultat, la recherche continue jusqu'à la
-	 * fin de la chaîne.
+	 * AprÃ¨s avoir trouvÃ© un premier rÃ©sultat, la recherche continue jusqu'Ã  la
+	 * fin de la chaÃ®ne.
 	 * 
 	 * @param pattern
-	 *            Le masque à chercher, sous la forme d'une chaîne de
-	 *            caractères.
+	 *            Le masque Ã  chercher, sous la forme d'une chaÃ®ne de
+	 *            caractÃ¨res.
 	 * @param subject
-	 *            La chaîne d'entrée.
+	 *            La chaÃ®ne d'entrÃ©e.
 	 * @param matches
-	 *            Tableau contenant tous les résultats, dans un tableau
-	 *            multidimensionnel ordonné suivant le paramètre <i>flags</i>.
+	 *            Tableau contenant tous les rÃ©sultats, dans un tableau
+	 *            multidimensionnel ordonnÃ© suivant le paramÃ¨tre <i>flags</i>.
 	 * @param flags
 	 *            Peut prendre une des deux valeurs suivantes :
 	 *            <ul>
 	 *            <li><b>PREG_ORDER.PATTERN_ORDER</b><br>
 	 *            L'ordre est tel que <i>matches[0]</i> est un tableau qui
-	 *            contient les résultats qui satisfont le masque complet,
-	 *            <i>matches[1]</i> est un tableau qui contient les résultats
-	 *            qui satisfont la première parenthèse capturante, etc.</li>
+	 *            contient les rÃ©sultats qui satisfont le masque complet,
+	 *            <i>matches[1]</i> est un tableau qui contient les rÃ©sultats
+	 *            qui satisfont la premiÃ¨re parenthÃ¨se capturante, etc.</li>
 	 *            <li><b>PREG_ORDER.SET_ORDER</b><br>
-	 *            Les résultats sont classés de telle façon que
-	 *            <i>matches[0]</i> contient la première série de résultats,
-	 *            <i>matches[1]</i> contient la deuxième, etc.</li>
+	 *            Les rÃ©sultats sont classÃ©s de telle faÃ§on que
+	 *            <i>matches[0]</i> contient la premiÃ¨re sÃ©rie de rÃ©sultats,
+	 *            <i>matches[1]</i> contient la deuxiÃ¨me, etc.</li>
 	 *            </ul>
-	 * @return <b>preg_match_all()</b> retourne le nombre de résultats qui
+	 * @return <b>preg_match_all()</b> retourne le nombre de rÃ©sultats qui
 	 *         satisfont le masque complet.
 	 */
 	public static int preg_match_all(String pattern, String subject,
@@ -143,24 +143,24 @@ public final class Misc {
 
 	/**
 	 * Analyse <i>subject</i> pour trouver l'expression <i>pattern</i> et met
-	 * les résultats dans <i>matches</i>, dans l'ordre spécifié par
+	 * les rÃ©sultats dans <i>matches</i>, dans l'ordre spÃ©cifiÃ© par
 	 * <i>flags</i>.<br>
-	 * Après avoir trouvé un premier résultat, la recherche continue jusqu'à la
-	 * fin de la chaîne.
+	 * AprÃ¨s avoir trouvÃ© un premier rÃ©sultat, la recherche continue jusqu'Ã  la
+	 * fin de la chaÃ®ne.
 	 * 
 	 * @param pattern
-	 *            Le masque à chercher, sous la forme d'une chaîne de
-	 *            caractères.
+	 *            Le masque Ã  chercher, sous la forme d'une chaÃ®ne de
+	 *            caractÃ¨res.
 	 * @param subject
-	 *            La chaîne d'entrée.
+	 *            La chaÃ®ne d'entrÃ©e.
 	 * @param matches
-	 *            Tableau contenant tous les résultats, dans un tableau
-	 *            multidimensionnel ordonné tel que <i>matches[0]</i> est un
-	 *            tableau qui contient les résultats qui satisfont le masque
+	 *            Tableau contenant tous les rÃ©sultats, dans un tableau
+	 *            multidimensionnel ordonnÃ© tel que <i>matches[0]</i> est un
+	 *            tableau qui contient les rÃ©sultats qui satisfont le masque
 	 *            complet, <i>matches[1]</i> est un tableau qui contient les
-	 *            résultats qui satisfont la première parenthèse capturante,
+	 *            rÃ©sultats qui satisfont la premiÃ¨re parenthÃ¨se capturante,
 	 *            etc..
-	 * @return <b>preg_match_all()</b> retourne le nombre de résultats qui
+	 * @return <b>preg_match_all()</b> retourne le nombre de rÃ©sultats qui
 	 *         satisfont le masque complet.
 	 */
 	public static int preg_match_all(String pattern, String subject,
@@ -203,8 +203,8 @@ public final class Misc {
 	}
 
 	/**
-	 * Retourne le nombre passé en argument en le préfixant d'un zéro s'il est
-	 * inférieur à 10.
+	 * Retourne le nombre passÃ© en argument en le prÃ©fixant d'un zÃ©ro s'il est
+	 * infÃ©rieur Ã  10.
 	 */
 	public static String addZeroBefore(int nb) {
 		String nbs = "";

@@ -1,7 +1,7 @@
 /*
  *  CoreConfig.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -26,7 +26,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Définition de constantes de configuration.
+ * DÃ©finition de constantes de configuration.
  * 
  */
 public final class CoreConfig {
@@ -35,15 +35,15 @@ public final class CoreConfig {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
 
-	// {tag}, {uP_root} seront remplacés par les valeurs des variables correspondantes;
+	// {tag}, {uP_root} seront remplacÃ©s par les valeurs des variables correspondantes;
 
 	/** URL de la racine du service */
 	public static final String rootURL = "http://ent.u-clermont1.fr/";
 	/** Adresse de la page de connexion */
 	public static final String loginURL = "https://cas.u-clermont1.fr/cas/login?service=http://ent.u-clermont1.fr/Login";
 	/**
-	 * Adresse utilisée dans la redirection http pour indiquer que la session a
-	 * expiré
+	 * Adresse utilisÃ©e dans la redirection http pour indiquer que la session a
+	 * expirÃ©
 	 */
 	public static final String loginRequestURL = rootURL + "Login";
 	/** Adresse du service de stockage de documents */
@@ -55,7 +55,7 @@ public final class CoreConfig {
 	 */
 	public static final String goIntoDirectoryURL = rootURL
 			+ "tag.{tag}.render.userLayoutRootNode.target.{uP_root}.uP#{uP_root}";
-	/** Adresse de téléchargement d'un fichier */
+	/** Adresse de tÃ©lÃ©chargement d'un fichier */
 	public static final String downloadFileURL = rootURL
 			+ "worker/download/tag.idempotent.worker.download.target.{uP_root}.uP";
 	/** Adresse de retour dans le dossier parent */
@@ -65,13 +65,13 @@ public final class CoreConfig {
 	public static final String refreshDirURL = rootURL
 			+ "tag.{tag}.render.userLayoutRootNode.target.{uP_root}.uP?modeDav=show_current_dir_mode#{uP_root}";
 	/**
-	 * Active ou désactive la reconnexion automatique après l'expiration de la
+	 * Active ou dÃ©sactive la reconnexion automatique aprÃ¨s l'expiration de la
 	 * session
 	 */
 	public static final boolean autoLogin = true;
 
 	/**
-	 * Adresse de téléchargement des informations de mise à jour.
+	 * Adresse de tÃ©lÃ©chargement des informations de mise Ã  jour.
 	 */
 	public static final String updaterURL = getString("ProductInfo.website")
 			+ "/checkUpdate.php?v={version}";

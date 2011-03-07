@@ -1,7 +1,7 @@
 /*
  *  DownloadedBytesListener.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -21,16 +21,16 @@
 package entDownloader.core.events;
 
 /**
- * Informe les observateurs que des octets ont été reçus lors d'un
- * téléchargement de fichier(s).
+ * Informe les observateurs que des octets ont Ã©tÃ© reÃ§us lors d'un
+ * tÃ©lÃ©chargement de fichier(s).
  */
 public interface DownloadedBytesListener extends BroadcastListener {
 
 	/**
-	 * Appelée lorsque des octets ont été reçus lors d'un téléchargement de
+	 * AppelÃ©e lorsque des octets ont Ã©tÃ© reÃ§us lors d'un tÃ©lÃ©chargement de
 	 * fichier(s). Voir la documentation de 
 	 * {@link entDownloader.core.events.DownloadedBytesEvent DownloadedBytesEvent}
-	 * pour plus d'informations à propos de cet événement.
+	 * pour plus d'informations Ã  propos de cet Ã©vÃ©nement.
 	 */
 	public void onDownloadedBytes(DownloadedBytesEvent e);
 

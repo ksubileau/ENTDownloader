@@ -1,7 +1,7 @@
 /*
  *  ENTDownloader.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -52,7 +52,7 @@ import entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 
 /* Bug possible :
- * Statut incorrect après une exception quelconque : cela peut poser problème.
+ * Statut incorrect aprÃ¨s une exception quelconque : cela peut poser problÃ¨me.
  */
 /**
  * Classe principale de l'application, interface entre les classes externes et
@@ -67,7 +67,7 @@ public class ENTDownloader extends Observable implements
 	/** L'instance statique */
 	private static ENTDownloader instance;
 
-	/** Flag indiquant si l'utilisateur est connecté ou non */
+	/** Flag indiquant si l'utilisateur est connectÃ© ou non */
 	private boolean isLogin = false;
 
 	/** Liste des dossiers et des fichiers du dossier courant */
@@ -75,9 +75,9 @@ public class ENTDownloader extends Observable implements
 	/** Chemin vers le dossier courant */
 	private ENTPath path = null;
 
-	/** Paramètre de l'URL de la page de stockage **/
+	/** ParamÃ¨tre de l'URL de la page de stockage **/
 	private String uP_root;
-	/** Paramètre de l'URL de la page de stockage **/
+	/** ParamÃ¨tre de l'URL de la page de stockage **/
 	private String tag;
 	/** Identifiant de connexion */
 	private String sessionid;
@@ -85,21 +85,21 @@ public class ENTDownloader extends Observable implements
 	private String username = null;
 	/** Login */
 	private String login = null;
-	/** Espace disque utilisé */
+	/** Espace disque utilisÃ© */
 	private int usedSpace = -1;
 	/** Espace disque total */
 	private int capacity = -1;
 
-	/** Progression de téléchargement */
+	/** Progression de tÃ©lÃ©chargement */
 	private long sizeDownloaded = 0;
 
-	/** Instance d'un navigateur utilisé pour la communication avec le serveur */
+	/** Instance d'un navigateur utilisÃ© pour la communication avec le serveur */
 	private Browser browser;
 
 	private ENTStatus status = ENTStatus.DISCONNECTED;
 
 	/**
-	 * Récupère l'instance unique de la classe ENTDownloader.<br>
+	 * RÃ©cupÃ¨re l'instance unique de la classe ENTDownloader.<br>
 	 * Remarque : le constructeur est rendu inaccessible
 	 */
 	public static ENTDownloader getInstance() {
@@ -115,11 +115,11 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Établit la connexion au serveur de l'ENT.
+	 * Ã‰tablit la connexion au serveur de l'ENT.
 	 * 
 	 * @param login Le nom d'utilisatateur pour la connexion.
 	 * @param password Mot de passe de connexion.
-	 * @return True en cas de réussite, ou false si l'authentification a échoué.
+	 * @return True en cas de rÃ©ussite, ou false si l'authentification a Ã©chouÃ©.
 	 * @throws ParseException Impossible d'obtenir les informations de session.
 	 */
 	public boolean login(String login, String password)
@@ -193,11 +193,11 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Obtient et définit les propriétés de l'espace de stockage (espace total
-	 * et utilisé)
+	 * Obtient et dÃ©finit les propriÃ©tÃ©s de l'espace de stockage (espace total
+	 * et utilisÃ©)
 	 * 
 	 * @param pageContent Code HTML d'une page de stockage.
-	 * @return true si les propriétés ont été trouvés, false sinon
+	 * @return true si les propriÃ©tÃ©s ont Ã©tÃ© trouvÃ©s, false sinon
 	 */
 	private boolean setStorageProperties(String pageContent) {
 		List<String> matches = new ArrayList<String>(4);
@@ -216,11 +216,11 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Détermine le nom complet de l'utilisateur à partir du code HTML de la
+	 * DÃ©termine le nom complet de l'utilisateur Ã  partir du code HTML de la
 	 * page.
 	 * 
 	 * @param pageContent Code HTML d'une page de stockage.
-	 * @return true si le nom a été trouvé, false sinon
+	 * @return true si le nom a Ã©tÃ© trouvÃ©, false sinon
 	 */
 	private boolean setUserName(String pageContent) {
 		List<String> matches = new ArrayList<String>(4);
@@ -232,24 +232,24 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Change le répertoire courant.
+	 * Change le rÃ©pertoire courant.
 	 * 
 	 * @param path Nom du dossier ou directive de parcours. Le dossier . est le
-	 *            dossier courant : appeler cette méthode avec ce paramètre ne
+	 *            dossier courant : appeler cette mÃ©thode avec ce paramÃ¨tre ne
 	 *            change donc pas le dossier courant
-	 *            mais permet de rafraîchir son contenu. Le dossier .. est le
+	 *            mais permet de rafraÃ®chir son contenu. Le dossier .. est le
 	 *            dossier parent, il permet donc de remonter dans
 	 *            l'arborescence. Enfin, le dossier / est la racine
 	 *            du service de stockage de l'utilisateur.
 	 * @throws ENTDirectoryNotFoundException
-	 *             Si le répertoire demandé n'existe pas dans le dossier courant
+	 *             Si le rÃ©pertoire demandÃ© n'existe pas dans le dossier courant
 	 * @throws ENTInvalidFS_ElementTypeException
-	 *             Si le nom d'un fichier a été passé en paramètre.
+	 *             Si le nom d'un fichier a Ã©tÃ© passÃ© en paramÃ¨tre.
 	 * @throws ParseException
 	 *             En cas d'erreur d'analyse du contenu du dossier cible.
 	 * @throws ENTUnauthenticatedUserException
 	 *             Si l'utilisateur n'est pas authentifier lors de l'appel de la
-	 *             méthode
+	 *             mÃ©thode
 	 * @throws IOException
 	 *             Si le service est indisponible.
 	 */
@@ -261,7 +261,7 @@ public class ENTDownloader extends Observable implements
 			throw new NullPointerException();
 		setStatus(ENTStatus.CHANGEDIR, path);
 
-		DirectoryChangingEvent changingevent = new DirectoryChangingEvent(); //Préparation des événements
+		DirectoryChangingEvent changingevent = new DirectoryChangingEvent(); //PrÃ©paration des Ã©vÃ©nements
 		changingevent.setSource(this);
 		DirectoryChangedEvent changedevent = new DirectoryChangedEvent();
 		changedevent.setSource(this);
@@ -279,7 +279,7 @@ public class ENTDownloader extends Observable implements
 		}
 
 		String splitPath[] = path.split("/");
-		if (splitPath.length > 1) { //Si le chemin de destination est composé, on cherche à le simplifier
+		if (splitPath.length > 1) { //Si le chemin de destination est composÃ©, on cherche Ã  le simplifier
 			ENTPath destination = new ENTPath(this.path);
 			destination.goTo(path);
 			String absDest = destination.toString(), relDest = this.path
@@ -306,8 +306,8 @@ public class ENTDownloader extends Observable implements
 		for (int i = isAbsolute ? 1 : 0; i < splitPath.length; ++i) {
 			if (!splitPath[i].isEmpty()
 					&& (i == 0 || !splitPath[i].equals("."))) {
-				/* Corrige les slash multiple dans le chemin et ignore les . à l'intérieur :
-				 * 		./toto/././////./titi est traité comme ./toto/titi
+				/* Corrige les slash multiple dans le chemin et ignore les . Ã  l'intÃ©rieur :
+				 * 		./toto/././////./titi est traitÃ© comme ./toto/titi
 				 */
 				submitDirectory(splitPath[i]);
 			}
@@ -319,28 +319,28 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Descend ou remonte d'un pas dans l'aborescence à partir du dossier
+	 * Descend ou remonte d'un pas dans l'aborescence Ã  partir du dossier
 	 * courant.
 	 * 
 	 * @param name
 	 *            Nom du dossier ou directive de parcours. Le dossier . est le
-	 *            dossier courant, appeler cette methode avec ce paramètre ne
+	 *            dossier courant, appeler cette methode avec ce paramÃ¨tre ne
 	 *            change donc pas le dossier courant
-	 *            mais permet de rafraîchir son contenu. Le dossier .. est le
+	 *            mais permet de rafraÃ®chir son contenu. Le dossier .. est le
 	 *            dossier parent, il permet donc de remonter dans
 	 *            l'arborescence. Enfin, le dossier / ou ~ est la racine
 	 *            du service de stockage de l'utilisateur. Si <code>name</code>
-	 *            est vide, le dossier / est chargé.
+	 *            est vide, le dossier / est chargÃ©.
 	 * @throws ENTDirectoryNotFoundException
-	 *             Si le répertoire demandé n'existe pas dans le dossier courant
+	 *             Si le rÃ©pertoire demandÃ© n'existe pas dans le dossier courant
 	 * @throws ENTInvalidFS_ElementTypeException
-	 *             Si le nom d'un fichier a été passé en paramètre.
+	 *             Si le nom d'un fichier a Ã©tÃ© passÃ© en paramÃ¨tre.
 	 * @throws ParseException
-	 *             {@link ENTDownloader#parsePage(String) Voir la méthode
+	 *             {@link ENTDownloader#parsePage(String) Voir la mÃ©thode
 	 *             parsePage}
 	 * @throws ENTUnauthenticatedUserException
 	 *             Si l'utilisateur n'est pas authentifier lors de l'appel de la
-	 *             méthode
+	 *             mÃ©thode
 	 * @throws IOException
 	 *             Si le service est indisponible.
 	 */
@@ -369,7 +369,7 @@ public class ENTDownloader extends Observable implements
 			browser.setUrl(urlBuilder(CoreConfig.refreshDirURL));
 		} else if (name.equals("..")) {
 			if (path.isRoot())
-				return; //Déjà à la racine
+				return; //DÃ©jÃ  Ã  la racine
 			browser.setMethod(Browser.Method.GET);
 			browser.setUrl(urlBuilder(CoreConfig.directoryBackURL));
 		} else {
@@ -413,28 +413,28 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Télécharge le fichier <i>name</i>.
-	 * Le fichier sera enregistré sous le dossier et le nom spécifié dans le
-	 * paramètre <i>destination</i>, ou sous le même nom que celui sous lequel
-	 * il est stocké sur l'ENT si le nouveau nom n'est pas indiqué dans
+	 * TÃ©lÃ©charge le fichier <i>name</i>.
+	 * Le fichier sera enregistrÃ© sous le dossier et le nom spÃ©cifiÃ© dans le
+	 * paramÃ¨tre <i>destination</i>, ou sous le mÃªme nom que celui sous lequel
+	 * il est stockÃ© sur l'ENT si le nouveau nom n'est pas indiquÃ© dans
 	 * <i>destination</i>.<br>
 	 * <br>
 	 * Exemples pour un fichier "tp13.pdf":<br>
 	 * <ul>
 	 * <li>Si le chemin de destination est "/home/sasa/tps/tpNumero13.pdf", le
-	 * fichier sera stocké sous "/home/sasa/tps/tpNumero13.pdf";</li>
+	 * fichier sera stockÃ© sous "/home/sasa/tps/tpNumero13.pdf";</li>
 	 * <li>Si le chemin de destination est "/home/sasa/bonjour/", le fichier
-	 * sera stocké sous "/home/sasa/bonjour/tp13.pdf";</li>
-	 * <li>Si le chemin de destination est "tp13.pdf", le fichier sera stocké
+	 * sera stockÃ© sous "/home/sasa/bonjour/tp13.pdf";</li>
+	 * <li>Si le chemin de destination est "tp13.pdf", le fichier sera stockÃ©
 	 * sous System.getProperty("user.dir") + "tp13.pdf";</li>
-	 * <li>Si le chemin de destination est vide ou null, le fichier sera stocké
-	 * sous System.getProperty("user.dir") + nom utilisé sous l'ENT;</li>
+	 * <li>Si le chemin de destination est vide ou null, le fichier sera stockÃ©
+	 * sous System.getProperty("user.dir") + nom utilisÃ© sous l'ENT;</li>
 	 * <li>Si le chemin de destination est "~/bonjour.pdf", le fichier sera
-	 * stocké sous System.getProperty("user.home") + "bonjour.pdf;</li>
+	 * stockÃ© sous System.getProperty("user.home") + "bonjour.pdf;</li>
 	 * </ul>
 	 * 
 	 * @param name
-	 *            Nom du fichier à télécharger
+	 *            Nom du fichier Ã  tÃ©lÃ©charger
 	 * @param destination
 	 *            Chemin de destination du fichier
 	 * @throws IOException
@@ -480,13 +480,13 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Télécharge le fichier <i>name</i>.
-	 * Le fichier sera enregistré dans le dossier local courant (généralement le
-	 * dossier de l'application), sous le même nom que celui sous lequel il est
-	 * stocké sur l'ENT.
+	 * TÃ©lÃ©charge le fichier <i>name</i>.
+	 * Le fichier sera enregistrÃ© dans le dossier local courant (gÃ©nÃ©ralement le
+	 * dossier de l'application), sous le mÃªme nom que celui sous lequel il est
+	 * stockÃ© sur l'ENT.
 	 * 
 	 * @param name
-	 *            Le nom du fichier à télécharger.
+	 *            Le nom du fichier Ã  tÃ©lÃ©charger.
 	 * @throws IOException
 	 */
 	public void getFile(String name) throws IOException {
@@ -494,23 +494,23 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Télécharge tous les fichiers contenus dans le dossier courant et ses sous
+	 * TÃ©lÃ©charge tous les fichiers contenus dans le dossier courant et ses sous
 	 * dossiers.
-	 * Les fichiers et dossiers seront enregistrés sous le dossier
-	 * <i>destination</i>, sous le même nom que celui sous lequel ils sont
-	 * stockés sur l'ENT.
+	 * Les fichiers et dossiers seront enregistrÃ©s sous le dossier
+	 * <i>destination</i>, sous le mÃªme nom que celui sous lequel ils sont
+	 * stockÃ©s sur l'ENT.
 	 * 
 	 * @param destination
-	 *            Dossier de destination des fichiers et dossiers téléchargés.
-	 *            Si null ou vide, ils seront enregistrés dans le répertoire
+	 *            Dossier de destination des fichiers et dossiers tÃ©lÃ©chargÃ©s.
+	 *            Si null ou vide, ils seront enregistrÃ©s dans le rÃ©pertoire
 	 *            courant.
 	 * @throws ENTInvalidFS_ElementTypeException
-	 *             Lancée lorsque le paramètre <i>destination</i> désigne un
+	 *             LancÃ©e lorsque le paramÃ¨tre <i>destination</i> dÃ©signe un
 	 *             fichier existant.
 	 * @throws IOException
 	 * @see ENTDownloader#getFile(String, String)
-	 * @return Le nombre de fichiers téléchargés
-	 * @deprecated Remplacé par getAllFiles(String destination, int maxdepth)
+	 * @return Le nombre de fichiers tÃ©lÃ©chargÃ©s
+	 * @deprecated RemplacÃ© par getAllFiles(String destination, int maxdepth)
 	 */
 	@Deprecated
 	public int getAllFiles(String destination) throws IOException {
@@ -518,27 +518,27 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Télécharge tous les fichiers contenus dans le dossier courant et ses sous
+	 * TÃ©lÃ©charge tous les fichiers contenus dans le dossier courant et ses sous
 	 * dossiers.
-	 * Les fichiers et dossiers seront enregistrés sous le dossier
-	 * <i>destination</i>, sous le même nom que celui sous lequel ils sont
-	 * stockés sur l'ENT.
+	 * Les fichiers et dossiers seront enregistrÃ©s sous le dossier
+	 * <i>destination</i>, sous le mÃªme nom que celui sous lequel ils sont
+	 * stockÃ©s sur l'ENT.
 	 * 
 	 * @param destination
-	 *            Dossier de destination des fichiers et dossiers téléchargés.
-	 *            Si null ou vide, ils seront enregistrés dans le répertoire
+	 *            Dossier de destination des fichiers et dossiers tÃ©lÃ©chargÃ©s.
+	 *            Si null ou vide, ils seront enregistrÃ©s dans le rÃ©pertoire
 	 *            courant.
 	 * @param maxdepth
-	 *            Profondeur maximale de téléchargement. 0 (zéro) signifie que
-	 *            la méthode ne va télécharger que les fichiers du dossier
+	 *            Profondeur maximale de tÃ©lÃ©chargement. 0 (zÃ©ro) signifie que
+	 *            la mÃ©thode ne va tÃ©lÃ©charger que les fichiers du dossier
 	 *            courant, sans descendre dans les sous-dossiers. Une valeur
-	 *            négative signifie aucune limite.
+	 *            nÃ©gative signifie aucune limite.
 	 * @throws ENTInvalidFS_ElementTypeException
-	 *             Lancée lorsque le paramètre <i>destination</i> désigne un
+	 *             LancÃ©e lorsque le paramÃ¨tre <i>destination</i> dÃ©signe un
 	 *             fichier existant.
 	 * @throws IOException
 	 * @see ENTDownloader#getFile(String, String)
-	 * @return Le nombre de fichiers téléchargés
+	 * @return Le nombre de fichiers tÃ©lÃ©chargÃ©s
 	 */
 	public int getAllFiles(String destination, int maxdepth) throws IOException {
 		int i = 0;
@@ -589,13 +589,13 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Analyse le contenu de la page passé en paramètre afin de déterminer les
+	 * Analyse le contenu de la page passÃ© en paramÃ¨tre afin de dÃ©terminer les
 	 * dossiers et fichiers contenus dans le dossier courant.
 	 * 
 	 * @param pageContent
-	 *            Le contenu de la page à analyser
+	 *            Le contenu de la page Ã  analyser
 	 * @throws ParseException
-	 *             Si l'analyse échoue
+	 *             Si l'analyse Ã©choue
 	 */
 	private void parsePage(String pageContent) throws ParseException {
 		List<List<String>> matches = new ArrayList<List<String>>();
@@ -609,7 +609,7 @@ public class ENTDownloader extends Observable implements
 				"&nbsp;<a href=\"javascript:submit(File|Directory)\\('.+?'\\);\"\\s+class.*?nnel\">(.*?)</a></td><td class=\"uportal-crumbtrail\" align=\"right\">\\s+?&nbsp;([0-9][0-9]*\\.[0-9][0-9]? [MKGo]{1,2})?\\s*?</td><td class=\"uportal-crumbtrail\" align=\"right\">\\s+?&nbsp;([0-9]{2})-([0-9]{2})-([0-9]{4})&nbsp;([0-9]{2}):([0-9]{2})",
 				pageContent, matches, Misc.PREG_ORDER.SET_ORDER);
 		for (List<String> fileInfos : matches) {
-			FS_Element file = null; // Fichier ou répertoire
+			FS_Element file = null; // Fichier ou rÃ©pertoire
 			if (fileInfos.get(1).equals("Directory")) {
 				file = new FS_Directory(HTMLEntities.unhtmlentities(fileInfos
 						.get(2)), new GregorianCalendar(
@@ -639,12 +639,12 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Construit l'url demandé en remplaçant les champs {...} par les valeurs
+	 * Construit l'url demandÃ© en remplaÃ§ant les champs {...} par les valeurs
 	 * correspondantes
 	 * 
 	 * @param url
-	 *            URL à construire
-	 * @return L'url passé en paramètre, après avoir remplacer les champs {...}.
+	 *            URL Ã  construire
+	 * @return L'url passÃ© en paramÃ¨tre, aprÃ¨s avoir remplacer les champs {...}.
 	 */
 	private String urlBuilder(String url) {
 		return url.replaceAll("\\{tag\\}", tag).replaceAll("\\{uP_root\\}",
@@ -652,7 +652,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Retourne le contenu du répertoire courant.
+	 * Retourne le contenu du rÃ©pertoire courant.
 	 */
 	public List<FS_Element> getDirectoryContent() {
 		if (directoryContent == null)
@@ -662,7 +662,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Obtient le nom du répertoire courant.
+	 * Obtient le nom du rÃ©pertoire courant.
 	 */
 	public String getDirectoryName() {
 		return path.getDirectoryName();
@@ -708,7 +708,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Obtient le chemin absolu permettant d'atteindre le répertoire courant.
+	 * Obtient le chemin absolu permettant d'atteindre le rÃ©pertoire courant.
 	 */
 	public String getDirectoryPath() {
 		if (path == null)
@@ -725,7 +725,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Retourne l'espace disque utilisé sur le service de stockage en Mo, ou -1
+	 * Retourne l'espace disque utilisÃ© sur le service de stockage en Mo, ou -1
 	 * si ce dernier est inconnu
 	 */
 	public int getUsedSpace() {
@@ -741,7 +741,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Retourne le login utilisé pour la connexion, ou null si ce dernier est
+	 * Retourne le login utilisÃ© pour la connexion, ou null si ce dernier est
 	 * inconnu.
 	 */
 	public String getLogin() {
@@ -749,18 +749,18 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Retourne l'index de la première occurrence de l'élément spécifié dans la
+	 * Retourne l'index de la premiÃ¨re occurrence de l'Ã©lÃ©ment spÃ©cifiÃ© dans la
 	 * liste {@link entDownloader.core.ENTDownloader#directoryContent
-	 * directoryContent}, ou -1 si la liste ne contient pas cet élément. Plus
+	 * directoryContent}, ou -1 si la liste ne contient pas cet Ã©lÃ©ment. Plus
 	 * formellement, retourne le plus petit index i tel que (o==null ?
 	 * get(i)==null : get(i).equals(o)), ou -1 si cet index n'existe pas.
 	 * 
-	 * @param o L'élément à rechercher
-	 * @return L'index de la première occurrence de l'élément spécifié dans la
+	 * @param o L'Ã©lÃ©ment Ã  rechercher
+	 * @return L'index de la premiÃ¨re occurrence de l'Ã©lÃ©ment spÃ©cifiÃ© dans la
 	 *         liste {@link entDownloader.core.ENTDownloader#directoryContent
-	 *         directoryContent}, ou -1 si la liste ne contient pas cet élément.
-	 * @throws IllegalStateException Si le répertoire courant n'a pas été
-	 *             chargé.
+	 *         directoryContent}, ou -1 si la liste ne contient pas cet Ã©lÃ©ment.
+	 * @throws IllegalStateException Si le rÃ©pertoire courant n'a pas Ã©tÃ©
+	 *             chargÃ©.
 	 */
 	private int indexOf(Object o) throws IllegalStateException {
 		if (directoryContent == null)
@@ -776,7 +776,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @deprecated Depuis la version 1.0.0, utilisez les événements du
+	 * @deprecated Depuis la version 1.0.0, utilisez les Ã©vÃ©nements du
 	 *             package <code>entDownloader.core.events</code>
 	 */
 	@Deprecated
@@ -785,7 +785,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @deprecated Depuis la version 1.0.0, utilisez les événements du
+	 * @deprecated Depuis la version 1.0.0, utilisez les Ã©vÃ©nements du
 	 *             package <code>entDownloader.core.events</code>
 	 */
 	@Deprecated
@@ -804,7 +804,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * @deprecated Depuis la version 1.0.0, utilisez les événements du
+	 * @deprecated Depuis la version 1.0.0, utilisez les Ã©vÃ©nements du
 	 *             package <code>entDownloader.core.events</code>
 	 */
 	@Deprecated
@@ -819,9 +819,9 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connexion à l'ENT.
+	 * Installe un proxy HTTP Ã  utiliser pour la connexion Ã  l'ENT.
 	 * 
-	 * @param host Le nom d'hôte ou l'adresse du proxy.
+	 * @param host Le nom d'hÃ´te ou l'adresse du proxy.
 	 * @param port Le port du proxy.
 	 */
 	public void setProxy(String host, int port) {
@@ -829,9 +829,9 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connexion à l'ENT.
+	 * Installe un proxy HTTP Ã  utiliser pour la connexion Ã  l'ENT.
 	 * 
-	 * @param proxy L'instance de java.net.Proxy à utiliser.
+	 * @param proxy L'instance de java.net.Proxy Ã  utiliser.
 	 * @see java.net.Proxy
 	 */
 	public void setProxy(Proxy proxy) {
@@ -839,23 +839,23 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Retourne le proxy HTTP utilisé pour la connexion à l'ENT.
+	 * Retourne le proxy HTTP utilisÃ© pour la connexion Ã  l'ENT.
 	 * 
-	 * @return Le proxy HTTP utilisé pour la connexion à l'ENT.
+	 * @return Le proxy HTTP utilisÃ© pour la connexion Ã  l'ENT.
 	 */
 	public Proxy getProxy() {
 		return browser.getProxy();
 	}
 
 	/**
-	 * Supprime la configuration de proxy précédemment installé.
+	 * Supprime la configuration de proxy prÃ©cÃ©demment installÃ©.
 	 */
 	public void removeProxy() {
 		browser.removeHttpProxy();
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connexion à l'ENT en utilisant
+	 * Installe un proxy HTTP Ã  utiliser pour la connexion Ã  l'ENT en utilisant
 	 * un fichier PAC (Proxy auto-configuration).
 	 * 
 	 * @param pacFile Emplacement du fichier PAC
@@ -865,7 +865,7 @@ public class ENTDownloader extends Observable implements
 	 * @see <a href="http://en.wikipedia.org/wiki/Proxy_auto-config"> PAC File on Wikipedia</a>
 	 */
 	public void setProxy(String pacFile) throws Exception {
-		//Efface la configuration précédente pour ne pas interférer avec l'accès au fichier PAC
+		//Efface la configuration prÃ©cÃ©dente pour ne pas interfÃ©rer avec l'accÃ¨s au fichier PAC
 		setProxy((Proxy) null);
 
 		URL url = new URI(pacFile).toURL();

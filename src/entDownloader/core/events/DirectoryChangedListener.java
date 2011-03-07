@@ -1,7 +1,7 @@
 /*
  *  DirectoryChangedListener.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -21,15 +21,15 @@
 package entDownloader.core.events;
 
 /**
- * Informe les observateurs que le répertoire courant a changé.
+ * Informe les observateurs que le rÃ©pertoire courant a changÃ©.
  */
 public interface DirectoryChangedListener extends BroadcastListener {
 
 	/**
-	 * Appelée après un changement de répertoire courant. Voir la documentation
+	 * AppelÃ©e aprÃ¨s un changement de rÃ©pertoire courant. Voir la documentation
 	 * de la classe 
 	 * {@link entDownloader.core.events.DirectoryChangedEvent DirectoryChangedEvent} 
-	 * pour plus d'informations à propos de cet événement.
+	 * pour plus d'informations Ã  propos de cet Ã©vÃ©nement.
 	 */
 	public void onDirectoryChanged(DirectoryChangedEvent event);
 }

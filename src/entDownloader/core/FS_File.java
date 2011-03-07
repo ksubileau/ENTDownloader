@@ -1,7 +1,7 @@
 /*
  *  FS_File.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -23,7 +23,7 @@ package entDownloader.core;
 import java.util.GregorianCalendar;
 
 /**
- * Représente un fichier stocké sur l'ENT.
+ * ReprÃ©sente un fichier stockÃ© sur l'ENT.
  */
 public class FS_File extends FS_Element {
 
@@ -46,21 +46,21 @@ public class FS_File extends FS_Element {
 	 * 
 	 * @param name Nom du fichier.
 	 * @param dateModif Date de modification du fichier
-	 * @param ssize Taille du fichier suivi de son unité (Ex: 20 Mo).
+	 * @param ssize Taille du fichier suivi de son unitÃ© (Ex: 20 Mo).
 	 */
 	public FS_File(String name, GregorianCalendar dateModif, String ssize) {
 		this(name, dateModif, size_StringToNumber(ssize));
 	}
 
 	/**
-	 * Convertit une représentation textuelle de la taille du fichier (Ex: 58
+	 * Convertit une reprÃ©sentation textuelle de la taille du fichier (Ex: 58
 	 * Ko) en octets.
 	 * 
-	 * @param ssize La taille sous forme d'une chaîne de caractère.
+	 * @param ssize La taille sous forme d'une chaÃ®ne de caractÃ¨re.
 	 * @return La taille convertit en octets.
-	 * @throws FileSizeFormatException Le format de la chaîne de caractère est
+	 * @throws FileSizeFormatException Le format de la chaÃ®ne de caractÃ¨re est
 	 *             invalide.
-	 * @throws UnsupportedOperationException Dépassement de capacité du Long.
+	 * @throws UnsupportedOperationException DÃ©passement de capacitÃ© du Long.
 	 */
 	public static long size_StringToNumber(String ssize)
 			throws FileSizeFormatException, UnsupportedOperationException {
@@ -86,7 +86,7 @@ public class FS_File extends FS_Element {
 
 		if (failed)
 			throw new FileSizeFormatException("Invalid SI prefix");
-		if (fsize > Long.MAX_VALUE) // Dépassement de la taille du long
+		if (fsize > Long.MAX_VALUE) // DÃ©passement de la taille du long
 			throw new UnsupportedOperationException(
 					"Unable to convert "
 							+ ssize
@@ -99,9 +99,9 @@ public class FS_File extends FS_Element {
 	/**
 	 * Formate une taille en octets pour l'affichage.
 	 * 
-	 * @param size La taille en octets à formater.
-	 * @return La taille dans une unité appropriée pour l'affichage, suivi de
-	 *         cette unité.
+	 * @param size La taille en octets Ã  formater.
+	 * @return La taille dans une unitÃ© appropriÃ©e pour l'affichage, suivi de
+	 *         cette unitÃ©.
 	 */
 	public static String size_Formatted(long size) {
 		float fsize;
@@ -123,24 +123,24 @@ public class FS_File extends FS_Element {
 	}
 
 	/**
-	 * Retourne la taille du fichier sous sa représentation textuelle formaté.
+	 * Retourne la taille du fichier sous sa reprÃ©sentation textuelle formatÃ©.
 	 */
 	public String getFormattedSize() {
 		return size_Formatted(size);
 	}
 
 	/**
-	 * Définit la taille du fichier à partir d'une représentation textuelle
-	 * formaté.
+	 * DÃ©finit la taille du fichier Ã  partir d'une reprÃ©sentation textuelle
+	 * formatÃ©.
 	 * 
-	 * @param ssize La taille du fichier sous sa représentation textuelle.
+	 * @param ssize La taille du fichier sous sa reprÃ©sentation textuelle.
 	 */
 	public void setSize(String ssize) {
 		setSize(size_StringToNumber(ssize));
 	}
 
 	/**
-	 * Définit la taille du fichier en octets.
+	 * DÃ©finit la taille du fichier en octets.
 	 * 
 	 * @param size La taille du fichier en octets.
 	 */
@@ -157,7 +157,7 @@ public class FS_File extends FS_Element {
 	}*/
 
 	/**
-	 * Retourne le type d'élément représenté par cette instance. En l'occurrence,
+	 * Retourne le type d'Ã©lÃ©ment reprÃ©sentÃ© par cette instance. En l'occurrence,
 	 * il s'agit d'un fichier.
 	 * 
 	 * @see FS_Element#getType()

@@ -1,7 +1,7 @@
 /*
  *  ENTPath.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -24,16 +24,16 @@ import java.security.InvalidParameterException;
 import java.util.Iterator;
 
 /**
- * Représente un chemin vers un fichier ou un dossier stocké sur l'ENT. Cette
- * classe ne fournit qu'une représentation
- * locale du chemin, et n'assure par conséquent aucun contrôle sur l'existence
- * réelle de la ressource représentée.
+ * ReprÃ©sente un chemin vers un fichier ou un dossier stockÃ© sur l'ENT. Cette
+ * classe ne fournit qu'une reprÃ©sentation
+ * locale du chemin, et n'assure par consÃ©quent aucun contrÃ´le sur l'existence
+ * rÃ©elle de la ressource reprÃ©sentÃ©e.
  */
 public class ENTPath implements Iterable<String> {
 	private Stack<String> path = null;
 
 	/**
-	 * Construit un nouveau chemin initialisé à la racine.
+	 * Construit un nouveau chemin initialisÃ© Ã  la racine.
 	 */
 	public ENTPath() {
 		path = new Stack<String>();
@@ -41,8 +41,8 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Construit un nouveau chemin à partir de sa représentation textuelle. Le
-	 * chemin donné doit être absolu.
+	 * Construit un nouveau chemin Ã  partir de sa reprÃ©sentation textuelle. Le
+	 * chemin donnÃ© doit Ãªtre absolu.
 	 */
 	public ENTPath(String path) {
 		this();
@@ -63,47 +63,47 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Copie le chemin donné en paramètre
+	 * Copie le chemin donnÃ© en paramÃ¨tre
 	 */
 	public ENTPath(ENTPath path) {
 		this.path = new Stack<String>(path.path);
 	}
 
 	/**
-	 * Fusionne le chemin donné en paramètre avec le chemin actuel
+	 * Fusionne le chemin donnÃ© en paramÃ¨tre avec le chemin actuel
 	 * 
 	 * @param path
-	 *            Le chemin de déplacement
+	 *            Le chemin de dÃ©placement
 	 */
 	public void goTo(String path) {
-		if (isAbsolute(path)) { //Si le chemin donné est absolu
+		if (isAbsolute(path)) { //Si le chemin donnÃ© est absolu
 			this.path.clear();
 			this.path.push("/"); //On repart de la racine
 		}
-		for (String name : path.split("/")) { //Pour chaque élément du chemin
+		for (String name : path.split("/")) { //Pour chaque Ã©lÃ©ment du chemin
 			if (name.isEmpty()) {
-				continue; //Si l'élement est vide, on passe au suivant
+				continue; //Si l'Ã©lement est vide, on passe au suivant
 			}
 			if (name.equals("..")) { //Sinon si on demande de remonter d'un noeud
 				if (!isRoot()) {
-					this.path.pop(); //On dépile
+					this.path.pop(); //On dÃ©pile
 				}
 			} else if (!name.equals(".")) {
 				this.path.push(name);
-				//Sinon si l'élement est . on ne fait rien
+				//Sinon si l'Ã©lement est . on ne fait rien
 			}
 		}
 	}
 
 	/**
 	 * Calcul et retourne le chemin relatif le plus simple correspondant au
-	 * chemin absolu donné en paramètre par rapport
-	 * au dossier courant actuellement représenté par cette instance.
+	 * chemin absolu donnÃ© en paramÃ¨tre par rapport
+	 * au dossier courant actuellement reprÃ©sentÃ© par cette instance.
 	 * 
 	 * @param destination
-	 *            le chemin absolu à relativiser.
-	 * @return Le chemin relatif le plus simple permettant d'accéder au dossier
-	 *         <i>destination</i> à partir du dossier courant
+	 *            le chemin absolu Ã  relativiser.
+	 * @return Le chemin relatif le plus simple permettant d'accÃ©der au dossier
+	 *         <i>destination</i> Ã  partir du dossier courant
 	 */
 	public String getRelative(ENTPath destination) {
 		int nbremontes = compareTo(destination), pathLength = destination.path
@@ -126,23 +126,23 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Compare le chemin donné avec le chemin de l'instance et retourne le
-	 * nombre de dossiers devant être remontés pour trouver un dossier commun au
+	 * Compare le chemin donnÃ© avec le chemin de l'instance et retourne le
+	 * nombre de dossiers devant Ãªtre remontÃ©s pour trouver un dossier commun au
 	 * deux chemins.<br>
 	 * Exemples :
 	 * <ul>
 	 * <li>Pour le dossier courant /home/user<i>/musics/playlists/artists</i> et
-	 * le chemin /home/user<i>/settings</i>, la méthode retournera 3.</li>
+	 * le chemin /home/user<i>/settings</i>, la mÃ©thode retournera 3.</li>
 	 * <li>Pour le dossier courant /home/user<i>/settings</i> et le chemin
-	 * /home/user<i>/musics/playlists/artists</i>, la méthode retournera 1.</li>
+	 * /home/user<i>/musics/playlists/artists</i>, la mÃ©thode retournera 1.</li>
 	 * <li>Pour le dossier courant /<i>etc/acpi</i> et le chemin
-	 * /<i>home/user/musics/playlists</i>, la méthode retournera 2.</li>
+	 * /<i>home/user/musics/playlists</i>, la mÃ©thode retournera 2.</li>
 	 * </ul>
-	 * La méthode ne retourne donc jamais plus de this.path.size()-1
+	 * La mÃ©thode ne retourne donc jamais plus de this.path.size()-1
 	 * 
 	 * @param absolutePath
-	 *            le chemin absolu à comparer
-	 * @return Le nombre de dossiers devant être remontés pour trouver un
+	 *            le chemin absolu Ã  comparer
+	 * @return Le nombre de dossiers devant Ãªtre remontÃ©s pour trouver un
 	 *         dossier commun au deux chemins.
 	 */
 	private int compareTo(ENTPath absolutePath) {
@@ -159,9 +159,9 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Détermine si un chemin est absolu ou relatif.
+	 * DÃ©termine si un chemin est absolu ou relatif.
 	 * 
-	 * @param path Le chemin à analyser.
+	 * @param path Le chemin Ã  analyser.
 	 * @return True si le chemin est absolu, false sinon.
 	 */
 	public static boolean isAbsolute(String path) {
@@ -169,9 +169,9 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Détermine si un chemin est absolu ou relatif.
+	 * DÃ©termine si un chemin est absolu ou relatif.
 	 * 
-	 * @param path Le chemin à analyser.
+	 * @param path Le chemin Ã  analyser.
 	 * @return True si le chemin est absolu, false sinon.
 	 */
 	public static boolean isAbsolute(String[] path) {
@@ -179,10 +179,10 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Détermine le nombre de requêtes nécessaires pour atteindre
-	 * le dossier définit par cette instance en partant de la racine (/).
+	 * DÃ©termine le nombre de requÃªtes nÃ©cessaires pour atteindre
+	 * le dossier dÃ©finit par cette instance en partant de la racine (/).
 	 * 
-	 * @return Le nombre de requêtes nécessaires pour atteindre le dossier en
+	 * @return Le nombre de requÃªtes nÃ©cessaires pour atteindre le dossier en
 	 *         partant de la racine (/).
 	 */
 	public int getNbRequests() {
@@ -190,11 +190,11 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Détermine le nombre de requêtes nécessaires pour atteindre
-	 * le dossier représenté par <code>path</code> en partant de la racine (/).
+	 * DÃ©termine le nombre de requÃªtes nÃ©cessaires pour atteindre
+	 * le dossier reprÃ©sentÃ© par <code>path</code> en partant de la racine (/).
 	 * 
-	 * @param path Le chemin à analyser.
-	 * @return Le nombre de requêtes nécessaires pour atteindre le dossier en
+	 * @param path Le chemin Ã  analyser.
+	 * @return Le nombre de requÃªtes nÃ©cessaires pour atteindre le dossier en
 	 *         partant de la racine (/).
 	 */
 	public static int getNbRequests(ENTPath path) {
@@ -202,11 +202,11 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Détermine le nombre de requêtes nécessaires pour atteindre
-	 * le dossier représenté par <code>path</code> en partant de la racine (/).
+	 * DÃ©termine le nombre de requÃªtes nÃ©cessaires pour atteindre
+	 * le dossier reprÃ©sentÃ© par <code>path</code> en partant de la racine (/).
 	 * 
-	 * @param path Le chemin à analyser.
-	 * @return Le nombre de requêtes nécessaires pour atteindre le dossier en
+	 * @param path Le chemin Ã  analyser.
+	 * @return Le nombre de requÃªtes nÃ©cessaires pour atteindre le dossier en
 	 *         partant de la racine (/).
 	 */
 	public static int getNbRequests(String path) {
@@ -214,11 +214,11 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Détermine le nombre de requêtes nécessaires pour atteindre
-	 * le dossier représenté par <code>path</code> en partant de la racine (/).
+	 * DÃ©termine le nombre de requÃªtes nÃ©cessaires pour atteindre
+	 * le dossier reprÃ©sentÃ© par <code>path</code> en partant de la racine (/).
 	 * 
-	 * @param path Le chemin à analyser.
-	 * @return Le nombre de requêtes nécessaires pour atteindre le dossier en
+	 * @param path Le chemin Ã  analyser.
+	 * @return Le nombre de requÃªtes nÃ©cessaires pour atteindre le dossier en
 	 *         partant de la racine (/).
 	 */
 	public static int getNbRequests(String[] path) {
@@ -226,9 +226,9 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Retourne une représentation textuelle du chemin absolu.
+	 * Retourne une reprÃ©sentation textuelle du chemin absolu.
 	 * 
-	 * @return Une représentation textuelle du chemin absolu.
+	 * @return Une reprÃ©sentation textuelle du chemin absolu.
 	 */
 	@Override
 	public String toString() {
@@ -243,10 +243,10 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Retourne un itérateur sur les éléments du chemin, en partant de la
+	 * Retourne un itÃ©rateur sur les Ã©lÃ©ments du chemin, en partant de la
 	 * racine.
 	 * 
-	 * @return Un itérateur sur les éléments du chemin, en partant de la racine.
+	 * @return Un itÃ©rateur sur les Ã©lÃ©ments du chemin, en partant de la racine.
 	 */
 	@Override
 	public Iterator<String> iterator() {
@@ -254,43 +254,43 @@ public class ENTPath implements Iterable<String> {
 	}
 
 	/**
-	 * Retourne un itérateur sur les éléments du chemin, en partant du dossier
-	 * courant jusqu'à la racine.
+	 * Retourne un itÃ©rateur sur les Ã©lÃ©ments du chemin, en partant du dossier
+	 * courant jusqu'Ã  la racine.
 	 * 
-	 * @return Un itérateur sur les éléments du chemin, en partant du dossier
-	 *         courant jusqu'à la racine.
+	 * @return Un itÃ©rateur sur les Ã©lÃ©ments du chemin, en partant du dossier
+	 *         courant jusqu'Ã  la racine.
 	 */
 	public Iterator<String> descendingIterator() {
 		return path.iterator();
 	}
 
 	/**
-	 * Supprime le chemin actuellement enregistré et retourne à la racine
+	 * Supprime le chemin actuellement enregistrÃ© et retourne Ã  la racine
 	 */
 	public void clear() {
 		goTo("/");
 	}
 
 	/**
-	 * Retourne le nombre d'éléments constituant ce chemin.
+	 * Retourne le nombre d'Ã©lÃ©ments constituant ce chemin.
 	 * 
-	 * @return Le nombre d'éléments constituant ce chemin.
+	 * @return Le nombre d'Ã©lÃ©ments constituant ce chemin.
 	 */
 	public int size() {
 		return path.size();
 	}
 
 	/**
-	 * Retourne vrai si le chemin actuel désigne la racine.
+	 * Retourne vrai si le chemin actuel dÃ©signe la racine.
 	 * 
-	 * @return True si le chemin actuel désigne la racine
+	 * @return True si le chemin actuel dÃ©signe la racine
 	 */
 	public boolean isRoot() {
 		return size() == 1;
 	}
 
 	/**
-	 * Retourne le nom du répertoire courant.
+	 * Retourne le nom du rÃ©pertoire courant.
 	 */
 	public String getDirectoryName() {
 		return path.peek();

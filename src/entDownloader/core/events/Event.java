@@ -1,7 +1,7 @@
 /*
  *  Event.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -20,51 +20,51 @@
  */
 package entDownloader.core.events;
 
-/** Classe de base pour tous les événements. */
+/** Classe de base pour tous les Ã©vÃ©nements. */
 public abstract class Event {
 
 	protected Object source;
 	protected Object userObj;
 
 	/**
-	 * Type d'événement inconnu.
+	 * Type d'Ã©vÃ©nement inconnu.
 	 */
 	public static final int UNKNOWN_TYPE = 0;
 	/**
-	 * Indique un changement de répertoire en cours.
+	 * Indique un changement de rÃ©pertoire en cours.
 	 */
 	public static final int CHANGING_DIR_TYPE = 1;
 	/**
-	 * Indique un changement de répertoire terminé.
+	 * Indique un changement de rÃ©pertoire terminÃ©.
 	 */
 	public static final int CHANGED_DIR_TYPE = 2;
 	/**
-	 * Indique que des octets ont été reçus durant un téléchargement.
+	 * Indique que des octets ont Ã©tÃ© reÃ§us durant un tÃ©lÃ©chargement.
 	 */
 	public static final int DOWNLOADED_BYTES_TYPE = 3;
 	/**
-	 * Indique le début d'un téléchargement.
+	 * Indique le dÃ©but d'un tÃ©lÃ©chargement.
 	 */
 	public static final int START_DOWNLOAD_TYPE = 4;
 	/**
-	 * Indique la fin d'un téléchargement.
+	 * Indique la fin d'un tÃ©lÃ©chargement.
 	 */
 	public static final int END_DOWNLOAD_TYPE = 5;
 
 	protected Event() {
 	}
 
-	/** Construit un événement avec la source spécifié. */
+	/** Construit un Ã©vÃ©nement avec la source spÃ©cifiÃ©. */
 	public Event(Object source) {
 		this.source = source;
 	}
 
-	/** Retourne la source de l'événement. */
+	/** Retourne la source de l'Ã©vÃ©nement. */
 	public Object getSource() {
 		return source;
 	}
 
-	/** Définit la source de l'événement. */
+	/** DÃ©finit la source de l'Ã©vÃ©nement. */
 	public void setSource(Object newSource) {
 		source = newSource;
 	}
@@ -80,7 +80,7 @@ public abstract class Event {
 	}
 
 	/**
-	 * @return Retourne le type de l'événement.
+	 * @return Retourne le type de l'Ã©vÃ©nement.
 	 */
 	public abstract int getType();
 

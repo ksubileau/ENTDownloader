@@ -1,7 +1,7 @@
 /*
  *  ShellMain.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -80,14 +80,14 @@ public final class ShellMain {
 				switch (((ENTDownloader) o).getStatus()) {
 				case START_DOWNLOAD:
 					file = (FS_File) arg;
-					message = "Téléchargement du fichier " + file.getName()
+					message = "TÃ©lÃ©chargement du fichier " + file.getName()
 							+ " en cours...";
 					pg.setDeterminate(true);
 					break;
 				case END_DOWNLOAD:
 					enabledWrite = true;
 					file = null;
-					message = "Téléchargement terminé.";
+					message = "TÃ©lÃ©chargement terminÃ©.";
 					pg.setVisible(false);
 					pg.setDeterminate(false);
 					pg.setVisible(false);
@@ -111,14 +111,14 @@ public final class ShellMain {
 					break;
 				case CHANGEDIR_END:
 					pg.setVisible(false);
-					message = "Chargement réussi.";
+					message = "Chargement rÃ©ussi.";
 					break;
 				case INITIALIZE:
-					message = "Authentification réussie, initialisation...";
+					message = "Authentification rÃ©ussie, initialisation...";
 					break;
 				case INITIALIZING_END:
 					pg.setVisible(false);
-					message = "Initialisation terminée.";
+					message = "Initialisation terminÃ©e.";
 					break;
 				case LOGIN:
 					message = "Connexion en cours...";
@@ -162,7 +162,7 @@ public final class ShellMain {
 			String argv = args[i];
 			if (argv.equalsIgnoreCase("-L")) {
 				if (i >= args.length - 1) {
-					System.err.println("Argument n°" + (i + 1)
+					System.err.println("Argument nÂ°" + (i + 1)
 							+ " incomplet : login attendu.");
 				} else {
 					++i;
@@ -171,7 +171,7 @@ public final class ShellMain {
 			} else if (argv.equalsIgnoreCase("-pac")) {
 				if (i >= args.length - 1) {
 					System.err
-							.println("Argument n°"
+							.println("Argument nÂ°"
 									+ (i + 1)
 									+ " incomplet : emplacement du fichier PAC attendu.");
 				} else {
@@ -180,17 +180,17 @@ public final class ShellMain {
 						entd.setProxy(args[i]);
 					} catch (Exception e) {
 						System.err
-								.println("Impossible de définir le proxy à utiliser à partir du fichier"
-										+ " PAC spécifié.");
+								.println("Impossible de dÃ©finir le proxy Ã  utiliser Ã  partir du fichier"
+										+ " PAC spÃ©cifiÃ©.");
 						continue;
 					}
 					System.out
-							.println("Paramètrage du serveur proxy à partir du fichier \""
+							.println("ParamÃ¨trage du serveur proxy Ã  partir du fichier \""
 									+ args[i] + "\".");
 				}
 			} else if (argv.equalsIgnoreCase("-proxy")) {
 				if (i >= args.length - 2) {
-					System.err.println("Argument n°" + (i + 1)
+					System.err.println("Argument nÂ°" + (i + 1)
 							+ " incomplet : adresse du proxy et port attendu. "
 							+ "Consultez le manuel pour plus d'informations.");
 				} else {
@@ -199,7 +199,7 @@ public final class ShellMain {
 					try {
 						proxyPort = Integer.parseInt(args[i + 2]);
 					} catch (NumberFormatException e1) {
-						System.err.println("Argument n°" + (i + 3)
+						System.err.println("Argument nÂ°" + (i + 3)
 								+ " invalide : port du proxy attendu.");
 						continue;
 					}
@@ -207,17 +207,17 @@ public final class ShellMain {
 						entd.setProxy(proxyAddr, proxyPort);
 					} catch (IllegalArgumentException e) {
 						System.err
-								.println("Argument n°"
+								.println("Argument nÂ°"
 										+ (i + 3)
 										+ " invalide : port du proxy attendu (entre 1 et 65535 compris).");
 						continue;
 					} catch (Exception e) {
 						System.err
-								.println("Impossible de définir le proxy demandé.");
+								.println("Impossible de dÃ©finir le proxy demandÃ©.");
 						continue;
 					}
 					System.out
-							.println("Paramètrage du serveur proxy : \n\tAdresse : "
+							.println("ParamÃ¨trage du serveur proxy : \n\tAdresse : "
 									+ proxyAddr
 									+ "\n\tPort : "
 									+ proxyPort
@@ -276,15 +276,15 @@ public final class ShellMain {
 				pg.setVisible(false);
 			}
 			System.err
-					.println("ENTDownloader: Service indisponible: Votre connexion Internet semble rencontrer un problème. Assurez-vous que votre ordinateur est connecté à Internet.");
+					.println("ENTDownloader: Service indisponible: Votre connexion Internet semble rencontrer un problÃ¨me. Assurez-vous que votre ordinateur est connectÃ© Ã  Internet.");
 			return;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		checkUpdate();
-		//Effacer le mot de passe de la mémoire
-		//password = null; //TODO Choix à faire : reconnection automatique => stockage du mot de passe non sécurisé ; ou effacement du mot de passe
+		//Effacer le mot de passe de la mÃ©moire
+		//password = null; //TODO Choix Ã  faire : reconnection automatique => stockage du mot de passe non sÃ©curisÃ© ; ou effacement du mot de passe
 		//Lecture des commandes
 		System.out.print("\n" + login + "@ent.u-clermont1.fr:"
 				+ entd.getDirectoryPath() + ">");
@@ -293,7 +293,7 @@ public final class ShellMain {
 			try {
 				command = splitCommand(sc.nextLine());
 			} catch (ParseException e3) {
-				System.err.println("ENTDownloader: Commande incomplète.");
+				System.err.println("ENTDownloader: Commande incomplÃ¨te.");
 			}
 
 			try {
@@ -305,7 +305,7 @@ public final class ShellMain {
 					} else if (command[0].equals("get")) {
 						get((command.length > 1) ? command[1] : "",
 								(command.length > 2) ? command[2] : null);
-					} else if (command[0].equals("getall")) { //TODO Creer un dossier eponyme au dossier courant comme destination si cette derniere n'est pas indiquée au lieu d'enregistrer directement dans le dossier courant local ??
+					} else if (command[0].equals("getall")) { //TODO Creer un dossier eponyme au dossier courant comme destination si cette derniere n'est pas indiquÃ©e au lieu d'enregistrer directement dans le dossier courant local ??
 						if (command.length > 1
 								&& (command[1].startsWith("-R") || command[1]
 										.startsWith("-r"))) {
@@ -319,13 +319,13 @@ public final class ShellMain {
 																.parseInt(command[1]
 																		.substring(2))
 																: -1)
-												+ " fichier(s) téléchargé(s)");
+												+ " fichier(s) tÃ©lÃ©chargÃ©(s)");
 							} catch (NumberFormatException e2) {
 								System.err
-										.println("ENTDownloader: getall: Un nombre entier est attendu après l'option -R.");
+										.println("ENTDownloader: getall: Un nombre entier est attendu aprÃ¨s l'option -R.");
 							} catch (ENTInvalidFS_ElementTypeException e) {
 								System.err
-										.println("ENTDownloader: getall: Impossible de créer le répertoire requis : un fichier portant le même nom existe.");
+										.println("ENTDownloader: getall: Impossible de crÃ©er le rÃ©pertoire requis : un fichier portant le mÃªme nom existe.");
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -335,10 +335,10 @@ public final class ShellMain {
 								System.out.println(entd.getAllFiles(
 										(command.length > 1) ? command[1]
 												: null, 0)
-										+ " fichier(s) téléchargé(s)");
+										+ " fichier(s) tÃ©lÃ©chargÃ©(s)");
 							} catch (ENTInvalidFS_ElementTypeException e) {
 								System.err
-										.println("ENTDownloader: getall: Impossible de créer le répertoire requis : un fichier portant le même nom existe.");
+										.println("ENTDownloader: getall: Impossible de crÃ©er le rÃ©pertoire requis : un fichier portant le mÃªme nom existe.");
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -362,7 +362,7 @@ public final class ShellMain {
 					pg.setVisible(false);
 				}
 				System.err
-						.println("ENTDownloader: Service indisponible: Votre connexion Internet semble rencontrer un problème. Assurez-vous que votre ordinateur est connecté à Internet.");
+						.println("ENTDownloader: Service indisponible: Votre connexion Internet semble rencontrer un problÃ¨me. Assurez-vous que votre ordinateur est connectÃ© Ã  Internet.");
 				return;
 			}
 			System.out.print(login + "@ent.u-clermont1.fr:"
@@ -374,7 +374,7 @@ public final class ShellMain {
 		try {
 			Updater updater = new Updater();
 			if (!updater.isUpToDate()) {
-				//Mise à jour disponible
+				//Mise Ã  jour disponible
 				System.out.println("Une nouvelle version de "
 						+ productName
 						+ " est disponible. La version "
@@ -387,7 +387,7 @@ public final class ShellMain {
 								Calendar.MONTH) + 1)
 						+ "/"
 						+ addZeroBefore(updater.datePublication().get(
-								Calendar.YEAR)) + " est téléchargeable sur "
+								Calendar.YEAR)) + " est tÃ©lÃ©chargeable sur "
 						+ updater.location() + ".");
 			}
 		} catch (Exception e) {
@@ -452,10 +452,10 @@ public final class ShellMain {
 			if (CoreConfig.autoLogin) {
 				String currentPath = entd.getDirectoryPath();
 				try {
-					if (!entd.login(login, password)) { //TODO Test expiration de session et généralisation aux autres méthodes.
+					if (!entd.login(login, password)) { //TODO Test expiration de session et gÃ©nÃ©ralisation aux autres mÃ©thodes.
 						pg.setVisible(false);
 						System.err
-								.println("La session a expirée et la tentative de reconnection a échoué. Veuillez vous reconnectez manuellement en relançant le programme.");
+								.println("La session a expirÃ©e et la tentative de reconnection a Ã©chouÃ©. Veuillez vous reconnectez manuellement en relanÃ§ant le programme.");
 						System.exit(1);
 					} else {
 						cd("/");
@@ -469,7 +469,7 @@ public final class ShellMain {
 				}
 			} else {
 				System.err
-						.println("La session a expirée, veuillez vous reconnectez en relançant le programme.");
+						.println("La session a expirÃ©e, veuillez vous reconnectez en relanÃ§ant le programme.");
 				System.exit(1);
 			}
 
@@ -478,13 +478,13 @@ public final class ShellMain {
 				pg.setVisible(false);
 			}
 			System.err.println("ENTDownloader: " + e.getMessage()
-					+ ": Aucun répertoire de ce type");
+					+ ": Aucun rÃ©pertoire de ce type");
 		} catch (ENTInvalidFS_ElementTypeException e) {
 			if (pg.isVisible()) {
 				pg.setVisible(false);
 			}
 			System.err.println("ENTDownloader: " + e.getMessage()
-					+ ": N'est pas un répertoire");
+					+ ": N'est pas un rÃ©pertoire");
 		} catch (ParseException e) {
 			if (pg.isVisible()) {
 				pg.setVisible(false);
@@ -492,7 +492,7 @@ public final class ShellMain {
 			System.err
 					.println("ENTDownloader: "
 							+ name
-							+ ": Une erreur est survenue lors de l'accès à ce répertoire");
+							+ ": Une erreur est survenue lors de l'accÃ¨s Ã  ce rÃ©pertoire");
 		}
 	}
 
@@ -510,8 +510,8 @@ public final class ShellMain {
 			System.err
 					.println("ENTDownloader: "
 							+ destination
-							+ ": Accès refusé. Impossible d'écrire au chemin indiqué. Veuillez vérifier qu'un fichier"
-							+ " portant ce nom n'existe pas déjà et que vous avez la permission d'écrire à cet emplacement.");
+							+ ": AccÃ¨s refusÃ©. Impossible d'Ã©crire au chemin indiquÃ©. Veuillez vÃ©rifier qu'un fichier"
+							+ " portant ce nom n'existe pas dÃ©jÃ  et que vous avez la permission d'Ã©crire Ã  cet emplacement.");
 		} catch (ENTInvalidFS_ElementTypeException e2) {
 			System.err.println("ENTDownloader: " + name
 					+ ": N'est pas un fichier");
@@ -543,7 +543,7 @@ public final class ShellMain {
 			System.out.println("Inconnu");
 		}
 		if (entd.getUsedSpace() != -1 && entd.getCapacity() != -1) {
-			System.out.println("Espace utilisé    : " + entd.getUsedSpace()
+			System.out.println("Espace utilisÃ©    : " + entd.getUsedSpace()
 					+ " Mo");
 			System.out.println("Espace disponible : "
 					+ (entd.getCapacity() - entd.getUsedSpace()) + " Mo");

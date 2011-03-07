@@ -1,7 +1,7 @@
 /*
  *  DetailsTableModel.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -36,7 +36,7 @@ public class DetailsTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 4563138001193938023L;
 	private Object[] columnNames = new Object[] { "Nom", "Type", "Taille",
-			"Date de création" };
+			"Date de crÃ©ation" };
 	private Vector<Object> rowData = new Vector<Object>();
 
 	public int getColumnIndex(Class<?> colClass) {
@@ -68,7 +68,7 @@ public class DetailsTableModel extends AbstractTableModel {
 	}
 
 	public void browseDirectory(List<FS_Element> dirContent) {
-		clear(); //suppression du contenu précédent
+		clear(); //suppression du contenu prÃ©cÃ©dent
 		final Vector<FS_Element> allFiles = new Vector<FS_Element>();
 		if (dirContent == null)
 			return;

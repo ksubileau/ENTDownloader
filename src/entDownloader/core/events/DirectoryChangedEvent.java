@@ -1,7 +1,7 @@
 /*
  *  DirectoryChangedEvent.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -21,12 +21,12 @@
 package entDownloader.core.events;
 
 /**
- * Un événement qui indique que le répertoire courant a changé.
+ * Un Ã©vÃ©nement qui indique que le rÃ©pertoire courant a changÃ©.
  */
 public class DirectoryChangedEvent extends Event {
 
 	/**
-	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * Retourne le type d'Ã©vÃ©nement portÃ© par cette instance. Ici, retourne
 	 * {@link Event#CHANGED_DIR_TYPE}
 	 */
 	@Override
@@ -35,16 +35,16 @@ public class DirectoryChangedEvent extends Event {
 	}
 
 	/**
-	 * Construit un nouvel évènement DirectoryChangedEvent.
+	 * Construit un nouvel Ã©vÃ¨nement DirectoryChangedEvent.
 	 */
 	public DirectoryChangedEvent() {
 		this(null);
 	}
 
 	/**
-	 * Construit un nouvel évènement DirectoryChangedEvent.
+	 * Construit un nouvel Ã©vÃ¨nement DirectoryChangedEvent.
 	 * 
-	 * @param targetPath Le chemin vers lequel on a migré.
+	 * @param targetPath Le chemin vers lequel on a migrÃ©.
 	 */
 	public DirectoryChangedEvent(String targetPath) {
 		setDirectory(targetPath);
@@ -53,14 +53,14 @@ public class DirectoryChangedEvent extends Event {
 	private String targetPath;
 
 	/**
-	 * Retourne le chemin vers lequel on a migré.
+	 * Retourne le chemin vers lequel on a migrÃ©.
 	 */
 	public String getDirectory() {
 		return targetPath;
 	}
 
 	/**
-	 * Définit le chemin vers lequel on a migré.
+	 * DÃ©finit le chemin vers lequel on a migrÃ©.
 	 */
 	public void setDirectory(String targetPath) {
 		this.targetPath = targetPath;

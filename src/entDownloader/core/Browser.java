@@ -1,7 +1,7 @@
 /*
  *  Browser.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -47,14 +47,14 @@ import entDownloader.core.events.Broadcaster;
 import entDownloader.core.events.DownloadedBytesEvent;
 
 /**
- * Gère les connexions HTTP et permet des utilisations avancées tels que
+ * GÃ¨re les connexions HTTP et permet des utilisations avancÃ©es tels que
  * l'obtention des sources HTML
- * et le téléchargement de fichiers.
+ * et le tÃ©lÃ©chargement de fichiers.
  * 
  */
 public class Browser {
 	/**
-	 * TODO Amélioration de la gestion des cookies : attribut path et secure,
+	 * TODO AmÃ©lioration de la gestion des cookies : attribut path et secure,
 	 * ...
 	 * Voir :
 	 * - http://www.java2s.com/Tutorial/Java/0320__Network/
@@ -78,7 +78,7 @@ public class Browser {
 	}
 
 	/**
-	 * Constructeur par défaut de la classe Browser
+	 * Constructeur par dÃ©faut de la classe Browser
 	 */
 	public Browser() {
 		this.argv = new HashMap<String, String>(8);
@@ -99,8 +99,8 @@ public class Browser {
 	}
 
 	/**
-	 * Ajoute un argument à la requête. Si l'argument a déjà été défini,
-	 * l'ancienne valeur sera écrasé.
+	 * Ajoute un argument Ã  la requÃªte. Si l'argument a dÃ©jÃ  Ã©tÃ© dÃ©fini,
+	 * l'ancienne valeur sera Ã©crasÃ©.
 	 * 
 	 * @param name Nom du champ de l'argument.
 	 * @param value Valeur de l'argument.
@@ -110,7 +110,7 @@ public class Browser {
 	}
 
 	/**
-	 * Supprime tous les arguments de requête précédemment définis
+	 * Supprime tous les arguments de requÃªte prÃ©cÃ©demment dÃ©finis
 	 */
 	public void clearParam() {
 		argv.clear();
@@ -119,7 +119,7 @@ public class Browser {
 	protected void encodeParam() throws UnsupportedEncodingException {
 		int argc = 0;
 		encodedParam = "";
-		//Encodage des paramètres de la requête
+		//Encodage des paramÃ¨tres de la requÃªte
 		if (!argv.isEmpty()) {
 			if (method == Method.GET) {
 				encodedParam = "?";
@@ -136,21 +136,21 @@ public class Browser {
 	}
 
 	/**
-	 * Effectue la requête précédemment configuré et retourne le texte renvoyé
+	 * Effectue la requÃªte prÃ©cÃ©demment configurÃ© et retourne le texte renvoyÃ©
 	 * par le serveur (code HTML par exemple).
 	 * 
-	 * @return Le texte renvoyé par le serveur (code HTML ou XML par exemple).
-	 * @throws IOException La connexion a échoué.
+	 * @return Le texte renvoyÃ© par le serveur (code HTML ou XML par exemple).
+	 * @throws IOException La connexion a Ã©chouÃ©.
 	 */
 	public String perform() throws IOException {
 		OutputStreamWriter writer = null;
 		BufferedReader reader = null;
 		String response = "";
 		try {
-			//Encodage des paramètres de la requête
+			//Encodage des paramÃ¨tres de la requÃªte
 			encodeParam();
 
-			//création de la connexion
+			//crÃ©ation de la connexion
 			URL url;
 			if (method == Method.POST) {
 				url = new URL(this.url);
@@ -167,13 +167,13 @@ public class Browser {
 			}
 
 			if (method == Method.POST) {
-				//envoi de la requête
+				//envoi de la requÃªte
 				writer = new OutputStreamWriter(conn.getOutputStream());
 				writer.write(encodedParam);
 				writer.flush();
 			}
 
-			//lecture de la réponse
+			//lecture de la rÃ©ponse
 			setCookies(conn.getHeaderField("Set-Cookie"));
 			responseCode = conn.getResponseCode();
 			headerFields = conn.getHeaderFields();
@@ -208,10 +208,10 @@ public class Browser {
 	}
 
 	/**
-	 * Télécharge le fichier défini par {@link #setUrl(String)} et l'enregistre
-	 * à l'emplacement désigné par <code>destinationPath</code>.
+	 * TÃ©lÃ©charge le fichier dÃ©fini par {@link #setUrl(String)} et l'enregistre
+	 * Ã  l'emplacement dÃ©signÃ© par <code>destinationPath</code>.
 	 * 
-	 * @param destinationPath Le chemin où le fichier sera enregistrer
+	 * @param destinationPath Le chemin oÃ¹ le fichier sera enregistrer
 	 * @throws FileNotFoundException Voir le constructeur de
 	 *             java.io.FileOutputStream
 	 */
@@ -223,16 +223,16 @@ public class Browser {
 		FileOutputStream writeFile = null;
 
 		try {
-			//Vérifie le chemin de destination donnée
+			//VÃ©rifie le chemin de destination donnÃ©e
 			File fpath = new File(destinationPath).getCanonicalFile();
 			destinationPath = fpath.getPath();
 			File dpath = new File(fpath.getParent());
 			dpath.mkdirs();
 
-			//Encodage des paramètres de la requête
+			//Encodage des paramÃ¨tres de la requÃªte
 			encodeParam();
 
-			//création de la connexion
+			//crÃ©ation de la connexion
 			URL url;
 			if (method == Method.POST) {
 				url = new URL(this.url);
@@ -249,13 +249,13 @@ public class Browser {
 			}
 
 			if (method == Method.POST) {
-				//envoi de la requête
+				//envoi de la requÃªte
 				writer = new OutputStreamWriter(conn.getOutputStream());
 				writer.write(encodedParam);
 				writer.flush();
 			}
 
-			//lecture de la réponse
+			//lecture de la rÃ©ponse
 			setCookies(conn.getHeaderField("Set-Cookie"));
 			responseCode = conn.getResponseCode();
 			headerFields = conn.getHeaderFields();
@@ -298,16 +298,16 @@ public class Browser {
 	}
 
 	/**
-	 * Définit l'url cible de la requête.
+	 * DÃ©finit l'url cible de la requÃªte.
 	 * 
-	 * @param url URL à définir
+	 * @param url URL Ã  dÃ©finir
 	 */
 	public void setUrl(String url) {
 		this.url = url;
 	}
 
 	/**
-	 * Retourne la méthode HTTP actuellement utilisée.
+	 * Retourne la mÃ©thode HTTP actuellement utilisÃ©e.
 	 * 
 	 */
 	public Method getMethod() {
@@ -315,9 +315,9 @@ public class Browser {
 	}
 
 	/**
-	 * Configure la méthode HTTP à utiliser (POST ou GET).
+	 * Configure la mÃ©thode HTTP Ã  utiliser (POST ou GET).
 	 * 
-	 * @param method Méthode HTTP à utiliser.
+	 * @param method MÃ©thode HTTP Ã  utiliser.
 	 */
 	public void setMethod(Method method) {
 		if (method == Method.POST || method == Method.GET) {
@@ -327,16 +327,16 @@ public class Browser {
 	}
 
 	/**
-	 * Retourne l'état actuel du suivi des redirections.
+	 * Retourne l'Ã©tat actuel du suivi des redirections.
 	 * 
-	 * @return True si le suivi des redirections est activé, false sinon.
+	 * @return True si le suivi des redirections est activÃ©, false sinon.
 	 */
 	public boolean isFollowRedirects() {
 		return followRedirects;
 	}
 
 	/**
-	 * Active ou désactive le suivi des redirections HTTP (code 3xx)
+	 * Active ou dÃ©sactive le suivi des redirections HTTP (code 3xx)
 	 * 
 	 * @param followRedirects
 	 *            Nouvelle valeur
@@ -346,27 +346,27 @@ public class Browser {
 	}
 
 	/**
-	 * Retourne les cookies actuellement définis dans une Map
+	 * Retourne les cookies actuellement dÃ©finis dans une Map
 	 */
 	public Map<String, String> getCookieMap() {
 		return cookies;
 	}
 
 	/**
-	 * Redéfinit les cookies envoyés dans les requêtes suivantes. Les précédents
-	 * cookies sont écrasés
+	 * RedÃ©finit les cookies envoyÃ©s dans les requÃªtes suivantes. Les prÃ©cÃ©dents
+	 * cookies sont Ã©crasÃ©s
 	 * 
 	 * @param cookies
-	 *            Cookies à définir, sous la forme d'une Map dont la clé
-	 *            représente le nom du champ.
+	 *            Cookies Ã  dÃ©finir, sous la forme d'une Map dont la clÃ©
+	 *            reprÃ©sente le nom du champ.
 	 */
 	public void setCookie(Map<String, String> cookies) {
 		this.cookies = cookies;
 	}
 
 	/**
-	 * Retourne les cookies actuellement définis tel qu'ils sont envoyés dans la
-	 * requête HTTP.
+	 * Retourne les cookies actuellement dÃ©finis tel qu'ils sont envoyÃ©s dans la
+	 * requÃªte HTTP.
 	 */
 	public String getCookie() {
 		String cookie = "";
@@ -392,18 +392,18 @@ public class Browser {
 	 * Retourne la valeur du champ de cookie portant le nom
 	 * <code>fieldname</code>, ou null si ce champ n'existe pas.
 	 * 
-	 * @param fieldname Le nom du champ de cookie souhaité
-	 * @return La valeur du champ de cookie demandé, ou null si le champ n'est
-	 *         pas défini.
+	 * @param fieldname Le nom du champ de cookie souhaitÃ©
+	 * @return La valeur du champ de cookie demandÃ©, ou null si le champ n'est
+	 *         pas dÃ©fini.
 	 */
 	public String getCookieField(String fieldname) {
 		return cookies.get(fieldname);
 	}
 
 	/**
-	 * Ajoute ou redéfinit la valeur du champ de cookie spécifié
+	 * Ajoute ou redÃ©finit la valeur du champ de cookie spÃ©cifiÃ©
 	 * 
-	 * @param fieldname Le nom du champ de cookie à définir
+	 * @param fieldname Le nom du champ de cookie Ã  dÃ©finir
 	 * @param value La valeur du champ de cookie <i>fieldname</i>.
 	 */
 	public void setCookieField(String fieldname, String value) {
@@ -411,26 +411,26 @@ public class Browser {
 	}
 
 	/**
-	 * Supprime tous les cookies actuellement défini
+	 * Supprime tous les cookies actuellement dÃ©fini
 	 */
 	public void delCookie() {
 		cookies.clear();
 	}
 
 	/**
-	 * Supprime le champ de cookie spécifié
+	 * Supprime le champ de cookie spÃ©cifiÃ©
 	 * 
-	 * @param fieldname Le champ à supprimer
+	 * @param fieldname Le champ Ã  supprimer
 	 */
 	public void delCookie(String fieldname) {
 		cookies.remove(fieldname);
 	}
 
 	/**
-	 * Définit les cookies envoyés dans les requêtes suivantes. Les précédents
-	 * cookies sont écrasés
+	 * DÃ©finit les cookies envoyÃ©s dans les requÃªtes suivantes. Les prÃ©cÃ©dents
+	 * cookies sont Ã©crasÃ©s
 	 * 
-	 * @param cookie Cookies à définir
+	 * @param cookie Cookies Ã  dÃ©finir
 	 */
 	public void setCookies(String cookie) {
 		if (cookie != null && !cookie.isEmpty()) {
@@ -456,11 +456,11 @@ public class Browser {
 	}
 
 	/**
-	 * Obtient le code de statut du message de réponse HTTP
+	 * Obtient le code de statut du message de rÃ©ponse HTTP
 	 * 
-	 * @return Le code de statut HTTP, ou -1 si aucun code ne peut être discerné
-	 *         de la réponse (la réponse n'est pas valide) ou si aucune requête
-	 *         n'a été effectué.
+	 * @return Le code de statut HTTP, ou -1 si aucun code ne peut Ãªtre discernÃ©
+	 *         de la rÃ©ponse (la rÃ©ponse n'est pas valide) ou si aucune requÃªte
+	 *         n'a Ã©tÃ© effectuÃ©.
 	 * @see HttpURLConnection#getResponseCode()
 	 */
 	public int getResponseCode() {
@@ -468,8 +468,8 @@ public class Browser {
 	}
 
 	/**
-	 * Retourne une Map contenant l'ensemble des entêtes de la réponse HTTP, ou
-	 * null si aucune requête n'a été effectué.
+	 * Retourne une Map contenant l'ensemble des entÃªtes de la rÃ©ponse HTTP, ou
+	 * null si aucune requÃªte n'a Ã©tÃ© effectuÃ©.
 	 * 
 	 * @see URLConnection#getHeaderFields()
 	 */
@@ -478,13 +478,13 @@ public class Browser {
 	}
 
 	/**
-	 * Retourne la valeur du champ d'entête portant le nom désigné, ou null s'il
-	 * n'y a pas ce champ dans la réponse.
+	 * Retourne la valeur du champ d'entÃªte portant le nom dÃ©signÃ©, ou null s'il
+	 * n'y a pas ce champ dans la rÃ©ponse.
 	 * 
-	 * @throws IllegalStateException Si aucune requête n'a été effectué.
+	 * @throws IllegalStateException Si aucune requÃªte n'a Ã©tÃ© effectuÃ©.
 	 * @see URLConnection#getHeaderField(String)
 	 */
-	public String getHeaderField(String name) { //Non débogué
+	public String getHeaderField(String name) { //Non dÃ©boguÃ©
 		if (headerFields == null)
 			throw new IllegalStateException("No request has been made.");
 		List<String> values = headerFields.get(name);
@@ -499,9 +499,9 @@ public class Browser {
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connexion à Internet.
+	 * Installe un proxy HTTP Ã  utiliser pour la connexion Ã  Internet.
 	 * 
-	 * @param host Le nom d'hôte ou l'adresse du proxy.
+	 * @param host Le nom d'hÃ´te ou l'adresse du proxy.
 	 * @param port Le port du proxy.
 	 */
 	public void setHttpProxy(String host, int port) {
@@ -509,9 +509,9 @@ public class Browser {
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connexion à Internet.
+	 * Installe un proxy HTTP Ã  utiliser pour la connexion Ã  Internet.
 	 * 
-	 * @param proxy L'instance de java.net.Proxy à utiliser.
+	 * @param proxy L'instance de java.net.Proxy Ã  utiliser.
 	 * @see java.net.Proxy
 	 */
 	public void setHttpProxy(Proxy proxy) {
@@ -522,16 +522,16 @@ public class Browser {
 	}
 
 	/**
-	 * Retourne le proxy HTTP utilisé pour la connexion à Internet.
+	 * Retourne le proxy HTTP utilisÃ© pour la connexion Ã  Internet.
 	 * 
-	 * @return Le proxy HTTP utilisé pour la connexion à Internet.
+	 * @return Le proxy HTTP utilisÃ© pour la connexion Ã  Internet.
 	 */
 	public Proxy getProxy() {
 		return proxy;
 	}
 
 	/**
-	 * Supprime la configuration de proxy précédemment installé.
+	 * Supprime la configuration de proxy prÃ©cÃ©demment installÃ©.
 	 */
 	public void removeHttpProxy() {
 		setHttpProxy(null);

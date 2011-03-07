@@ -1,7 +1,7 @@
 /*
  *  LoginFrame.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -48,7 +48,7 @@ import entDownloader.core.ENTDownloader;
 import entDownloader.gui.Components.JFadePanel;
 
 /**
- * Fenêtre de connexion.
+ * FenÃªtre de connexion.
  */
 public class LoginFrame extends javax.swing.JFrame {
 	private static final long serialVersionUID = 6012478520927856073L;
@@ -212,7 +212,7 @@ public class LoginFrame extends javax.swing.JFrame {
 				}
 				{
 					mdp = new JPasswordField();
-					mdp.setEchoChar('•');
+					mdp.setEchoChar('Â•');
 					passLabel.setLabelFor(mdp);
 					mdp.addKeyListener(new KeyAdapter() {
 						@Override
@@ -345,8 +345,8 @@ public class LoginFrame extends javax.swing.JFrame {
 						JOptionPane
 								.showMessageDialog(
 										loginPane,
-										"Votre connexion Internet semble rencontrer un problème.\nAssurez-vous que votre ordinateur est connecté à Internet, "
-												+ "\net que vous avez correctement configuré les paramètres de proxy.",
+										"Votre connexion Internet semble rencontrer un problÃ¨me.\nAssurez-vous que votre ordinateur est connectÃ© Ã  Internet, "
+												+ "\net que vous avez correctement configurÃ© les paramÃ¨tres de proxy.",
 										"ENTDownloader - Service indisponible",
 										JOptionPane.ERROR_MESSAGE);
 						System.exit(1);

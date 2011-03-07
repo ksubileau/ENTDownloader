@@ -1,7 +1,7 @@
 /*
  *  EndDownloadListener.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -21,15 +21,15 @@
 package entDownloader.core.events;
 
 /**
- * Informe les observateurs que le téléchargement d'un fichier s'est terminé.
+ * Informe les observateurs que le tÃ©lÃ©chargement d'un fichier s'est terminÃ©.
  */
 public interface EndDownloadListener extends BroadcastListener {
 
 	/**
-	 * Appelée lorsque le téléchargement d'un fichier s'est terminé. Voir la
+	 * AppelÃ©e lorsque le tÃ©lÃ©chargement d'un fichier s'est terminÃ©. Voir la
 	 * documentation de la classe
 	 * {@link entDownloader.core.events.EndDownloadEvent EndDownloadEvent}
-	 * pour plus d'informations à propos de cet événement.
+	 * pour plus d'informations Ã  propos de cet Ã©vÃ©nement.
 	 */
 	public void onEndDownload(EndDownloadEvent e);
 }

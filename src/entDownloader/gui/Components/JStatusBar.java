@@ -1,7 +1,7 @@
 /*
  *  JStatusBar.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -35,7 +35,7 @@ public class JStatusBar extends JPanel {
 	private static final long serialVersionUID = -3850702427642770674L;
 
 	/**
-	 * Créé une nouvelle barre de statut.
+	 * CrÃ©Ã© une nouvelle barre de statut.
 	 */
 	public JStatusBar() {
 		setLayout(new BorderLayout());

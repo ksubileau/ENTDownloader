@@ -1,7 +1,7 @@
 /*
  *  Broadcaster.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * Enregistre et supprime les observateurs, et les averti lorsqu'un événement se
+ * Enregistre et supprime les observateurs, et les averti lorsqu'un Ã©vÃ©nement se
  * produit.
  */
 public class Broadcaster {
@@ -65,19 +65,19 @@ public class Broadcaster {
 		return wh.values().iterator();
 	}
 
-	/** Ajoute un observateur sur l'événement DirectoryChanging */
+	/** Ajoute un observateur sur l'Ã©vÃ©nement DirectoryChanging */
 	public static void addDirectoryChangingListener(
 			DirectoryChangingListener listener) {
 		addListener(DirectoryChangingListener.class, listener);
 	}
 
-	/** Supprime un observateur sur l'événement DirectoryChanging */
+	/** Supprime un observateur sur l'Ã©vÃ©nement DirectoryChanging */
 	public static void removeDirectoryChangingListener(
 			DirectoryChangingListener listener) {
 		removeListener(DirectoryChangingListener.class, listener);
 	}
 
-	/** Avertit tous les observateurs de l'événement DirectoryChanging */
+	/** Avertit tous les observateurs de l'Ã©vÃ©nement DirectoryChanging */
 	public static void fireDirectoryChanging(DirectoryChangingEvent event) {
 		Iterator<BroadcastListener> it = getListenerIterator(DirectoryChangingListener.class);
 		DirectoryChangingListener listener;
@@ -87,19 +87,19 @@ public class Broadcaster {
 		}
 	}
 
-	/** Ajoute un observateur sur l'événement DirectoryChanging */
+	/** Ajoute un observateur sur l'Ã©vÃ©nement DirectoryChanging */
 	public static void addDirectoryChangedListener(
 			DirectoryChangedListener listener) {
 		addListener(DirectoryChangedListener.class, listener);
 	}
 
-	/** Supprime un observateur sur l'événement DirectoryChanging */
+	/** Supprime un observateur sur l'Ã©vÃ©nement DirectoryChanging */
 	public static void removeDirectoryChangedListener(
 			DirectoryChangedListener listener) {
 		removeListener(DirectoryChangedListener.class, listener);
 	}
 
-	/** Avertit tous les observateurs de l'événement DirectoryChanging */
+	/** Avertit tous les observateurs de l'Ã©vÃ©nement DirectoryChanging */
 	public static void fireDirectoryChanged(DirectoryChangedEvent event) {
 		Iterator<BroadcastListener> it = getListenerIterator(DirectoryChangedListener.class);
 		DirectoryChangedListener listener;
@@ -109,19 +109,19 @@ public class Broadcaster {
 		}
 	}
 
-	/** Ajoute un observateur sur l'événement DownloadedBytes */
+	/** Ajoute un observateur sur l'Ã©vÃ©nement DownloadedBytes */
 	public static void addDownloadedBytesListener(
 			DownloadedBytesListener listener) {
 		addListener(DownloadedBytesListener.class, listener);
 	}
 
-	/** Supprime un observateur sur l'événement DownloadedBytes */
+	/** Supprime un observateur sur l'Ã©vÃ©nement DownloadedBytes */
 	public static void removeDownloadedBytesListener(
 			DownloadedBytesListener listener) {
 		removeListener(DownloadedBytesListener.class, listener);
 	}
 
-	/** Avertit tous les observateurs de l'événement DownloadedBytes */
+	/** Avertit tous les observateurs de l'Ã©vÃ©nement DownloadedBytes */
 	public static void fireDownloadedBytes(DownloadedBytesEvent event) {
 		Iterator<BroadcastListener> it = getListenerIterator(DownloadedBytesListener.class);
 		DownloadedBytesListener listener;
@@ -131,18 +131,18 @@ public class Broadcaster {
 		}
 	}
 
-	/** Ajoute un observateur sur l'événement StartDownload */
+	/** Ajoute un observateur sur l'Ã©vÃ©nement StartDownload */
 	public static void addStartDownloadListener(StartDownloadListener listener) {
 		addListener(StartDownloadListener.class, listener);
 	}
 
-	/** Supprime un observateur sur l'événement StartDownload */
+	/** Supprime un observateur sur l'Ã©vÃ©nement StartDownload */
 	public static void removeStartDownloadListener(
 			StartDownloadListener listener) {
 		removeListener(StartDownloadListener.class, listener);
 	}
 
-	/** Avertit tous les observateurs de l'événement StartDownload */
+	/** Avertit tous les observateurs de l'Ã©vÃ©nement StartDownload */
 	public static void fireStartDownload(StartDownloadEvent event) {
 		Iterator<BroadcastListener> it = getListenerIterator(StartDownloadListener.class);
 		StartDownloadListener listener;
@@ -152,17 +152,17 @@ public class Broadcaster {
 		}
 	}
 
-	/** Ajoute un observateur sur l'événement EndDownload */
+	/** Ajoute un observateur sur l'Ã©vÃ©nement EndDownload */
 	public static void addEndDownloadListener(EndDownloadListener listener) {
 		addListener(EndDownloadListener.class, listener);
 	}
 
-	/** Supprime un observateur sur l'événement EndDownload */
+	/** Supprime un observateur sur l'Ã©vÃ©nement EndDownload */
 	public static void removeEndDownloadListener(EndDownloadListener listener) {
 		removeListener(EndDownloadListener.class, listener);
 	}
 
-	/** Avertit tous les observateurs de l'événement EndDownload */
+	/** Avertit tous les observateurs de l'Ã©vÃ©nement EndDownload */
 	public static void fireEndDownload(EndDownloadEvent event) {
 		Iterator<BroadcastListener> it = getListenerIterator(EndDownloadListener.class);
 		EndDownloadListener listener;

@@ -1,7 +1,7 @@
 /*
  *  ENTInvalidFS_ElementTypeException.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -23,8 +23,8 @@ package entDownloader.core.exceptions;
 import java.io.IOException;
 
 /**
- * Lancé pour indiquer qu'un répertoire a été passé en argument à une méthode
- * qui attendait un fichier, ou réciproquement.
+ * LancÃ© pour indiquer qu'un rÃ©pertoire a Ã©tÃ© passÃ© en argument Ã  une mÃ©thode
+ * qui attendait un fichier, ou rÃ©ciproquement.
  * 
  */
 public class ENTInvalidFS_ElementTypeException extends IOException {
@@ -40,8 +40,8 @@ public class ENTInvalidFS_ElementTypeException extends IOException {
 
 	/**
 	 * Construit une exception ENTInvalidFS_ElementTypeException avec le message
-	 * d'information spécifié. Le message d'erreur peut ensuite être retrouvé
-	 * grâce à la méthode getMessage().
+	 * d'information spÃ©cifiÃ©. Le message d'erreur peut ensuite Ãªtre retrouvÃ©
+	 * grÃ¢ce Ã  la mÃ©thode getMessage().
 	 * 
 	 * @param message Le message d'erreur.
 	 */

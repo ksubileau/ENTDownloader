@@ -1,7 +1,7 @@
 /*
  *  DoubleClickOnRowListener.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -23,16 +23,16 @@ package entDownloader.gui.events;
 import entDownloader.core.events.BroadcastListener;
 
 /**
- * Informe les observateurs que l'utilisateur a double-cliqué
- * sur une ligne de l'affichage Détail.
+ * Informe les observateurs que l'utilisateur a double-cliquÃ©
+ * sur une ligne de l'affichage DÃ©tail.
  */
 public interface DoubleClickOnRowListener extends BroadcastListener {
 
 	/**
-	 * Appelée lorsque l'utilisateur a double-cliqué sur une ligne de
-	 * l'affichage Détail. Voir la documentation de
-	 * {@link DoubleClickOnRowEvent} pour plus d'informations à propos de cet
-	 * événement.
+	 * AppelÃ©e lorsque l'utilisateur a double-cliquÃ© sur une ligne de
+	 * l'affichage DÃ©tail. Voir la documentation de
+	 * {@link DoubleClickOnRowEvent} pour plus d'informations Ã  propos de cet
+	 * Ã©vÃ©nement.
 	 */
 	public void onDoubleClickOnRow(DoubleClickOnRowEvent event);
 }

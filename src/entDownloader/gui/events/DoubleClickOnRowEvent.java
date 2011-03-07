@@ -1,7 +1,7 @@
 /*
  *  DoubleClickOnRowEvent.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -23,13 +23,13 @@ package entDownloader.gui.events;
 import entDownloader.core.FS_Element;
 
 /**
- * Un événement qui indique que l'utilisateur a double-cliqué
- * sur une ligne de l'affichage Détail.
+ * Un Ã©vÃ©nement qui indique que l'utilisateur a double-cliquÃ©
+ * sur une ligne de l'affichage DÃ©tail.
  */
 public class DoubleClickOnRowEvent extends GuiEvent {
 
 	/**
-	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * Retourne le type d'Ã©vÃ©nement portÃ© par cette instance. Ici, retourne
 	 * {@link GuiEvent#DOUBLE_CLICK_ON_ROW_TYPE}
 	 */
 	@Override
@@ -38,17 +38,17 @@ public class DoubleClickOnRowEvent extends GuiEvent {
 	}
 
 	/**
-	 * Construit un nouvel évènement DoubleClickOnRowEvent.
+	 * Construit un nouvel Ã©vÃ¨nement DoubleClickOnRowEvent.
 	 */
 	public DoubleClickOnRowEvent() {
 		this(null);
 	}
 
 	/**
-	 * Construit un nouvel évènement DoubleClickOnRowEvent.
+	 * Construit un nouvel Ã©vÃ¨nement DoubleClickOnRowEvent.
 	 * 
 	 * @param target Le {@link entDownloader.core.FS_Element FS_Element}
-	 * sur lequel on a double-cliqué.
+	 * sur lequel on a double-cliquÃ©.
 	 */
 	public DoubleClickOnRowEvent(FS_Element target) {
 		setTarget(target);
@@ -58,15 +58,15 @@ public class DoubleClickOnRowEvent extends GuiEvent {
 
 	/**
 	 * Retourne le {@link entDownloader.core.FS_Element FS_Element} 
-	 * sur lequel on a double-cliqué.
+	 * sur lequel on a double-cliquÃ©.
 	 */
 	public FS_Element getTarget() {
 		return target;
 	}
 
 	/**
-	 * Définit le {@link entDownloader.core.FS_Element FS_Element} 
-	 * sur lequel on a double-cliqué.
+	 * DÃ©finit le {@link entDownloader.core.FS_Element FS_Element} 
+	 * sur lequel on a double-cliquÃ©.
 	 */
 	public void setTarget(FS_Element target) {
 		this.target = target;

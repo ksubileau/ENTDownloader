@@ -1,7 +1,7 @@
 /*
  *  FS_Directory.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -23,7 +23,7 @@ package entDownloader.core;
 import java.util.GregorianCalendar;
 
 /**
- * Représente un dossier stocké sur l'ENT.
+ * ReprÃ©sente un dossier stockÃ© sur l'ENT.
  */
 public class FS_Directory extends FS_Element {
 
@@ -38,7 +38,7 @@ public class FS_Directory extends FS_Element {
 	}
 
 	/**
-	 * Retourne le type d'élément représenté par cette instance. En l'occurrence,
+	 * Retourne le type d'Ã©lÃ©ment reprÃ©sentÃ© par cette instance. En l'occurrence,
 	 * il s'agit d'un dossier.
 	 * 
 	 * @see FS_Element#getType()

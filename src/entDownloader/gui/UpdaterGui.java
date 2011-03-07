@@ -1,7 +1,7 @@
 /*
  *  UpdaterGui.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -64,7 +64,7 @@ public class UpdaterGui {
 							+ CoreConfig.getString("ProductInfo.name")
 							+ " est disponible ! La version <b>"
 							+ updater.version()
-							+ "</b> est téléchargeable sur <a href=\""
+							+ "</b> est tÃ©lÃ©chargeable sur <a href=\""
 							+ updater.location()
 							+ "\">"
 							+ updater.location()
@@ -103,10 +103,10 @@ public class UpdaterGui {
 			prompt = new Runnable() {
 				@Override
 				public void run() {
-					String[] options = new String[] { "Télécharger...",
+					String[] options = new String[] { "TÃ©lÃ©charger...",
 							"Annuler" };
 					int choose = JOptionPane.showOptionDialog(null, content,
-							"ENTDownloader - Mise à jour disponible",
+							"ENTDownloader - Mise Ã  jour disponible",
 							JOptionPane.YES_NO_OPTION,
 							JOptionPane.INFORMATION_MESSAGE, null, options,
 							options[0]);
@@ -121,7 +121,7 @@ public class UpdaterGui {
 				@Override
 				public void run() {
 					JOptionPane.showMessageDialog(owner,
-							"Aucune mise à jour n'est disponible.",
+							"Aucune mise Ã  jour n'est disponible.",
 							"ENTDownloader", JOptionPane.INFORMATION_MESSAGE);
 				}
 			};
@@ -158,7 +158,7 @@ public class UpdaterGui {
 		JScrollPane changesScroll = new JScrollPane(changesPane);
 		changesScroll.setPreferredSize(new Dimension(450, 100));
 		changesScroll.setMaximumSize(new Dimension(450, 1000));
-		changesPane.setCaretPosition(0); //Scroll au début de la liste
+		changesPane.setCaretPosition(0); //Scroll au dÃ©but de la liste
 		return changesScroll;
 	}
 
@@ -184,14 +184,14 @@ public class UpdaterGui {
 			//changesText += "		</dl>";
 		}
 		if (fixed != null) {
-			changesText += "		<dt>Corrigé :</dt>";
+			changesText += "		<dt>CorrigÃ© :</dt>";
 			for (String fix : fixed) {
 				changesText += "			<dd>&ndash; " + fix + "</dd>";
 			}
 			//changesText += "		</ul>";
 		}
 		if (changed != null) {
-			changesText += "		<dt>Modifié :</dt>";
+			changesText += "		<dt>ModifiÃ© :</dt>";
 			for (String change : changed) {
 				changesText += "			<dd>&ndash; " + change + "</dd>";
 			}

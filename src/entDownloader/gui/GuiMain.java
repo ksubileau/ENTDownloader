@@ -1,7 +1,7 @@
 /*
  *  GuiMain.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -47,8 +47,8 @@ public class GuiMain {
 										.getSystemLookAndFeelClassName());
 					} catch (Exception e1) {
 						System.err
-								.println("Impossible de définir le Look & Feel de l'application. "
-										+ "Le rendu visuel peut être dégradé.");
+								.println("Impossible de dÃ©finir le Look & Feel de l'application. "
+										+ "Le rendu visuel peut Ãªtre dÃ©gradÃ©.");
 					}
 				}
 				appIcon = new ImageIcon(getClass().getClassLoader()
@@ -64,7 +64,7 @@ public class GuiMain {
 					String argv = args[i];
 					if (argv.equalsIgnoreCase("-L")) {
 						if (i >= args.length - 1) {
-							System.err.println("Argument n°" + (i + 1)
+							System.err.println("Argument nÂ°" + (i + 1)
 									+ " incomplet : login attendu.");
 						} else {
 							++i;
@@ -73,27 +73,27 @@ public class GuiMain {
 					} else if (argv.equalsIgnoreCase("-pac")) {
 						if (i >= args.length - 1) {
 							System.err
-									.println("Argument n°"
+									.println("Argument nÂ°"
 											+ (i + 1)
 											+ " incomplet : emplacement du fichier PAC attendu.");
 						} else {
 							++i;
 							try {
-								ENTDownloader.getInstance().setProxy(args[i]); //TODO Penser à adapter ici pour garder le nom du fichier pac
+								ENTDownloader.getInstance().setProxy(args[i]); //TODO Penser Ã  adapter ici pour garder le nom du fichier pac
 							} catch (Exception e) {
 								System.err
-										.println("Impossible de définir le proxy à utiliser à partir du fichier"
-												+ " PAC spécifié.");
+										.println("Impossible de dÃ©finir le proxy Ã  utiliser Ã  partir du fichier"
+												+ " PAC spÃ©cifiÃ©.");
 								continue;
 							}
 							System.out
-									.println("Paramètrage du serveur proxy à partir du fichier \""
+									.println("ParamÃ¨trage du serveur proxy Ã  partir du fichier \""
 											+ args[i] + "\".");
 						}
 					} else if (argv.equalsIgnoreCase("-proxy")) {
 						if (i >= args.length - 2) {
 							System.err
-									.println("Argument n°"
+									.println("Argument nÂ°"
 											+ (i + 1)
 											+ " incomplet : adresse du proxy et port attendu. "
 											+ "Consultez le manuel pour plus d'informations.");
@@ -103,7 +103,7 @@ public class GuiMain {
 							try {
 								proxyPort = Integer.parseInt(args[i + 2]);
 							} catch (NumberFormatException e1) {
-								System.err.println("Argument n°" + (i + 3)
+								System.err.println("Argument nÂ°" + (i + 3)
 										+ " invalide : port du proxy attendu.");
 								continue;
 							}
@@ -112,17 +112,17 @@ public class GuiMain {
 										proxyPort);
 							} catch (IllegalArgumentException e) {
 								System.err
-										.println("Argument n°"
+										.println("Argument nÂ°"
 												+ (i + 3)
 												+ " invalide : port du proxy attendu (entre 1 et 65535 compris).");
 								continue;
 							} catch (Exception e) {
 								System.err
-										.println("Impossible de définir le proxy demandé.");
+										.println("Impossible de dÃ©finir le proxy demandÃ©.");
 								continue;
 							}
 							System.out
-									.println("Paramètrage du serveur proxy : \n\tAdresse : "
+									.println("ParamÃ¨trage du serveur proxy : \n\tAdresse : "
 											+ proxyAddr
 											+ "\n\tPort : "
 											+ proxyPort + ".");
@@ -130,7 +130,7 @@ public class GuiMain {
 						}
 					}
 				}
-				//Lancement de l'updater dans un thread séparé.
+				//Lancement de l'updater dans un thread sÃ©parÃ©.
 				new Thread(new Runnable() {
 					@Override
 					public void run() {

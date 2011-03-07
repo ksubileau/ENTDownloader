@@ -1,7 +1,7 @@
 /*
  *  Downloader.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -105,16 +105,16 @@ public class Downloader extends SwingWorker<Void, Void> implements
 	}
 
 	/*
-	 * Cette méthode ne devrait pas être appelé dans l'EDT
+	 * Cette mÃ©thode ne devrait pas Ãªtre appelÃ© dans l'EDT
 	 */
 	private void download() throws IOException, ENTUnauthenticatedUserException {
 		ENTDownloader entd = ENTDownloader.getInstance();
 
 		boolean isThereDirectories = isThereDirectories();
 		boolean isMultiple = downList.size() > 1;
-		/*	Pour optimisation, on considère que tout télécharger 
-		 *  dans un dossier contenant seulement un élément revient à un téléchargement unique,
-		 *  et non à un "télécharger tout"
+		/*	Pour optimisation, on considÃ¨re que tout tÃ©lÃ©charger 
+		 *  dans un dossier contenant seulement un Ã©lÃ©ment revient Ã  un tÃ©lÃ©chargement unique,
+		 *  et non Ã  un "tÃ©lÃ©charger tout"
 		 */
 		boolean isDownloadAll = (isMultiple && downList.size() == entd
 				.getDirectoryContent().size());
@@ -122,14 +122,14 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		if (downList == null || downList.isEmpty())
 			return;
 
-		if (isMultiple || isThereDirectories) { //Sélection multiple ou un dossier seulement
+		if (isMultiple || isThereDirectories) { //SÃ©lection multiple ou un dossier seulement
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			downloadFrame
-					.setOpenWhenFinishedText("Ouvrir le dossier à la fin du téléchargement");
+					.setOpenWhenFinishedText("Ouvrir le dossier Ã  la fin du tÃ©lÃ©chargement");
 		} else { //Selection unique d'un fichier
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			downloadFrame
-					.setOpenWhenFinishedText("Ouvrir le fichier à la fin du téléchargement");
+					.setOpenWhenFinishedText("Ouvrir le fichier Ã  la fin du tÃ©lÃ©chargement");
 			if (!isThereDirectories) {
 				fileChooser.setSelectedFile(new File(fileChooser
 						.getSelectedFile(), downList.get(0).getName()));
@@ -138,8 +138,8 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 		//Save Look & Feel
 		LookAndFeel lookfeel = null;
-		//Il est préférable d'utiliser le filechooser correspondant au SystemLookAndFeel
-		//Sauf pour Linux sur lequel il est très mal fait
+		//Il est prÃ©fÃ©rable d'utiliser le filechooser correspondant au SystemLookAndFeel
+		//Sauf pour Linux sur lequel il est trÃ¨s mal fait
 		if (!System.getProperty("os.name").contains("Linux")) {
 			lookfeel = javax.swing.UIManager.getLookAndFeel();
 			//Set Look & Feel
@@ -165,7 +165,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			return;
 		File saveas = fileChooser.getSelectedFile();
 
-		if (!isThereDirectories) { //Téléchargement de fichiers seulement
+		if (!isThereDirectories) { //TÃ©lÃ©chargement de fichiers seulement
 			long totalsize = 0;
 			int nbFiles = 0;
 			for (Iterator<FS_Element> file = downList.iterator(); file
@@ -202,7 +202,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 		if (isDownloadAll) {
 			entd.getAllFiles(savePath, -1);
-		} else { //Téléchargement unique ou partiel
+		} else { //TÃ©lÃ©chargement unique ou partiel
 			for (Iterator<FS_Element> it = downList.iterator(); it.hasNext();) {
 				FS_Element el = it.next();
 				if (el.isFile()) {
@@ -211,7 +211,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 					try {
 						entd.changeDirectory(el.getName());
 						entd.getAllFiles(
-								new File(saveas, el.getName()).getPath(), -1); //TODO : Gestion profondeur maximale (EX : case à cocher "récursif ?" dans JFileChooser)
+								new File(saveas, el.getName()).getPath(), -1); //TODO : Gestion profondeur maximale (EX : case Ã  cocher "rÃ©cursif ?" dans JFileChooser)
 						entd.changeDirectory("..");
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block

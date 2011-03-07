@@ -1,7 +1,7 @@
 /*
  *  AboutBox.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -37,7 +37,7 @@ import javax.swing.WindowConstants;
 import entDownloader.core.CoreConfig;
 
 /**
- * Boîte de dialogue A propos de...
+ * BoÃ®te de dialogue A propos de...
  */
 public class AboutBox extends javax.swing.JDialog {
 	private static final long serialVersionUID = -3485384134597214576L;
@@ -54,9 +54,9 @@ public class AboutBox extends javax.swing.JDialog {
 	private JLabel productName;
 
 	/**
-	 * Affiche la boîte de dialogue A propos.
+	 * Affiche la boÃ®te de dialogue A propos.
 	 * 
-	 * @param frame La fenêtre propriétaire de cette boîte de dialogue.
+	 * @param frame La fenÃªtre propriÃ©taire de cette boÃ®te de dialogue.
 	 */
 	public AboutBox(JFrame frame) {
 		super(frame);

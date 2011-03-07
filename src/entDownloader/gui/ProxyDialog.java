@@ -1,7 +1,7 @@
 /*
  *  ProxyDialog.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -83,7 +83,7 @@ public class ProxyDialog extends javax.swing.JDialog {
 		}
 		initGUI();
 		setCurrentConfig();
-		this.addWindowListener(new WindowAdapter() { //Restaure le look and feel précédent à la fermeture
+		this.addWindowListener(new WindowAdapter() { //Restaure le look and feel prÃ©cÃ©dent Ã  la fermeture
 			@Override
 			public void windowClosed(WindowEvent arg0) {
 				try {
@@ -113,7 +113,7 @@ public class ProxyDialog extends javax.swing.JDialog {
 	private void initGUI() {
 		try {
 			{
-				this.setTitle("Paramètres de connexion");
+				this.setTitle("ParamÃ¨tres de connexion");
 				this.setIconImage(GuiMain.getAppIcon());
 				this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 				this.setModal(true);
@@ -146,7 +146,7 @@ public class ProxyDialog extends javax.swing.JDialog {
 							.setBorder(BorderFactory
 									.createTitledBorder(
 											null,
-											"Configuration du serveur proxy pour accéder à Internet",
+											"Configuration du serveur proxy pour accÃ©der Ã  Internet",
 											TitledBorder.LEADING,
 											TitledBorder.DEFAULT_POSITION,
 											new java.awt.Font("Segoe UI", 0, 12),
@@ -159,7 +159,7 @@ public class ProxyDialog extends javax.swing.JDialog {
 								GridBagConstraints.NONE,
 								new Insets(0, 0, 0, 0), 0, 0));
 						directBtn
-								.setText("Connection directe à Internet ou détection automatique des paramètres");
+								.setText("Connection directe Ã  Internet ou dÃ©tection automatique des paramÃ¨tres");
 						directBtn.setMnemonic(java.awt.event.KeyEvent.VK_D);
 						getConfTypeGroup().add(directBtn);
 						directBtn.addActionListener(new ActionListener() {
@@ -305,7 +305,7 @@ public class ProxyDialog extends javax.swing.JDialog {
 											.showMessageDialog(
 													ProxyDialog.this,
 													"Veuillez indiquez l'emplacement du fichier de configuration automatique (PAC).",
-													"Paramètre invalide",
+													"ParamÃ¨tre invalide",
 													JOptionPane.ERROR_MESSAGE);
 									pacLocation.grabFocus();
 									return;

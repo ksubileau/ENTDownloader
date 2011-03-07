@@ -1,7 +1,7 @@
 /*
  *  StartDownloadListener.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -21,14 +21,14 @@
 package entDownloader.core.events;
 
 /**
- * Informe les observateurs que le téléchargement d'un fichier débute.
+ * Informe les observateurs que le tÃ©lÃ©chargement d'un fichier dÃ©bute.
  */
 public interface StartDownloadListener extends BroadcastListener {
 
 	/**
-	 * Appelée lorsque le téléchargement d'un fichier débute. Voir la
-	 * documentation de {@link StartDownloadEvent} pour plus d'informations à
-	 * propos de cet événement.
+	 * AppelÃ©e lorsque le tÃ©lÃ©chargement d'un fichier dÃ©bute. Voir la
+	 * documentation de {@link StartDownloadEvent} pour plus d'informations Ã 
+	 * propos de cet Ã©vÃ©nement.
 	 */
 	public void onStartDownload(StartDownloadEvent e);
 }

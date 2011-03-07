@@ -1,7 +1,7 @@
 /*
  *  FS_Element.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -23,7 +23,7 @@ package entDownloader.core;
 import java.util.GregorianCalendar;
 
 /**
- * Représente un élément abstrait (dossier ou fichier) stocké sur l'ENT.
+ * ReprÃ©sente un Ã©lÃ©ment abstrait (dossier ou fichier) stockÃ© sur l'ENT.
  * 
  */
 public abstract class FS_Element {
@@ -35,10 +35,10 @@ public abstract class FS_Element {
 	public static final short FILE = 1;
 
 	/**
-	 * Construit un nouvel élément de système de fichiers (dossier ou fichier).
+	 * Construit un nouvel Ã©lÃ©ment de systÃ¨me de fichiers (dossier ou fichier).
 	 * 
-	 * @param name Nom de l'élément.
-	 * @param dateModif Date de modification de l'élément.
+	 * @param name Nom de l'Ã©lÃ©ment.
+	 * @param dateModif Date de modification de l'Ã©lÃ©ment.
 	 */
 	FS_Element(String name, GregorianCalendar dateModif) {
 		this.name = name;
@@ -46,32 +46,32 @@ public abstract class FS_Element {
 	}
 
 	/**
-	 * Retourne la date de modification de l'élément.
+	 * Retourne la date de modification de l'Ã©lÃ©ment.
 	 */
 	public GregorianCalendar getDateModif() {
 		return dateModif;
 	}
 
 	/**
-	 * Définit la date de modification de l'élément.
+	 * DÃ©finit la date de modification de l'Ã©lÃ©ment.
 	 * 
-	 * @param dateModif La date de modification de l'élément.
+	 * @param dateModif La date de modification de l'Ã©lÃ©ment.
 	 */
 	public void setDateModif(GregorianCalendar dateModif) {
 		this.dateModif = dateModif;
 	}
 
 	/**
-	 * Retourne le nom de l'élément.
+	 * Retourne le nom de l'Ã©lÃ©ment.
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Définit le nom de l'élément.
+	 * DÃ©finit le nom de l'Ã©lÃ©ment.
 	 * 
-	 * @param name Le nouveau nom de l'élément.
+	 * @param name Le nouveau nom de l'Ã©lÃ©ment.
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -86,9 +86,9 @@ public abstract class FS_Element {
 	abstract short getType();
 
 	/**
-	 * Détermine si l'élément représenté par cette instance est un fichier.
+	 * DÃ©termine si l'Ã©lÃ©ment reprÃ©sentÃ© par cette instance est un fichier.
 	 * 
-	 * @return True si l'élément représenté par cette instance est un fichier,
+	 * @return True si l'Ã©lÃ©ment reprÃ©sentÃ© par cette instance est un fichier,
 	 *         false sinon.
 	 */
 	public boolean isFile() {
@@ -96,9 +96,9 @@ public abstract class FS_Element {
 	}
 
 	/**
-	 * Détermine si l'élément représenté par cette instance est un dossier.
+	 * DÃ©termine si l'Ã©lÃ©ment reprÃ©sentÃ© par cette instance est un dossier.
 	 * 
-	 * @return True si l'élément représenté par cette instance est un dossier,
+	 * @return True si l'Ã©lÃ©ment reprÃ©sentÃ© par cette instance est un dossier,
 	 *         false sinon.
 	 */
 	public boolean isDirectory() {

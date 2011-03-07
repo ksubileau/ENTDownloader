@@ -1,7 +1,7 @@
 /*
  *  BroadcastListener.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -20,7 +20,7 @@
  */
 package entDownloader.core.events;
 
-/** Interface implémenté par tous les observateurs */
+/** Interface implÃ©mentÃ© par tous les observateurs */
 public interface BroadcastListener {
 
 }

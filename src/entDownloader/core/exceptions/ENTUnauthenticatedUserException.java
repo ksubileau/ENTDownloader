@@ -1,7 +1,7 @@
 /*
  *  ENTUnauthenticatedUserException.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -21,19 +21,19 @@
 package entDownloader.core.exceptions;
 
 /**
- * Lancé pour indiquer qu'un contrôle d'authentification de l'utilisateur a
- * échoué (c'est à dire que l'utilisateur n'est pas connecté ou que sa session a
- * expiré).
+ * LancÃ© pour indiquer qu'un contrÃ´le d'authentification de l'utilisateur a
+ * Ã©chouÃ© (c'est Ã  dire que l'utilisateur n'est pas connectÃ© ou que sa session a
+ * expirÃ©).
  */
 public class ENTUnauthenticatedUserException extends IllegalStateException {
 
 	private static final long serialVersionUID = -6029089402020384239L;
 	/**
-	 * Indique que l'utilisateur ne s'est pas authentifié.
+	 * Indique que l'utilisateur ne s'est pas authentifiÃ©.
 	 */
 	public static final int UNAUTHENTICATED = 0;
 	/**
-	 * Indique que la session de l'utilisateur a expiré.
+	 * Indique que la session de l'utilisateur a expirÃ©.
 	 */
 	public static final int SESSION_EXPIRED = 1;
 	private int type = UNAUTHENTICATED;
@@ -41,7 +41,7 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 	/**
 	 * Construit une exception ENTUnauthenticatedUserException sans message
 	 * d'information et avec un code d'erreur indiquant que l'utilisateur ne
-	 * s'est pas authentifié.
+	 * s'est pas authentifiÃ©.
 	 */
 	public ENTUnauthenticatedUserException() {
 		super();
@@ -49,9 +49,9 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 
 	/**
 	 * Construit une exception ENTUnauthenticatedUserException avec le message
-	 * d'information spécifié et un code d'erreur indiquant que l'utilisateur ne
-	 * s'est pas authentifié. Le message d'erreur peut ensuite être retrouvé
-	 * grâce à la méthode getMessage().
+	 * d'information spÃ©cifiÃ© et un code d'erreur indiquant que l'utilisateur ne
+	 * s'est pas authentifiÃ©. Le message d'erreur peut ensuite Ãªtre retrouvÃ©
+	 * grÃ¢ce Ã  la mÃ©thode getMessage().
 	 * 
 	 * @param message Le message d'erreur.
 	 */
@@ -61,12 +61,12 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 
 	/**
 	 * Construit une exception ENTUnauthenticatedUserException avec le message
-	 * d'information et le code d'erreur spécifié. Le message d'erreur peut
-	 * ensuite être retrouvé grâce à la méthode getMessage().
+	 * d'information et le code d'erreur spÃ©cifiÃ©. Le message d'erreur peut
+	 * ensuite Ãªtre retrouvÃ© grÃ¢ce Ã  la mÃ©thode getMessage().
 	 * 
 	 * @param message Le message d'erreur.
 	 * @param type Le code d'erreur, qui indique s'il s'agit d'une expiration de
-	 *            session ou si l'utilisateur ne s'est pas authentifié.
+	 *            session ou si l'utilisateur ne s'est pas authentifiÃ©.
 	 */
 	public ENTUnauthenticatedUserException(String message, int type) {
 		super(message);
@@ -77,10 +77,10 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 
 	/**
 	 * Construit une exception ENTUnauthenticatedUserException sans message
-	 * d'information et avec le code d'erreur spécifié.
+	 * d'information et avec le code d'erreur spÃ©cifiÃ©.
 	 * 
 	 * @param type Le code d'erreur, qui indique s'il s'agit d'une expiration de
-	 *            session ou si l'utilisateur ne s'est pas authentifié.
+	 *            session ou si l'utilisateur ne s'est pas authentifiÃ©.
 	 */
 	public ENTUnauthenticatedUserException(int type) {
 		super();
@@ -90,7 +90,7 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 	}
 
 	/**
-	 * Retourne le code d'erreur indiquant la nature de l'échec
+	 * Retourne le code d'erreur indiquant la nature de l'Ã©chec
 	 * d'authentification.
 	 * 
 	 * @see ENTUnauthenticatedUserException#UNAUTHENTICATED

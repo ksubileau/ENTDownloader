@@ -1,7 +1,7 @@
 /*
  *  Updater.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * Gestionnaire de mise à jour. Obtient les informations de mise à jour à partir
+ * Gestionnaire de mise Ã  jour. Obtient les informations de mise Ã  jour Ã  partir
  * du site Internet du logiciel.
  * 
  * @since ENTDownloader 1.0.1
@@ -55,7 +55,7 @@ public class Updater {
 
 	/**
 	 * Construit une nouvelle instance d'Updater et charge le fichier de version
-	 * par défaut.
+	 * par dÃ©faut.
 	 * 
 	 * @throws Exception URL incorrecte, format de fichier invalide ...
 	 */
@@ -65,7 +65,7 @@ public class Updater {
 
 	/**
 	 * Construit une nouvelle instance d'Updater et charge le fichier de version
-	 * indiqué en argument.
+	 * indiquÃ© en argument.
 	 * 
 	 * @param updateURL L'URL du fichier XML contenant les informations de
 	 *            version.
@@ -81,7 +81,7 @@ public class Updater {
 					.newInstance();
 
 			DocumentBuilder constructeur = fabrique.newDocumentBuilder();
-			//Désactive l'affichage des erreurs sur la sortie d'erreur
+			//DÃ©sactive l'affichage des erreurs sur la sortie d'erreur
 			constructeur.setErrorHandler(new ErrorHandler() {
 				@Override
 				public void warning(SAXParseException exception)
@@ -125,16 +125,16 @@ public class Updater {
 	}
 
 	/**
-	 * Détermine si le programme est à jour ou non.
+	 * DÃ©termine si le programme est Ã  jour ou non.
 	 * 
-	 * @return True si le logiciel est à jour, false sinon.
+	 * @return True si le logiciel est Ã  jour, false sinon.
 	 */
 	public boolean isUpToDate() {
 		return !available;
 	}
 
 	/**
-	 * Retourne le numéro de la nouvelle version, ou null si aucune mise à jour
+	 * Retourne le numÃ©ro de la nouvelle version, ou null si aucune mise Ã  jour
 	 * n'est disponible.
 	 */
 	public String version() {
@@ -150,8 +150,8 @@ public class Updater {
 	}
 
 	/**
-	 * Retourne l'adresse de téléchargement de la mise à jour, ou null si le
-	 * programme est à jour.
+	 * Retourne l'adresse de tÃ©lÃ©chargement de la mise Ã  jour, ou null si le
+	 * programme est Ã  jour.
 	 */
 	public String location() {
 		if (!available)
@@ -167,7 +167,7 @@ public class Updater {
 
 	/**
 	 * Retourne la date de publication de la nouvelle version, ou null si aucune
-	 * mise à jour n'est disponible.
+	 * mise Ã  jour n'est disponible.
 	 */
 	public Calendar datePublication() {
 		if (!available)
@@ -182,7 +182,7 @@ public class Updater {
 	}
 
 	/**
-	 * Retourne les nouveautés de la mise à jour, ou null si le programme est à
+	 * Retourne les nouveautÃ©s de la mise Ã  jour, ou null si le programme est Ã 
 	 * jour.
 	 */
 	public ArrayList<String> changelog_added() {
@@ -196,8 +196,8 @@ public class Updater {
 	}
 
 	/**
-	 * Retourne les fonctionnalités modifiées dans la nouvelle version, ou null
-	 * si aucune mise à jour n'est disponible.
+	 * Retourne les fonctionnalitÃ©s modifiÃ©es dans la nouvelle version, ou null
+	 * si aucune mise Ã  jour n'est disponible.
 	 */
 	public ArrayList<String> changelog_changed() {
 		if (!available)
@@ -210,8 +210,8 @@ public class Updater {
 	}
 
 	/**
-	 * Retourne les bogues corrigés par la mise à jour, ou null si le programme
-	 * est à jour.
+	 * Retourne les bogues corrigÃ©s par la mise Ã  jour, ou null si le programme
+	 * est Ã  jour.
 	 */
 	public ArrayList<String> changelog_fixed() {
 		if (!available)
@@ -225,7 +225,7 @@ public class Updater {
 
 	/**
 	 * Retourne les autres changements de la nouvelle version, ou null si aucune
-	 * mise à jour n'est disponible.
+	 * mise Ã  jour n'est disponible.
 	 */
 	public ArrayList<String> changelog_other() {
 		if (!available)
@@ -238,10 +238,10 @@ public class Updater {
 	}
 
 	/**
-	 * Retourne le contenu textuel du premier noeud portant le nom indiqué en
-	 * paramètre, ou null si aucun noeud correspondant n'est trouvé.
+	 * Retourne le contenu textuel du premier noeud portant le nom indiquÃ© en
+	 * paramÃ¨tre, ou null si aucun noeud correspondant n'est trouvÃ©.
 	 * 
-	 * @param tagName Le nom du noeud désiré.
+	 * @param tagName Le nom du noeud dÃ©sirÃ©.
 	 * @throws DOMException
 	 */
 	private String getElementTextContentByTagName(String tagName)
@@ -257,10 +257,10 @@ public class Updater {
 	}
 
 	/**
-	 * Retourne les contenus textuels des noeuds portant le nom indiqué en
-	 * paramètre, ou null si aucun noeud correspondant n'est trouvé.
+	 * Retourne les contenus textuels des noeuds portant le nom indiquÃ© en
+	 * paramÃ¨tre, ou null si aucun noeud correspondant n'est trouvÃ©.
 	 * 
-	 * @param tagName Le nom du noeud désiré.
+	 * @param tagName Le nom du noeud dÃ©sirÃ©.
 	 * @throws DOMException
 	 */
 	private ArrayList<String> getElementsTextContentByTagName(String tagName)

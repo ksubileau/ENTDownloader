@@ -1,7 +1,7 @@
 /*
  *  GuiEvent.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -25,8 +25,8 @@ import entDownloader.core.events.Event;
 public abstract class GuiEvent extends Event {
 
 	/**
-	 * Indique que l'utilisateur a double-cliqué sur une ligne de l'affichage
-	 * Détail.
+	 * Indique que l'utilisateur a double-cliquÃ© sur une ligne de l'affichage
+	 * DÃ©tail.
 	 */
 	public static final int DOUBLE_CLICK_ON_ROW_TYPE = 101;
 

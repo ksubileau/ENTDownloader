@@ -1,7 +1,7 @@
 /*
  *  EndDownloadEvent.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010 KÃ©vin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -23,31 +23,31 @@ package entDownloader.core.events;
 import entDownloader.core.FS_File;
 
 /**
- * Un événement qui indique que le téléchargement d'un
- * fichier s'est terminé.
+ * Un Ã©vÃ©nement qui indique que le tÃ©lÃ©chargement d'un
+ * fichier s'est terminÃ©.
  */
 public class EndDownloadEvent extends Event {
 
 	private FS_File file;
 
 	/**
-	 * Construit un nouvel évènement EndDownloadEvent.
+	 * Construit un nouvel Ã©vÃ¨nement EndDownloadEvent.
 	 */
 	public EndDownloadEvent() {
 		this(null);
 	}
 
 	/**
-	 * Construit un nouvel évènement EndDownloadEvent.
+	 * Construit un nouvel Ã©vÃ¨nement EndDownloadEvent.
 	 * 
-	 * @param file Le fichier dont le téléchargement s'est terminé.
+	 * @param file Le fichier dont le tÃ©lÃ©chargement s'est terminÃ©.
 	 */
 	public EndDownloadEvent(FS_File file) {
 		setFile(file);
 	}
 
 	/**
-	 * Définit le fichier pour lequel le téléchargement s'est terminé.
+	 * DÃ©finit le fichier pour lequel le tÃ©lÃ©chargement s'est terminÃ©.
 	 * 
 	 * @param file
 	 */
@@ -56,14 +56,14 @@ public class EndDownloadEvent extends Event {
 	}
 
 	/**
-	 * Retourne le fichier dont le téléchargement s'est terminé.
+	 * Retourne le fichier dont le tÃ©lÃ©chargement s'est terminÃ©.
 	 */
 	public FS_File getFile() {
 		return file;
 	}
 
 	/**
-	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * Retourne le type d'Ã©vÃ©nement portÃ© par cette instance. Ici, retourne
 	 * {@link Event#END_DOWNLOAD_TYPE}
 	 */
 	@Override
