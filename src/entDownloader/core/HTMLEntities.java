@@ -4,7 +4,7 @@ import java.util.Hashtable;
 
 /**
  * Collection of static methods to convert special and extended
- * characters into HTML entitities and vice versa.<br/>
+ * characters into HTML entities and vice versa.<br/>
  * <br/>
  * Copyright (c) 2004-2005 Tecnick.com S.r.l (www.tecnick.com) Via Ugo Foscolo
  * n.19 - 09045 Quartu Sant'Elena (CA) - ITALY - www.tecnick.com -

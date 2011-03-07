@@ -55,7 +55,7 @@ import entDownloader.core.exceptions.ENTUnauthenticatedUserException;
  * Statut incorrect après une exception quelconque : cela peut poser problème.
  */
 /**
- * Classe principale de l'application, interface entre les classe externe et
+ * Classe principale de l'application, interface entre les classes externes et
  * l'ENT.<br>
  * <b>Classe singleton</b> : utilisez {@link ENTDownloader#getInstance()
  * getInstance()} pour
@@ -497,7 +497,7 @@ public class ENTDownloader extends Observable implements
 	 * Télécharge tous les fichiers contenus dans le dossier courant et ses sous
 	 * dossiers.
 	 * Les fichiers et dossiers seront enregistrés sous le dossier
-	 * <i>destination</i>, sous le même nom que celui sous lequel il sont
+	 * <i>destination</i>, sous le même nom que celui sous lequel ils sont
 	 * stockés sur l'ENT.
 	 * 
 	 * @param destination
@@ -521,7 +521,7 @@ public class ENTDownloader extends Observable implements
 	 * Télécharge tous les fichiers contenus dans le dossier courant et ses sous
 	 * dossiers.
 	 * Les fichiers et dossiers seront enregistrés sous le dossier
-	 * <i>destination</i>, sous le même nom que celui sous lequel il sont
+	 * <i>destination</i>, sous le même nom que celui sous lequel ils sont
 	 * stockés sur l'ENT.
 	 * 
 	 * @param destination
@@ -819,7 +819,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connection à l'ENT.
+	 * Installe un proxy HTTP à utiliser pour la connexion à l'ENT.
 	 * 
 	 * @param host Le nom d'hôte ou l'adresse du proxy.
 	 * @param port Le port du proxy.
@@ -829,7 +829,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connection à l'ENT.
+	 * Installe un proxy HTTP à utiliser pour la connexion à l'ENT.
 	 * 
 	 * @param proxy L'instance de java.net.Proxy à utiliser.
 	 * @see java.net.Proxy
@@ -839,9 +839,9 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Retourne le proxy HTTP utilisé pour la connection à l'ENT.
+	 * Retourne le proxy HTTP utilisé pour la connexion à l'ENT.
 	 * 
-	 * @return Le proxy HTTP utilisé pour la connection à l'ENT.
+	 * @return Le proxy HTTP utilisé pour la connexion à l'ENT.
 	 */
 	public Proxy getProxy() {
 		return browser.getProxy();
@@ -855,7 +855,7 @@ public class ENTDownloader extends Observable implements
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connection à l'ENT en utilisant
+	 * Installe un proxy HTTP à utiliser pour la connexion à l'ENT en utilisant
 	 * un fichier PAC (Proxy auto-configuration).
 	 * 
 	 * @param pacFile Emplacement du fichier PAC

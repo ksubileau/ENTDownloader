@@ -26,7 +26,7 @@ import java.util.Iterator;
 /**
  * Représente un chemin vers un fichier ou un dossier stocké sur l'ENT. Cette
  * classe ne fournit qu'une représentation
- * locale du chemin, et ne fournit par conséquent aucun contrôle sur l'existence
+ * locale du chemin, et n'assure par conséquent aucun contrôle sur l'existence
  * réelle de la ressource représentée.
  */
 public class ENTPath implements Iterable<String> {

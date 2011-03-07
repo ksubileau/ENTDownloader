@@ -99,7 +99,7 @@ public class FS_File extends FS_Element {
 	/**
 	 * Formate une taille en octets pour l'affichage.
 	 * 
-	 * @param size La taille en octets à formatter.
+	 * @param size La taille en octets à formater.
 	 * @return La taille dans une unité appropriée pour l'affichage, suivi de
 	 *         cette unité.
 	 */
@@ -157,7 +157,7 @@ public class FS_File extends FS_Element {
 	}*/
 
 	/**
-	 * Retourne le type d'élément représenté par cette instance. En l'occurence,
+	 * Retourne le type d'élément représenté par cette instance. En l'occurrence,
 	 * il s'agit d'un fichier.
 	 * 
 	 * @see FS_Element#getType()

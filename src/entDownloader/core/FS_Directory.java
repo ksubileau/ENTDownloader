@@ -38,7 +38,7 @@ public class FS_Directory extends FS_Element {
 	}
 
 	/**
-	 * Retourne le type d'élément représenté par cette instance. En l'occurence,
+	 * Retourne le type d'élément représenté par cette instance. En l'occurrence,
 	 * il s'agit d'un dossier.
 	 * 
 	 * @see FS_Element#getType()

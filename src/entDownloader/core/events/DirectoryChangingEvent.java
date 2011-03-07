@@ -42,7 +42,7 @@ public class DirectoryChangingEvent extends Event {
 	}
 
 	/**
-	 * Construit un nouvel évènement DirectoryChangedEvent.
+	 * Construit un nouvel évènement DirectoryChangingEvent.
 	 * 
 	 * @param targetPath Le chemin vers lequel on est en train de migrer.
 	 */

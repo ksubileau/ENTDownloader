@@ -47,7 +47,7 @@ import entDownloader.core.events.Broadcaster;
 import entDownloader.core.events.DownloadedBytesEvent;
 
 /**
- * Gère les connections HTTP et permet des utilisations avancées tels que
+ * Gère les connexions HTTP et permet des utilisations avancées tels que
  * l'obtention des sources HTML
  * et le téléchargement de fichiers.
  * 
@@ -150,7 +150,7 @@ public class Browser {
 			//Encodage des paramètres de la requête
 			encodeParam();
 
-			//création de la connection
+			//création de la connexion
 			URL url;
 			if (method == Method.POST) {
 				url = new URL(this.url);
@@ -232,7 +232,7 @@ public class Browser {
 			//Encodage des paramètres de la requête
 			encodeParam();
 
-			//création de la connection
+			//création de la connexion
 			URL url;
 			if (method == Method.POST) {
 				url = new URL(this.url);
@@ -365,7 +365,7 @@ public class Browser {
 	}
 
 	/**
-	 * Retourne les cookies actuellement définis tel qu'il sont envoyés dans la
+	 * Retourne les cookies actuellement définis tel qu'ils sont envoyés dans la
 	 * requête HTTP.
 	 */
 	public String getCookie() {
@@ -478,7 +478,7 @@ public class Browser {
 	}
 
 	/**
-	 * Retourne la valeur du champ d'entête portant le nom désigné, or null s'il
+	 * Retourne la valeur du champ d'entête portant le nom désigné, ou null s'il
 	 * n'y a pas ce champ dans la réponse.
 	 * 
 	 * @throws IllegalStateException Si aucune requête n'a été effectué.
@@ -499,7 +499,7 @@ public class Browser {
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connection à Internet.
+	 * Installe un proxy HTTP à utiliser pour la connexion à Internet.
 	 * 
 	 * @param host Le nom d'hôte ou l'adresse du proxy.
 	 * @param port Le port du proxy.
@@ -509,7 +509,7 @@ public class Browser {
 	}
 
 	/**
-	 * Installe un proxy HTTP à utiliser pour la connection à Internet.
+	 * Installe un proxy HTTP à utiliser pour la connexion à Internet.
 	 * 
 	 * @param proxy L'instance de java.net.Proxy à utiliser.
 	 * @see java.net.Proxy
@@ -522,9 +522,9 @@ public class Browser {
 	}
 
 	/**
-	 * Retourne le proxy HTTP utilisé pour la connection à Internet.
+	 * Retourne le proxy HTTP utilisé pour la connexion à Internet.
 	 * 
-	 * @return Le proxy HTTP utilisé pour la connection à Internet.
+	 * @return Le proxy HTTP utilisé pour la connexion à Internet.
 	 */
 	public Proxy getProxy() {
 		return proxy;

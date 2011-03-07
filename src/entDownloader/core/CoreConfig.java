@@ -65,7 +65,7 @@ public final class CoreConfig {
 	public static final String refreshDirURL = rootURL
 			+ "tag.{tag}.render.userLayoutRootNode.target.{uP_root}.uP?modeDav=show_current_dir_mode#{uP_root}";
 	/**
-	 * Active ou désactive la reconnection automatique après l'expiration de la
+	 * Active ou désactive la reconnexion automatique après l'expiration de la
 	 * session
 	 */
 	public static final boolean autoLogin = true;

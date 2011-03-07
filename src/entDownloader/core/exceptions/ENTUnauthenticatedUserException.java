@@ -21,7 +21,7 @@
 package entDownloader.core.exceptions;
 
 /**
- * Lancé pour indiqué qu'un contrôle d'authentification de l'utilisateur a
+ * Lancé pour indiquer qu'un contrôle d'authentification de l'utilisateur a
  * échoué (c'est à dire que l'utilisateur n'est pas connecté ou que sa session a
  * expiré).
  */
@@ -91,7 +91,7 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 
 	/**
 	 * Retourne le code d'erreur indiquant la nature de l'échec
-	 * d'authentificataion.
+	 * d'authentification.
 	 * 
 	 * @see ENTUnauthenticatedUserException#UNAUTHENTICATED
 	 * @see ENTUnauthenticatedUserException#SESSION_EXPIRED
