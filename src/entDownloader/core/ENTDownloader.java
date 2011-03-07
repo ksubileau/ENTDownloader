@@ -120,7 +120,7 @@ public class ENTDownloader extends Observable implements
 	 * @param login Le nom d'utilisatateur pour la connexion.
 	 * @param password Mot de passe de connexion.
 	 * @return True en cas de réussite, ou false si l'authentification a échoué.
-	 * @throws ParseException Impossible d'obtenir les paramètres de requête.
+	 * @throws ParseException Impossible d'obtenir les informations de session.
 	 */
 	public boolean login(String login, String password)
 			throws java.io.IOException, ParseException {

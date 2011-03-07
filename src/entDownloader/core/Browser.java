@@ -213,7 +213,7 @@ public class Browser {
 	 * 
 	 * @param destinationPath Le chemin où le fichier sera enregistrer
 	 * @throws FileNotFoundException Voir le constructeur de
-	 *             java.io.FileOutputStream}
+	 *             java.io.FileOutputStream
 	 */
 	public void downloadFile(String destinationPath)
 			throws FileNotFoundException {
