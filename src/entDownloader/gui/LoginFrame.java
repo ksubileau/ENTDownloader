@@ -212,7 +212,7 @@ public class LoginFrame extends javax.swing.JFrame {
 				}
 				{
 					mdp = new JPasswordField();
-					mdp.setEchoChar('');
+					mdp.setEchoChar('•');
 					passLabel.setLabelFor(mdp);
 					mdp.addKeyListener(new KeyAdapter() {
 						@Override
