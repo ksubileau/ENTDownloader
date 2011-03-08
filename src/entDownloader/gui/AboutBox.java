@@ -1,7 +1,7 @@
 /*
  *  AboutBox.java
  *      
- *  Copyright 2010 Kévin Subileau. 
+ *  Copyright 2010-2011 Kévin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -92,12 +92,12 @@ public class AboutBox extends javax.swing.JDialog {
 			copyright = new JLabel();
 			getContentPane().add(copyright);
 			copyright
-					.setText("<html>Copyright (c) 2010 "
+					.setText("<html>Copyright (c) 2010-2011 "
 							+ CoreConfig.getString("ProductInfo.author")
 							+ ". "
 							+ CoreConfig.getString("ProductInfo.name")
 							+ " est un logiciel libre. Vous pouvez le redistribuez et/ou le modifiez sous les termes de la licence GNU General Public License.</html>");
-			copyright.setBounds(12, 129, 296, 43);
+			copyright.setBounds(12, 129, 350, 50);
 			copyright.setFont(new java.awt.Font("Segoe UI", 0, 10));
 		}
 		{
@@ -149,7 +149,7 @@ public class AboutBox extends javax.swing.JDialog {
 			close = new JButton();
 			getContentPane().add(close);
 			close.setText("Fermer");
-			close.setBounds(269, 176, 80, 27);
+			close.setBounds(269, 183, 80, 27);
 			close.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -183,7 +183,7 @@ public class AboutBox extends javax.swing.JDialog {
 		if (owner != null) {
 			setIconImage(owner.getIconImage());
 		}
-		this.setSize(380, 240);
+		this.setSize(380, 247);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setModal(true);
 		setLocationRelativeTo(owner);
