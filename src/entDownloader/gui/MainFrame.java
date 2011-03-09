@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.LinkedList;
@@ -86,6 +87,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private ENTDownloader entd = ENTDownloader.getInstance();
 
 	private JMenuItem dld;
+	private JMenuItem onlineHelp;
 	private JMenuItem dldAll;
 	private JMenuItem website;
 	private JMenuItem checkUpdate;
@@ -571,6 +573,28 @@ public class MainFrame extends javax.swing.JFrame implements
 					help = new JMenu();
 					jMenuBar.add(help);
 					help.setText("Aide");
+					{
+						onlineHelp = new JMenuItem();
+						help.add(onlineHelp);
+						onlineHelp.setText("Aide en ligne...");
+						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+						onlineHelp.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								try {
+									Misc.browse(CoreConfig
+											.getString("ProductInfo.manpage")
+											.replaceAll("\\{version\\}",
+												java.net.URLEncoder.encode(
+													CoreConfig.getString("ProductInfo.version"),
+													"UTF-8")
+												)
+											);
+								} catch (UnsupportedEncodingException e1) {
+									// TODO Auto-generated catch block
+								}
+							}
+						});
+					}
 					{
 						website = new JMenuItem();
 						help.add(website);
