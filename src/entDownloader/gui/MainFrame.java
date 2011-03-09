@@ -520,11 +520,23 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						dld = new JMenuItem();
 						dld.setAction(dldAction);
+						dld.setAccelerator(
+								KeyStroke.getKeyStroke(
+										java.awt.event.KeyEvent.VK_T,
+										ActionEvent.CTRL_MASK
+									)
+								);
 						jMenu1.add(dld);
 					}
 					{
 						dldAll = new JMenuItem();
 						dldAll.setAction(dldAllAction);
+						dldAll.setAccelerator(
+								KeyStroke.getKeyStroke(
+										java.awt.event.KeyEvent.VK_T,
+										ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK
+									)
+								);
 						jMenu1.add(dldAll);
 					}
 					{
@@ -565,6 +577,12 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						exit = new JMenuItem();
 						jMenu1.add(exit);
+						exit.setAccelerator(
+								KeyStroke.getKeyStroke(
+										java.awt.event.KeyEvent.VK_Q,
+										ActionEvent.CTRL_MASK
+									)
+								);
 						exit.setText("Quitter");
 						exit.addActionListener(new ExitForm());
 					}
