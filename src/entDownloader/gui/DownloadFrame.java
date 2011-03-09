@@ -94,8 +94,7 @@ public class DownloadFrame extends javax.swing.JDialog {
 							GridBagConstraints.CENTER, GridBagConstraints.NONE,
 							new Insets(0, 0, 0, 0), 0, 0));
 			abort.setText("Annuler");
-			abort.setLocation(306, 227);
-			abort.setBounds(290, 95, 79, 26);
+			abort.setBounds(308, 95, 79, 26);
 			abort.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -106,13 +105,13 @@ public class DownloadFrame extends javax.swing.JDialog {
 		{
 			downProgress = new JProgressBar();
 			getContentPane().add(downProgress);
-			downProgress.setBounds(2, 26, 380, 22);
+			downProgress.setBounds(8, 26, 380, 22);
 			downProgress.setStringPainted(true);
 		}
 		{
 			filename = new JLabel();
 			getContentPane().add(filename);
-			filename.setBounds(106, 7, 261, 16);
+			filename.setBounds(118, 7, 261, 16);
 		}
 		{
 			jLabel2 = new JLabel();
@@ -124,38 +123,38 @@ public class DownloadFrame extends javax.swing.JDialog {
 			jLabel3 = new JLabel();
 			getContentPane().add(jLabel3);
 			jLabel3.setText("Téléchargé(s) :");
-			jLabel3.setBounds(8, 51, 83, 16);
+			jLabel3.setBounds(8, 51, 97, 16);
 		}
 		{
 			globalProgress = new JLabel();
 			getContentPane().add(globalProgress);
-			globalProgress.setBounds(97, 51, 270, 16);
+			globalProgress.setBounds(105, 51, 270, 16);
 		}
 		{
 			jLabel5 = new JLabel();
 			getContentPane().add(jLabel5);
 			jLabel5.setText("Total :");
-			jLabel5.setBounds(8, 71, 33, 16);
+			jLabel5.setBounds(8, 71, 41, 16);
 		}
 		{
 			remaining = new JLabel();
 			getContentPane().add(remaining);
-			remaining.setBounds(47, 71, 320, 16);
+			remaining.setBounds(53, 71, 320, 16);
 		}
 		{
 			openWhenFinished = new JCheckBox();
 			getContentPane().add(openWhenFinished);
 			openWhenFinished
 					.setText("Ouvrir le dossier à la fin du téléchargement");
-			openWhenFinished.setBounds(10, 100, 269, 18);
+			openWhenFinished.setBounds(8, 100, 295, 18);
 			openWhenFinished.setVisible(false);
 		}
 		JFrame owner = (JFrame) getOwner();
 		if (owner != null) {
 			setIconImage(owner.getIconImage());
 		}
-		this.setPreferredSize(new java.awt.Dimension(404, 164));
-		this.setSize(404, 164);
+		this.setPreferredSize(new java.awt.Dimension(404, 157));
+		this.setSize(404, 157);
 		this.setResizable(false);
 		setLocationRelativeTo(owner);
 		pack();
