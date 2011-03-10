@@ -20,6 +20,7 @@
  */
 package entDownloader.gui.Components.filesViews.detailview;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -46,6 +47,7 @@ public class DetailsTable extends JTable {
 	private void setOtherProperties() {
 		this.getTableHeader().setReorderingAllowed(false);
 		this.setShowGrid(false);
+		this.setSelectionBackground(new Color(208, 227, 252));
 		//this.setColumnSelectionAllowed(false);
 		//this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	}

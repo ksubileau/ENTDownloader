@@ -20,7 +20,6 @@
  */
 package entDownloader.gui.Components.filesViews.detailview;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JTable;
@@ -47,11 +46,11 @@ public class DetailsTableCellRenderer extends DefaultTableCellRenderer {
 		setValue(value);
 		setForeground(table.getForeground());
 
-		if (table.isRowSelected(row) && table.isFocusOwner()) {
-			border.setLineColor(new Color(125, 162, 206));
+		if (isSelected) {
+			border.setLineColor(table.getSelectionBackground());
 			border.setBorderInsets(getBorder().getBorderInsets(this));
 			setBorder(border);
-			setBackground(new Color(208, 227, 252));
+			setBackground(table.getSelectionBackground());
 		} else {
 			setBorder(noFocusBorder);
 			setBackground(table.getBackground());
