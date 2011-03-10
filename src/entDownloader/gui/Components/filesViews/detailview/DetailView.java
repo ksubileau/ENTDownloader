@@ -80,16 +80,25 @@ public class DetailView extends ListView {
 			@Override
 			public void mouseClicked(MouseEvent event) {
 				if (SwingUtilities.isRightMouseButton(event)) {
-					int select = table.rowAtPoint(event.getPoint());
-					if (select < 0) {
+					int selectedRow = table.rowAtPoint(event.getPoint());
+					if (selectedRow < 0) {
 						table.clearSelection();
-					} else {
-						table.getSelectionModel().setSelectionInterval(select,
-								select);
+					} else if (!table.isRowSelected(selectedRow)){
+						table.getSelectionModel().setSelectionInterval(selectedRow,
+								selectedRow);
 					}
 
 					((MainFrame) GuiMain.getMainFrame()).getPopupMenu().show(
 							table, event.getX(), event.getY());
+				}
+			}
+		});
+		scroll.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent event) {
+				if (SwingUtilities.isRightMouseButton(event)) {
+					((MainFrame) GuiMain.getMainFrame()).getPopupMenu().show(
+							scroll, event.getX(), event.getY());
 				}
 			}
 		});
