@@ -67,7 +67,6 @@ public class Misc {
 					icon = (Icon) UIManager.get("FileView.fileIcon");
 				}
 				fileIcons.put(extension, icon);
-				fileDescription.put(extension, icon.toString());
 			}
 		} else {
 			icon = (Icon) UIManager.get("FileView.fileIcon");
