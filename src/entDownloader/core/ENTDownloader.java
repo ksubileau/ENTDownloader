@@ -470,7 +470,7 @@ public class ENTDownloader extends Observable implements
 		browser.clearParam();
 		browser.setUrl(urlBuilder(CoreConfig.downloadFileURL));
 		browser.setMethod(Browser.Method.POST);
-		browser.setParam("downloadFile", HTMLEntities.htmlentities(name));
+		browser.setParam("downloadFile", name);
 		browser.setFollowRedirects(false);
 		browser.setCookieField("JSESSIONID", sessionid);
 		sizeDownloaded = 0;
