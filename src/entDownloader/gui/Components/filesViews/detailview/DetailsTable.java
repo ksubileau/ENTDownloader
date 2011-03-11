@@ -22,6 +22,7 @@ package entDownloader.gui.Components.filesViews.detailview;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -40,14 +41,18 @@ public class DetailsTable extends JTable {
 
 	public DetailsTable() {
 		super();
-		addMouseActions();
 		setOtherProperties();
+		addMouseActions();
 	}
 
 	private void setOtherProperties() {
 		this.getTableHeader().setReorderingAllowed(false);
 		this.setShowGrid(false);
 		this.setSelectionBackground(new Color(208, 227, 252));
+		//Remove default enter key action
+		getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
+				put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),"none");
+
 		//this.setColumnSelectionAllowed(false);
 		//this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	}
