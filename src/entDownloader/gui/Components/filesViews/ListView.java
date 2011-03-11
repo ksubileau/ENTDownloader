@@ -22,6 +22,7 @@ package entDownloader.gui.Components.filesViews;
 
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.event.KeyListener;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -79,6 +80,17 @@ public abstract class ListView extends JPanel {
 	 * @return the current selected files.
 	 */
 	public abstract FS_Element[] getSelectedFiles();
+	
+	/**
+	 * This method returns the number of selected files from the view.
+	 * 
+	 * @return the number of selected files.
+	 * @since 1.0.2
+	 */
+	public int getSelectedFilesCount()
+	{
+		return getSelectedFiles().length;
+	}
 
 	/**
 	 * Update the view from the content specified
@@ -118,4 +130,16 @@ public abstract class ListView extends JPanel {
 	 * @see javax.swing.JList#getSelectionModel()
 	 */
 	public abstract ListSelectionModel getSelectionModel();
+
+	/**
+	 * Adds the specified key listener to receive key events from the view
+	 * component (JTable or a JList). If keyListener is null, no exception 
+	 * is thrown and no action is performed.
+	 *  
+	 * @param keyListener the key listener to add
+	 * @since 1.0.2
+	 */
+	public void addKeyListenerOnView(KeyListener keyListener) {
+		getViewComponent().addKeyListener(keyListener);
+	}
 }
