@@ -130,6 +130,11 @@ public class DetailView extends ListView {
 		}
 		return files;
 	}
+	
+	@Override 
+	public int getSelectedFilesCount() {
+		return table.getSelectedRowCount();
+	}
 
 	@Override
 	public void addListSelectionListener(ListSelectionListener listener) {
