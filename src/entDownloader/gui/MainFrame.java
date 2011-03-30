@@ -1124,7 +1124,12 @@ public class MainFrame extends javax.swing.JFrame implements
 		//Supprime l'action par défaut de la touche Entrée
 		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
 				put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),"none");
+		
+		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
+				put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,0),"prevDirAction");
 
+		fileView.getViewActionMap().put("prevDirAction", prevDirAction);
+		
 		if (BriefView.class == view) {
 			listViewBtn.setSelected(true);
 			detailsViewBtn.setSelected(false);
