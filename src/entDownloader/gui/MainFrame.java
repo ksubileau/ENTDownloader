@@ -137,6 +137,8 @@ public class MainFrame extends javax.swing.JFrame implements
 	private int historyPos;
 	private JMenuItem homeMenuIt;
 	private HomeDirAction homeDirAction;
+	private ParentDirAction parentDirAction;
+	private JMenuItem parentMenuIt;
 	
 	/**
 	 * Navigue vers le dossier racine.
@@ -169,6 +171,39 @@ public class MainFrame extends javax.swing.JFrame implements
 		}
 		
 	}
+	
+	/**
+	 * Navigue vers le dossier parent.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class ParentDirAction extends AbstractAction {
+		
+		private static final long serialVersionUID = 113366319192328568L;
+
+		/**
+		 * Construit une nouvelle action ParentDirAction
+		 */
+		public ParentDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Dossier parent");
+			putValue(Action.NAME, "Dossier parent");
+			ImageIcon icon = loadIcon("parent.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_UP,
+					ActionEvent.ALT_MASK
+			));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			changeDirectory("..");
+		}
+		
+	}
+	
 	/**
 	 * Demande de téléchargement de un ou plusieurs fichiers
 	 * 
@@ -253,6 +288,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		dldAllAction.putValue(Action.SHORT_DESCRIPTION,
 				"Télécharger tous les dossiers et fichiers du dossier courant");
 		homeDirAction = new HomeDirAction();
+		parentDirAction = new ParentDirAction();
 		historyList = new LinkedList<String>();
 		historyPos = 0;
 		initGUI();
@@ -425,23 +461,17 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					parentBtn = new JButton();
-					adressBar.add(parentBtn, new GridBagConstraints(3, 0, 1, 1,
-							0.0, 0.0, GridBagConstraints.CENTER,
-							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
-							0));
-					setIcon(parentBtn, "parent.png");
 					parentBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
 					parentBtn.setMinimumSize(new java.awt.Dimension(24, 24));
 					parentBtn.setPreferredSize(new java.awt.Dimension(24, 24));
 					parentBtn.setMaximumSize(new java.awt.Dimension(24, 24));
 					parentBtn.setFocusable(false);
-					parentBtn.setToolTipText("Dossier parent");
-					parentBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory("..");
-						}
-					});
+					parentBtn.setAction(parentDirAction);
+					parentBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
+					adressBar.add(parentBtn, new GridBagConstraints(3, 0, 1, 1,
+							0.0, 0.0, GridBagConstraints.CENTER,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
 				}
 				{
 					adressField = new JTextField();
@@ -593,6 +623,11 @@ public class MainFrame extends javax.swing.JFrame implements
 						homeMenuIt = new JMenuItem();
 						homeMenuIt.setAction(homeDirAction);
 						navigationMenu.add(homeMenuIt);
+					}
+					{
+						parentMenuIt = new JMenuItem();
+						parentMenuIt.setAction(parentDirAction);
+						navigationMenu.add(parentMenuIt);
 					}
 				}
 				{
@@ -1037,7 +1072,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	@Override
 	public void onDirectoryChanged(DirectoryChangedEvent event) {
 		adressField.setText(entd.getDirectoryPath());
-		parentBtn.setEnabled(!adressField.getText().equals("/"));
+		parentDirAction.setEnabled(!adressField.getText().equals("/"));
 		statusInfo.setText(dirInfos());
 		setUsedSpace();
 		userName.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
