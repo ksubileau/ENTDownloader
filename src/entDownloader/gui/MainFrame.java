@@ -129,6 +129,11 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem refreshItem;
 	private DownloadAction dldAction;
 	private DownloadAction dldAllAction;
+	private HomeDirAction homeDirAction;
+	private ParentDirAction parentDirAction;
+	private JMenuItem parentMenuIt;
+	private PreviousDirAction prevDirAction;
+	private NextDirAction nextDirAction;
 
 	private LinkedList<String> historyList;
 	/**
@@ -136,9 +141,8 @@ public class MainFrame extends javax.swing.JFrame implements
 	 */
 	private int historyPos;
 	private JMenuItem homeMenuIt;
-	private HomeDirAction homeDirAction;
-	private ParentDirAction parentDirAction;
-	private JMenuItem parentMenuIt;
+	private JMenuItem nextDirMenuIt;
+	private JMenuItem prevDirMenuIt;
 	
 	/**
 	 * Navigue vers le dossier racine.
@@ -200,6 +204,121 @@ public class MainFrame extends javax.swing.JFrame implements
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			changeDirectory("..");
+		}
+		
+	}
+	
+	/**
+	 * Retourne au dossier précédent dans l'historique de navigation.
+	 * Si l'on est déjà au plus ancien dossier visité, aucune action n'est
+	 * effectuée.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class PreviousDirAction extends AbstractAction {
+		
+		private static final long serialVersionUID = 193366319192328568L;
+		private AbstractAction nextDirAction;
+
+		/**
+		 * Construit une nouvelle action PreviousDirAction
+		 */
+		public PreviousDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Précédent");
+			putValue(Action.NAME, "Précédent");
+			ImageIcon icon = loadIcon("previous.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_LEFT,
+					ActionEvent.ALT_MASK
+			));
+		}
+		
+		public void setNextDirAction(AbstractAction nextDirAction) {
+			this.nextDirAction = nextDirAction;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if(historyPos <= 0)
+				return;
+
+			changeDirectory(historyList.get(historyPos - 1),
+					false);
+			--historyPos;
+			if(nextDirAction != null)
+			{
+				nextDirAction.setEnabled(true);
+				nextDirAction.putValue(Action.SHORT_DESCRIPTION, "Avancer à "
+						+ historyList.get(historyPos + 1));
+			}
+			if (historyPos < 1) {
+				setEnabled(false);
+				
+				putValue(Action.SHORT_DESCRIPTION, "Précédent");
+			} else {
+				putValue(Action.SHORT_DESCRIPTION, "Retour à "
+						+ historyList.get(historyPos - 1));
+			}
+		}
+		
+	}
+	
+	/**
+	 * Navigue vers le dossier suivant dans l'historique de navigation.
+	 * Si l'on est déjà au dossier le plus récemment visité, aucune action 
+	 * n'est effectuée.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class NextDirAction extends AbstractAction {
+		
+		private static final long serialVersionUID = 193366319192328568L;
+		private AbstractAction prevDirAction;
+		
+		/**
+		 * Construit une nouvelle action NextDirAction
+		 */
+		public NextDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Suivant");
+			putValue(Action.NAME, "Suivant");
+			ImageIcon icon = loadIcon("next.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_RIGHT,
+					ActionEvent.ALT_MASK
+			));
+		}
+		
+		public void setPreviousDirAction(AbstractAction prevDirAction) {
+			this.prevDirAction = prevDirAction;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			int historySize = historyList.size();
+			if(historyPos >= historySize -1)
+				return;
+
+			changeDirectory(historyList.get(historyPos + 1),
+					false);
+			++historyPos;
+			if (historyPos >= historySize - 1) {
+				setEnabled(false);
+			} else {
+				putValue(Action.SHORT_DESCRIPTION, "Avancer à "
+						+ historyList.get(historyPos + 1));
+			}
+			if(prevDirAction != null)
+			{
+				prevDirAction.setEnabled(true);
+				prevDirAction.putValue(Action.SHORT_DESCRIPTION, "Retour à "
+						+ historyList.get(historyPos - 1));
+			}
 		}
 		
 	}
@@ -289,6 +408,12 @@ public class MainFrame extends javax.swing.JFrame implements
 				"Télécharger tous les dossiers et fichiers du dossier courant");
 		homeDirAction = new HomeDirAction();
 		parentDirAction = new ParentDirAction();
+		prevDirAction = new PreviousDirAction();
+		prevDirAction.setEnabled(false);
+		nextDirAction = new NextDirAction();
+		nextDirAction.setEnabled(false);
+		prevDirAction.setNextDirAction(nextDirAction);
+		nextDirAction.setPreviousDirAction(prevDirAction);
 		historyList = new LinkedList<String>();
 		historyPos = 0;
 		initGUI();
@@ -384,66 +509,31 @@ public class MainFrame extends javax.swing.JFrame implements
 				adressBar.setLayout(adressBarLayout);
 				{
 					prevBtn = new JButton();
-					adressBar.add(prevBtn, new GridBagConstraints(0, 0, 1, 1,
-							0.0, 0.0, GridBagConstraints.CENTER,
-							GridBagConstraints.NONE, new Insets(0, 1, 0, 0), 0,
-							0));
-					setIcon(prevBtn, "previous.png");
 					prevBtn.setMinimumSize(new java.awt.Dimension(24, 24));
 					prevBtn.setPreferredSize(new java.awt.Dimension(21, 21));
 					prevBtn.setMaximumSize(new java.awt.Dimension(24, 24));
 					prevBtn.setFocusable(false);
 					prevBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					prevBtn.setToolTipText("Précédent");
-					prevBtn.setEnabled(false);
-					prevBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory(historyList.get(historyPos - 1),
-									false);
-							--historyPos;
-							nextBtn.setEnabled(true);
-							nextBtn.setToolTipText("Avancer à "
-									+ historyList.get(historyPos + 1));
-							if (historyPos < 1) {
-								prevBtn.setEnabled(false);
-								prevBtn.setToolTipText("Précédent");
-							} else {
-								prevBtn.setToolTipText("Retour à "
-										+ historyList.get(historyPos - 1));
-							}
-						}
-					});
+					prevBtn.setAction(prevDirAction);
+					prevBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
+					adressBar.add(prevBtn, new GridBagConstraints(0, 0, 1, 1,
+							0.0, 0.0, GridBagConstraints.CENTER,
+							GridBagConstraints.NONE, new Insets(0, 1, 0, 0), 0,
+							0));
 				}
 				{
 					nextBtn = new JButton();
-					adressBar.add(nextBtn, new GridBagConstraints(1, 0, 1, 1,
-							0.0, 0.0, GridBagConstraints.CENTER,
-							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
-							0));
-					setIcon(nextBtn, "next.png");
 					nextBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
 					nextBtn.setMinimumSize(new java.awt.Dimension(24, 24));
 					nextBtn.setPreferredSize(new java.awt.Dimension(24, 24));
 					nextBtn.setMaximumSize(new java.awt.Dimension(24, 24));
 					nextBtn.setFocusable(false);
-					nextBtn.setToolTipText("Suivant");
-					nextBtn.setEnabled(false);
-					nextBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory(historyList.get(historyPos + 1),
-									false);
-							++historyPos;
-							if (historyPos >= historyList.size() - 1) {
-								nextBtn.setEnabled(false);
-							} else {
-								nextBtn.setToolTipText("Avancer à "
-										+ historyList.get(historyPos + 1));
-							}
-							prevBtn.setEnabled(true);
-						}
-					});
+					nextBtn.setAction(nextDirAction);
+					nextBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
+					adressBar.add(nextBtn, new GridBagConstraints(1, 0, 1, 1,
+							0.0, 0.0, GridBagConstraints.CENTER,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
 				}
 				{
 					homeBtn = new JButton();
@@ -628,6 +718,16 @@ public class MainFrame extends javax.swing.JFrame implements
 						parentMenuIt = new JMenuItem();
 						parentMenuIt.setAction(parentDirAction);
 						navigationMenu.add(parentMenuIt);
+					}
+					{
+						prevDirMenuIt = new JMenuItem();
+						prevDirMenuIt.setAction(prevDirAction);
+						navigationMenu.add(prevDirMenuIt);
+					}
+					{
+						nextDirMenuIt = new JMenuItem();
+						nextDirMenuIt.setAction(nextDirAction);
+						navigationMenu.add(nextDirMenuIt);
 					}
 				}
 				{
@@ -1114,11 +1214,11 @@ public class MainFrame extends javax.swing.JFrame implements
 			--histSize;
 		}
 		historyPos = histSize - 1;
-		nextBtn.setEnabled(false);
-		nextBtn.setToolTipText("Suivant");
+		nextDirAction.setEnabled(false);
+		nextDirAction.putValue(Action.SHORT_DESCRIPTION, "Suivant");
 		if (histSize > 1) {
-			prevBtn.setEnabled(true);
-			prevBtn.setToolTipText("Retour à "
+			prevDirAction.setEnabled(true);
+			prevDirAction.putValue(Action.SHORT_DESCRIPTION, "Retour à "
 					+ historyList.get(historyPos - 1));
 		}
 	}
