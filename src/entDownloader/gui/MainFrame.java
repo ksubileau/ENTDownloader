@@ -87,6 +87,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private ENTDownloader entd = ENTDownloader.getInstance();
 
 	private JMenuItem dld;
+	private JMenu navigationMenu;
 	private JMenuItem onlineHelp;
 	private JMenuItem dldAll;
 	private JMenuItem website;
@@ -555,6 +556,11 @@ public class MainFrame extends javax.swing.JFrame implements
 						exit.setText("Quitter");
 						exit.addActionListener(new ExitForm());
 					}
+				}
+				{
+					navigationMenu = new JMenu();
+					jMenuBar.add(navigationMenu);
+					navigationMenu.setText("Navigation");
 				}
 				{
 					affichMenu = new JMenu();
