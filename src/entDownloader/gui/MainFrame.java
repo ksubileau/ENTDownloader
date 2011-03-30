@@ -540,37 +540,6 @@ public class MainFrame extends javax.swing.JFrame implements
 						jMenu1.add(dldAll);
 					}
 					{
-						affichMenu = new JMenu();
-						jMenu1.add(affichMenu);
-						affichMenu.setText("Affichage");
-						{
-							ListItem = new JRadioButtonMenuItem();
-							affichMenu.add(ListItem);
-							setIcon(ListItem, "listview.png");
-							ListItem.setText("Liste");
-							ListItem.addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									setFileView(BriefView.class);
-								}
-							});
-							getAffichGroup().add(ListItem);
-						}
-						{
-							DetailItem = new JRadioButtonMenuItem();
-							affichMenu.add(DetailItem);
-							setIcon(DetailItem, "detailsview.png");
-							DetailItem.setText("Détails");
-							DetailItem.addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									setFileView(DetailView.class);
-								}
-							});
-							getAffichGroup().add(DetailItem);
-						}
-					}
-					{
 						jSeparator1 = new JSeparator();
 						jMenu1.add(jSeparator1);
 					}
@@ -585,6 +554,37 @@ public class MainFrame extends javax.swing.JFrame implements
 								);
 						exit.setText("Quitter");
 						exit.addActionListener(new ExitForm());
+					}
+				}
+				{
+					affichMenu = new JMenu();
+					jMenuBar.add(affichMenu);
+					affichMenu.setText("Affichage");
+					{
+						ListItem = new JRadioButtonMenuItem();
+						affichMenu.add(ListItem);
+						setIcon(ListItem, "listview.png");
+						ListItem.setText("Liste");
+						ListItem.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								setFileView(BriefView.class);
+							}
+						});
+						getAffichGroup().add(ListItem);
+					}
+					{
+						DetailItem = new JRadioButtonMenuItem();
+						affichMenu.add(DetailItem);
+						setIcon(DetailItem, "detailsview.png");
+						DetailItem.setText("Détails");
+						DetailItem.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								setFileView(DetailView.class);
+							}
+						});
+						getAffichGroup().add(DetailItem);
 					}
 				}
 				{
@@ -659,11 +659,6 @@ public class MainFrame extends javax.swing.JFrame implements
 							}
 						});
 					}
-					/*{
-						guide = new JMenuItem();
-						help.add(guide);
-						guide.setText("Guide de l'utilisateur");
-					}*/
 					{
 						jSeparator2 = new JSeparator();
 						help.add(jSeparator2);
