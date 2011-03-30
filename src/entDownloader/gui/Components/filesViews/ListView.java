@@ -24,6 +24,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.KeyListener;
 
+import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -168,5 +169,17 @@ public abstract class ListView extends JPanel {
 	 */
 	public InputMap getViewInputMap(int condition) {
 		return getViewComponent().getInputMap(condition);
+	}
+	
+	/**
+	 * Returns the ActionMap used to determine what Action to fire for 
+	 * particular KeyStroke binding. The returned ActionMap, unless 
+	 * otherwise set, will have the ActionMap from the UI set as the parent.
+	 * 
+	 * @return the ActionMap containing the key/action bindings
+	 * @since 1.0.2
+	 */
+	public ActionMap getViewActionMap() {
+		return getViewComponent().getActionMap();
 	}
 }
