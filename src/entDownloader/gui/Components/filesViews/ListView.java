@@ -24,6 +24,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.KeyListener;
 
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -152,8 +153,8 @@ public abstract class ListView extends JPanel {
 	 * 			(JTable or a JList) has focus.
 	 * @since 1.0.2
 	 */
-	public void getViewInputMap() {
-		getViewComponent().getInputMap();
+	public InputMap getViewInputMap() {
+		return getViewComponent().getInputMap();
 	}
 	
 	/**
@@ -165,7 +166,7 @@ public abstract class ListView extends JPanel {
 	 * @return the InputMap for the specified condition
 	 * @since 1.0.2
 	 */
-	public void getViewInputMap(int condition) {
-		getViewComponent().getInputMap(condition);
+	public InputMap getViewInputMap(int condition) {
+		return getViewComponent().getInputMap(condition);
 	}
 }
