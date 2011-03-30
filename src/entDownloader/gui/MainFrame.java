@@ -164,6 +164,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			ImageIcon icon = loadIcon("home.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_HOME,
 					ActionEvent.ALT_MASK
@@ -196,6 +197,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			ImageIcon icon = loadIcon("parent.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_UP,
 					ActionEvent.ALT_MASK
@@ -231,6 +233,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			ImageIcon icon = loadIcon("previous.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_LEFT,
 					ActionEvent.ALT_MASK
@@ -289,6 +292,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			ImageIcon icon = loadIcon("next.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_RIGHT,
 					ActionEvent.ALT_MASK
@@ -655,6 +659,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					fileMenu = new JMenu();
 					jMenuBar.add(fileMenu);
 					fileMenu.setText("Fichier");
+					fileMenu.setMnemonic(KeyEvent.VK_F);
 					{
 						refreshItem = new JMenuItem();
 						fileMenu.add(refreshItem);
@@ -696,11 +701,10 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						exit = new JMenuItem();
 						fileMenu.add(exit);
+						exit.setMnemonic(KeyEvent.VK_Q);
 						exit.setAccelerator(
 								KeyStroke.getKeyStroke(
-										java.awt.event.KeyEvent.VK_Q,
-										ActionEvent.CTRL_MASK
-									)
+										KeyEvent.VK_Q, ActionEvent.CTRL_MASK)
 								);
 						exit.setText("Quitter");
 						exit.addActionListener(new ExitForm());
@@ -710,6 +714,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					navigationMenu = new JMenu();
 					jMenuBar.add(navigationMenu);
 					navigationMenu.setText("Navigation");
+					navigationMenu.setMnemonic(KeyEvent.VK_N);
 					{
 						homeMenuIt = new JMenuItem();
 						homeMenuIt.setAction(homeDirAction);
@@ -735,6 +740,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					affichMenu = new JMenu();
 					jMenuBar.add(affichMenu);
 					affichMenu.setText("Affichage");
+					affichMenu.setMnemonic(KeyEvent.VK_A);
 					{
 						ListItem = new JRadioButtonMenuItem();
 						affichMenu.add(ListItem);
@@ -766,10 +772,12 @@ public class MainFrame extends javax.swing.JFrame implements
 					help = new JMenu();
 					jMenuBar.add(help);
 					help.setText("Aide");
+					help.setMnemonic(KeyEvent.VK_I);
 					{
 						onlineHelp = new JMenuItem();
 						help.add(onlineHelp);
 						onlineHelp.setText("Aide en ligne...");
+						onlineHelp.setMnemonic(KeyEvent.VK_I);
 						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
 						onlineHelp.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
@@ -792,6 +800,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						website = new JMenuItem();
 						help.add(website);
 						website.setText("Site Web");
+						website.setMnemonic(KeyEvent.VK_W);
 						website.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -804,6 +813,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						checkUpdate = new JMenuItem();
 						help.add(checkUpdate);
 						checkUpdate.setText("Rechercher des mises à jour...");
+						checkUpdate.setMnemonic(KeyEvent.VK_M);
 						checkUpdate.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -843,6 +853,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						about = new JMenuItem();
 						help.add(about);
 						about.setText("A propos");
+						about.setMnemonic(KeyEvent.VK_P);
 						about.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
