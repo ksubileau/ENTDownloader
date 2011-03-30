@@ -142,4 +142,30 @@ public abstract class ListView extends JPanel {
 	public void addKeyListenerOnView(KeyListener keyListener) {
 		getViewComponent().addKeyListener(keyListener);
 	}
+	
+	/**
+	 * Returns the InputMap that is used when the view component
+	 * has focus. This is convenience method 
+	 * for {@link #getViewInputMap(int) getInputMap(WHEN_FOCUSED)}.
+	 *  
+	 * @return the InputMap used when the view component 
+	 * 			(JTable or a JList) has focus.
+	 * @since 1.0.2
+	 */
+	public void getViewInputMap() {
+		getViewComponent().getInputMap();
+	}
+	
+	/**
+	 * Returns the InputMap that is used by the view component 
+	 * (JTable or a JList) during condition.
+	 *  
+	 * @param condition one of WHEN_IN_FOCUSED_WINDOW, 
+	 * 					WHEN_FOCUSED, WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+	 * @return the InputMap for the specified condition
+	 * @since 1.0.2
+	 */
+	public void getViewInputMap(int condition) {
+		getViewComponent().getInputMap(condition);
+	}
 }
