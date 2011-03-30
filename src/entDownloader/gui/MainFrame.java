@@ -40,6 +40,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -1119,6 +1120,10 @@ public class MainFrame extends javax.swing.JFrame implements
 			fileView.browseDirectory(entd.getDirectoryContent());
 		} catch (IllegalStateException e) {
 		}
+		
+		//Supprime l'action par défaut de la touche Entrée
+		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
+				put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),"none");
 
 		if (BriefView.class == view) {
 			listViewBtn.setSelected(true);
