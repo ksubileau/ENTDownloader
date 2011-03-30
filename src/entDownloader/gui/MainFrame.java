@@ -121,7 +121,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenu help;
 	private JSeparator jSeparator1;
 	private JMenuItem exit;
-	private JMenu jMenu1;
+	private JMenu fileMenu;
 	private JMenuBar jMenuBar;
 	private JButton DownloadAll_tool;
 	private JStatusBar statusBar;
@@ -135,7 +135,40 @@ public class MainFrame extends javax.swing.JFrame implements
 	 * Position du dossier courant dans la liste de l'historique
 	 */
 	private int historyPos;
+	private JMenuItem homeMenuIt;
+	private HomeDirAction homeDirAction;
+	
+	/**
+	 * Navigue vers le dossier racine.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class HomeDirAction extends AbstractAction {
 
+		private static final long serialVersionUID = -2395918860597268331L;
+
+		/**
+		 * Construit une nouvelle action HomeDirAction
+		 */
+		public HomeDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Dossier racine");
+			putValue(Action.NAME, "Dossier racine");
+			ImageIcon icon = loadIcon("home.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_HOME,
+					ActionEvent.ALT_MASK
+				));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			changeDirectory("/");
+		}
+		
+	}
 	/**
 	 * Demande de téléchargement de un ou plusieurs fichiers
 	 * 
@@ -219,6 +252,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		dldAllAction.putValue(Action.LARGE_ICON_KEY, loadIcon("downall.png"));
 		dldAllAction.putValue(Action.SHORT_DESCRIPTION,
 				"Télécharger tous les dossiers et fichiers du dossier courant");
+		homeDirAction = new HomeDirAction();
 		historyList = new LinkedList<String>();
 		historyPos = 0;
 		initGUI();
@@ -377,23 +411,17 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					homeBtn = new JButton();
-					adressBar.add(homeBtn, new GridBagConstraints(2, 0, 1, 1,
-							0.0, 0.0, GridBagConstraints.CENTER,
-							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
-							0));
-					setIcon(homeBtn, "home.png");
 					homeBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
 					homeBtn.setMinimumSize(new java.awt.Dimension(24, 24));
 					homeBtn.setPreferredSize(new java.awt.Dimension(24, 24));
 					homeBtn.setMaximumSize(new java.awt.Dimension(24, 24));
 					homeBtn.setFocusable(false);
-					homeBtn.setToolTipText("Dossier racine");
-					homeBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory("/");
-						}
-					});
+					homeBtn.setAction(homeDirAction);
+					homeBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
+					adressBar.add(homeBtn, new GridBagConstraints(2, 0, 1, 1,
+							0.0, 0.0, GridBagConstraints.CENTER,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
 				}
 				{
 					parentBtn = new JButton();
@@ -503,12 +531,12 @@ public class MainFrame extends javax.swing.JFrame implements
 				jMenuBar = new JMenuBar();
 				setJMenuBar(jMenuBar);
 				{
-					jMenu1 = new JMenu();
-					jMenuBar.add(jMenu1);
-					jMenu1.setText("Fichier");
+					fileMenu = new JMenu();
+					jMenuBar.add(fileMenu);
+					fileMenu.setText("Fichier");
 					{
 						refreshItem = new JMenuItem();
-						jMenu1.add(refreshItem);
+						fileMenu.add(refreshItem);
 						refreshItem.setText("Actualiser");
 						refreshItem.setAccelerator(KeyStroke.getKeyStroke(
 								KeyEvent.VK_F5, 0));
@@ -527,7 +555,7 @@ public class MainFrame extends javax.swing.JFrame implements
 										ActionEvent.CTRL_MASK
 									)
 								);
-						jMenu1.add(dld);
+						fileMenu.add(dld);
 					}
 					{
 						dldAll = new JMenuItem();
@@ -538,15 +566,15 @@ public class MainFrame extends javax.swing.JFrame implements
 										ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK
 									)
 								);
-						jMenu1.add(dldAll);
+						fileMenu.add(dldAll);
 					}
 					{
 						jSeparator1 = new JSeparator();
-						jMenu1.add(jSeparator1);
+						fileMenu.add(jSeparator1);
 					}
 					{
 						exit = new JMenuItem();
-						jMenu1.add(exit);
+						fileMenu.add(exit);
 						exit.setAccelerator(
 								KeyStroke.getKeyStroke(
 										java.awt.event.KeyEvent.VK_Q,
@@ -561,6 +589,11 @@ public class MainFrame extends javax.swing.JFrame implements
 					navigationMenu = new JMenu();
 					jMenuBar.add(navigationMenu);
 					navigationMenu.setText("Navigation");
+					{
+						homeMenuIt = new JMenuItem();
+						homeMenuIt.setAction(homeDirAction);
+						navigationMenu.add(homeMenuIt);
+					}
 				}
 				{
 					affichMenu = new JMenu();
