@@ -25,6 +25,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -177,8 +178,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			setMode(mode);
 		}
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void doAction() {
 			Downloader dld = null;
 			if (mode == SELECTED) {
 				dld = new Downloader(MainFrame.this,
@@ -192,6 +192,11 @@ public class MainFrame extends javax.swing.JFrame implements
 			} catch (ENTUnauthenticatedUserException e1) {
 				e1.printStackTrace();
 			}
+		}
+	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			doAction();
 		}
 
 		public void setMode(short mode) {
@@ -328,19 +333,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					prevBtn.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							changeDirectory(historyList.get(historyPos - 1),
-									false);
-							--historyPos;
-							nextBtn.setEnabled(true);
-							nextBtn.setToolTipText("Avancer à "
-									+ historyList.get(historyPos + 1));
-							if (historyPos < 1) {
-								prevBtn.setEnabled(false);
-								prevBtn.setToolTipText("Précédent");
-							} else {
-								prevBtn.setToolTipText("Retour à "
-										+ historyList.get(historyPos - 1));
-							}
+							goPreviousDir();
 						}
 					});
 				}
@@ -361,16 +354,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					nextBtn.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							changeDirectory(historyList.get(historyPos + 1),
-									false);
-							++historyPos;
-							if (historyPos >= historyList.size() - 1) {
-								nextBtn.setEnabled(false);
-							} else {
-								nextBtn.setToolTipText("Avancer à "
-										+ historyList.get(historyPos + 1));
-							}
-							prevBtn.setEnabled(true);
+							goNextDir();
 						}
 					});
 				}
@@ -978,6 +962,44 @@ public class MainFrame extends javax.swing.JFrame implements
 						.isSelectionEmpty());
 			}
 		});
+
+		fileView.addKeyListenerOnView(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				switch(e.getKeyCode()) {
+				case KeyEvent.VK_ENTER:
+					switch(fileView.getSelectedFilesCount()) {
+					case 0:
+						break;
+					case 1:
+						//TODO Utiliser des méthodes // Ne pas reposer sur les composants GUI.
+						GuiBroadcaster
+						.fireDoubleClickOnRow(new DoubleClickOnRowEvent(
+								(FS_Element) fileView.getSelectedFile()));
+						break;
+					default:
+						dldAction.doAction();
+						break;
+					}
+					break;
+				case KeyEvent.VK_BACK_SPACE:
+					goPreviousDir();
+					break;
+				case KeyEvent.VK_LEFT:
+					if (e.getModifiers() == InputEvent.ALT_MASK)
+						goPreviousDir();
+					break;
+				case KeyEvent.VK_RIGHT:
+					if (e.getModifiers() == InputEvent.ALT_MASK)
+						goNextDir();
+					break;
+				case KeyEvent.VK_UP:
+					if (e.getModifiers() == InputEvent.ALT_MASK)
+						changeDirectory("..");
+					break;
+				}
+			}
+		});
 		dldAction.setEnabled(!fileView.getSelectionModel().isSelectionEmpty());
 	}
 
@@ -1052,5 +1074,51 @@ public class MainFrame extends javax.swing.JFrame implements
 			prevBtn.setToolTipText("Retour à "
 					+ historyList.get(historyPos - 1));
 		}
+	}
+
+	/**
+	 * Retourne au dossier précédent dans l'historique de navigation.
+	 * Si l'on est déjà au plus ancien dossier visité, aucune action n'est
+	 * effectuée.
+	 */
+	protected void goPreviousDir() {
+		if(historyPos <= 0)
+			return;
+		
+		changeDirectory(historyList.get(historyPos - 1),
+				false);
+		--historyPos;
+		nextBtn.setEnabled(true);
+		nextBtn.setToolTipText("Avancer à "
+				+ historyList.get(historyPos + 1));
+		if (historyPos < 1) {
+			prevBtn.setEnabled(false);
+			prevBtn.setToolTipText("Précédent");
+		} else {
+			prevBtn.setToolTipText("Retour à "
+					+ historyList.get(historyPos - 1));
+		}
+	}
+
+	/**
+	 * Navigue vers le dossier suivant dans l'historique de navigation.
+	 * Si l'on est déjà au dossier le plus récemment visité, aucune action 
+	 * n'est effectuée.
+	 */
+	protected void goNextDir() {
+		int historySize = historyList.size();
+		if(historyPos >= historySize -1)
+			return;
+		
+		changeDirectory(historyList.get(historyPos + 1),
+				false);
+		++historyPos;
+		if (historyPos >= historySize - 1) {
+			nextBtn.setEnabled(false);
+		} else {
+			nextBtn.setToolTipText("Avancer à "
+					+ historyList.get(historyPos + 1));
+		}
+		prevBtn.setEnabled(true);
 	}
 }
