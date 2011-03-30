@@ -1121,14 +1121,32 @@ public class MainFrame extends javax.swing.JFrame implements
 		} catch (IllegalStateException e) {
 		}
 		
-		//Supprime l'action par défaut de la touche Entrée
 		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
-				put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),"none");
+				put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),"enterPressedAction");
 		
 		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
 				put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,0),"prevDirAction");
 
 		fileView.getViewActionMap().put("prevDirAction", prevDirAction);
+		fileView.getViewActionMap().put("enterPressedAction", new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switch(fileView.getSelectedFilesCount()) {
+				case 0:
+					break;
+				case 1:
+					GuiBroadcaster
+					.fireDoubleClickOnRow(new DoubleClickOnRowEvent(
+							(FS_Element) fileView.getSelectedFile()));
+					break;
+				default:
+					dldAction.actionPerformed(null);
+					break;
+				}
+			}
+		});
 		
 		if (BriefView.class == view) {
 			listViewBtn.setSelected(true);
