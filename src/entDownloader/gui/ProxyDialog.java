@@ -99,10 +99,17 @@ public class ProxyDialog extends javax.swing.JDialog {
 
 	private void setCurrentConfig() {
 		Proxy proxy = ENTDownloader.getInstance().getProxy();
-		if (proxy == null || proxy == Proxy.NO_PROXY) {
+		String proxyFile = ENTDownloader.getInstance().getProxyFile();
+		
+		if (proxy == null || (proxy == Proxy.NO_PROXY && proxyFile == null)) {
 			directBtn.doClick();
-		} else {
-			//TODO Minimaliste : Perte de la configuration par PAC (emplacement du fichier)
+		} 
+		else if(proxyFile != null)
+		{
+			pacBtn.doClick();
+			pacLocation.setText(proxyFile);
+		} 
+		else {
 			InetSocketAddress addr = (InetSocketAddress) proxy.address();
 			manualBtn.doClick();
 			proxyAddr.setText(addr.getHostName());

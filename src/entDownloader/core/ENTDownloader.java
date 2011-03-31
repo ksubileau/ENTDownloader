@@ -98,6 +98,13 @@ public class ENTDownloader extends Observable implements
 
 	private ENTStatus status = ENTStatus.DISCONNECTED;
 
+	/** 
+	 * Enregistre le fichier PAC utilisé pour la configuration du proxy le
+	 * cas échéant. Si aucun proxy n'est utilisé ou si la configuration ne
+	 * provient pas d'un fichier PAC, cette variable vaut null.
+	 */
+	private String proxyFile = null;
+
 	/**
 	 * Récupère l'instance unique de la classe ENTDownloader.<br>
 	 * Remarque : le constructeur est rendu inaccessible
@@ -826,6 +833,7 @@ public class ENTDownloader extends Observable implements
 	 */
 	public void setProxy(String host, int port) {
 		browser.setHttpProxy(host, port);
+		proxyFile = null;
 	}
 
 	/**
@@ -836,6 +844,7 @@ public class ENTDownloader extends Observable implements
 	 */
 	public void setProxy(Proxy proxy) {
 		browser.setHttpProxy(proxy);
+		proxyFile = null;
 	}
 
 	/**
@@ -847,11 +856,25 @@ public class ENTDownloader extends Observable implements
 		return browser.getProxy();
 	}
 
+	/** 
+	 * Retourne le fichier PAC utilisé pour la configuration du proxy le
+	 * cas échéant. 
+	 * 
+	 * Si aucun proxy n'est utilisé ou si la configuration ne
+	 * provient pas d'un fichier PAC, cette méthode retourne <code>null</code>.
+	 * 
+	 * @return Le fichier PAC utilisé pour la configuration du proxy.
+	 */
+	public String getProxyFile() {
+		return proxyFile;
+	}
+
 	/**
 	 * Supprime la configuration de proxy précédemment installé.
 	 */
 	public void removeProxy() {
 		browser.removeHttpProxy();
+		proxyFile = null;
 	}
 
 	/**
@@ -874,5 +897,6 @@ public class ENTDownloader extends Observable implements
 				new InputStreamReader(conn.getInputStream())));
 		Proxy proxy = a.select(new URI(CoreConfig.rootURL)).get(0);
 		setProxy(proxy);
+		proxyFile = pacFile;
 	}
 }
