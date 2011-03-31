@@ -20,6 +20,7 @@
  */
 package entDownloader.gui;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -443,7 +444,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			this.setIconImage(GuiMain.getAppIcon());
 			getContentPane().setBackground(new java.awt.Color(240, 240, 240));
 			this.setJMenuBar(jMenuBar);
-			this.setMinimumSize(new java.awt.Dimension(500, 350));
+			this.setMinimumSize(new Dimension(500, 350));
 			{
 				statusBar = new JStatusBar();
 				GridBagLayout statusBarLayout = new GridBagLayout();
@@ -453,8 +454,7 @@ public class MainFrame extends javax.swing.JFrame implements
 				statusBarLayout.columnWidths = new int[] { 50, 50, 7 };
 				statusBar.setLayout(statusBarLayout);
 				statusBar.setBackground(new java.awt.Color(240, 240, 240));
-				statusBar
-						.setMaximumSize(new java.awt.Dimension(2147483647, 46));
+				statusBar.setMaximumSize(new Dimension(2147483647, 46));
 				{
 					statusInfo = new JLabel();
 					statusBar.add(statusInfo, new GridBagConstraints(0, 0, 1,
@@ -491,10 +491,8 @@ public class MainFrame extends javax.swing.JFrame implements
 							2, 1, 0.0, 0.0, GridBagConstraints.EAST,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
 									6), 0, 0));
-					usedSpaceProgress.setPreferredSize(new java.awt.Dimension(
-							162, 23));
-					usedSpaceProgress.setMinimumSize(new java.awt.Dimension(
-							162, 19));
+					usedSpaceProgress.setPreferredSize(new Dimension(162, 23));
+					usedSpaceProgress.setMinimumSize(new Dimension(162, 19));
 					usedSpaceProgress.setStringPainted(true);
 					usedSpaceProgress.setVisible(false);
 				}
@@ -503,7 +501,7 @@ public class MainFrame extends javax.swing.JFrame implements
 				adressBar = new JToolBar();
 				adressBar.setFloatable(false);
 				adressBar.setSize(810, 20);
-				adressBar.setMargin(new java.awt.Insets(0, 5, 0, 5));
+				adressBar.setMargin(new Insets(0, 5, 0, 5));
 				GridBagLayout adressBarLayout = new GridBagLayout();
 				adressBarLayout.rowWeights = new double[] { 1.0 };
 				adressBarLayout.rowHeights = new int[] { 20 };
@@ -514,11 +512,11 @@ public class MainFrame extends javax.swing.JFrame implements
 				adressBar.setLayout(adressBarLayout);
 				{
 					prevBtn = new JButton();
-					prevBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					prevBtn.setPreferredSize(new java.awt.Dimension(21, 21));
-					prevBtn.setMaximumSize(new java.awt.Dimension(24, 24));
+					prevBtn.setMinimumSize(new Dimension(24, 24));
+					prevBtn.setPreferredSize(new Dimension(21, 21));
+					prevBtn.setMaximumSize(new Dimension(24, 24));
 					prevBtn.setFocusable(false);
-					prevBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
+					prevBtn.setMargin(new Insets(0, 0, 0, 0));
 					prevBtn.setAction(prevDirAction);
 					prevBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
 					adressBar.add(prevBtn, new GridBagConstraints(0, 0, 1, 1,
@@ -528,10 +526,10 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					nextBtn = new JButton();
-					nextBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					nextBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					nextBtn.setPreferredSize(new java.awt.Dimension(24, 24));
-					nextBtn.setMaximumSize(new java.awt.Dimension(24, 24));
+					nextBtn.setMargin(new Insets(0, 0, 0, 0));
+					nextBtn.setMinimumSize(new Dimension(24, 24));
+					nextBtn.setPreferredSize(new Dimension(24, 24));
+					nextBtn.setMaximumSize(new Dimension(24, 24));
 					nextBtn.setFocusable(false);
 					nextBtn.setAction(nextDirAction);
 					nextBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
@@ -542,10 +540,10 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					homeBtn = new JButton();
-					homeBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					homeBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					homeBtn.setPreferredSize(new java.awt.Dimension(24, 24));
-					homeBtn.setMaximumSize(new java.awt.Dimension(24, 24));
+					homeBtn.setMargin(new Insets(0, 0, 0, 0));
+					homeBtn.setMinimumSize(new Dimension(24, 24));
+					homeBtn.setPreferredSize(new Dimension(24, 24));
+					homeBtn.setMaximumSize(new Dimension(24, 24));
 					homeBtn.setFocusable(false);
 					homeBtn.setAction(homeDirAction);
 					homeBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
@@ -556,10 +554,10 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					parentBtn = new JButton();
-					parentBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					parentBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					parentBtn.setPreferredSize(new java.awt.Dimension(24, 24));
-					parentBtn.setMaximumSize(new java.awt.Dimension(24, 24));
+					parentBtn.setMargin(new Insets(0, 0, 0, 0));
+					parentBtn.setMinimumSize(new Dimension(24, 24));
+					parentBtn.setPreferredSize(new Dimension(24, 24));
+					parentBtn.setMaximumSize(new Dimension(24, 24));
 					parentBtn.setFocusable(false);
 					parentBtn.setAction(parentDirAction);
 					parentBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
@@ -590,10 +588,10 @@ public class MainFrame extends javax.swing.JFrame implements
 							1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
-					refreshBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					refreshBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					refreshBtn.setPreferredSize(new java.awt.Dimension(24, 24));
-					refreshBtn.setMaximumSize(new java.awt.Dimension(24, 24));
+					refreshBtn.setMargin(new Insets(0, 0, 0, 0));
+					refreshBtn.setMinimumSize(new Dimension(24, 24));
+					refreshBtn.setPreferredSize(new Dimension(24, 24));
+					refreshBtn.setMaximumSize(new Dimension(24, 24));
 					refreshBtn.setFocusable(false);
 					setIcon(refreshBtn, "refresh.png");
 					refreshBtn.setToolTipText("Actualiser");
@@ -612,12 +610,12 @@ public class MainFrame extends javax.swing.JFrame implements
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 					setIcon(listViewBtn, "listview.png");
-					listViewBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
+					listViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					listViewBtn.setToolTipText("Vue liste");
-					listViewBtn.setMinimumSize(new java.awt.Dimension(24, 24));
+					listViewBtn.setMinimumSize(new Dimension(24, 24));
 					listViewBtn
-							.setPreferredSize(new java.awt.Dimension(24, 24));
-					listViewBtn.setMaximumSize(new java.awt.Dimension(24, 24));
+							.setPreferredSize(new Dimension(24, 24));
+					listViewBtn.setMaximumSize(new Dimension(24, 24));
 					listViewBtn.setFocusable(false);
 					listViewBtn.addActionListener(new ActionListener() {
 						@Override
@@ -634,14 +632,14 @@ public class MainFrame extends javax.swing.JFrame implements
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 					setIcon(detailsViewBtn, "detailsview.png");
-					detailsViewBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
+					detailsViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					detailsViewBtn.setToolTipText("Vue détails");
 					detailsViewBtn
-							.setMinimumSize(new java.awt.Dimension(24, 24));
-					detailsViewBtn.setPreferredSize(new java.awt.Dimension(24,
+							.setMinimumSize(new Dimension(24, 24));
+					detailsViewBtn.setPreferredSize(new Dimension(24,
 							24));
 					detailsViewBtn
-							.setMaximumSize(new java.awt.Dimension(24, 24));
+							.setMaximumSize(new Dimension(24, 24));
 					detailsViewBtn.setFocusable(false);
 					detailsViewBtn.addActionListener(new ActionListener() {
 						@Override
@@ -825,19 +823,19 @@ public class MainFrame extends javax.swing.JFrame implements
 											new UpdaterGui(MainFrame.this, true);
 										} catch (final Exception e) {
 											SwingUtilities
-													.invokeLater(new Runnable() {
-														@Override
-														public void run() {
-															JOptionPane
-																	.showMessageDialog(
-																			MainFrame.this,
-																			"<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>"
-																					+ e.toString()
-																					+ "</b></html>",
-																			"ENTDownloader - Erreur",
-																			JOptionPane.ERROR_MESSAGE);
-														}
-													});
+											.invokeLater(new Runnable() {
+												@Override
+												public void run() {
+													JOptionPane
+													.showMessageDialog(
+															MainFrame.this,
+															"<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>"
+															+ e.toString()
+															+ "</b></html>",
+															"ENTDownloader - Erreur",
+															JOptionPane.ERROR_MESSAGE);
+												}
+											});
 										}
 									}
 								}, "Updater").start();
@@ -878,16 +876,16 @@ public class MainFrame extends javax.swing.JFrame implements
 								GridBagConstraints.NORTHWEST,
 								GridBagConstraints.HORIZONTAL, new Insets(0, 0,
 										0, 0), 0, 0));
-				adressBar.setPreferredSize(new java.awt.Dimension(810, 30));
-				adressBar.setMinimumSize(new java.awt.Dimension(15, 30));
+				adressBar.setPreferredSize(new Dimension(810, 30));
+				adressBar.setMinimumSize(new Dimension(15, 30));
 				getContentPane().add(
 						statusBar,
 						new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
 								GridBagConstraints.SOUTHWEST,
 								GridBagConstraints.HORIZONTAL, new Insets(0, 0,
 										0, 0), 0, 0));
-				statusBar.setPreferredSize(new java.awt.Dimension(810, 25));
-				statusBar.setMinimumSize(new java.awt.Dimension(0, 25));
+				statusBar.setPreferredSize(new Dimension(810, 25));
+				statusBar.setMinimumSize(new Dimension(0, 25));
 				{
 					//setFileView(BriefView.class);
 					DetailItem.doClick();
@@ -902,8 +900,8 @@ public class MainFrame extends javax.swing.JFrame implements
 				toolBar.setBackground(new java.awt.Color(240, 240, 240));
 				toolBar.setForeground(new java.awt.Color(0, 0, 0));
 				toolBar.setSize(810, 54);
-				toolBar.setPreferredSize(new java.awt.Dimension(810, 50));
-				toolBar.setMinimumSize(new java.awt.Dimension(15, 50));
+				toolBar.setPreferredSize(new Dimension(810, 50));
+				toolBar.setMinimumSize(new Dimension(15, 50));
 				{
 					Download_tool = makeToolbarButton(dldAction);
 					DownloadAll_tool = makeToolbarButton(dldAllAction);
@@ -1002,7 +1000,7 @@ public class MainFrame extends javax.swing.JFrame implements
 
 		//Create and initialize the button.
 		JButton button = new JButton();
-		button.setPreferredSize(new java.awt.Dimension(50, 50));
+		button.setPreferredSize(new Dimension(50, 50));
 		button.setSize(50, 50);
 		button.setFocusable(false);
 		button.setActionCommand(actionCommand);
@@ -1021,7 +1019,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	protected JButton makeToolbarButton(Action action) {
 		//Create and initialize the button.
 		JButton button = new JButton(action);
-		button.setPreferredSize(new java.awt.Dimension(50, 50));
+		button.setPreferredSize(new Dimension(50, 50));
 		button.setSize(50, 50);
 		button.setFocusable(false);
 		button.setHideActionText(true);
