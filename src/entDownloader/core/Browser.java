@@ -196,12 +196,14 @@ public class Browser {
 			e.printStackTrace();
 		} finally {
 			try {
-				writer.close();
-			} catch (Exception e) {
+				if(writer != null)
+					writer.close();
+			} catch (IOException e) {
 			}
 			try {
-				reader.close();
-			} catch (Exception e) {
+				if(reader != null)
+					reader.close();
+			} catch (IOException e) {
 			}
 		}
 		return response;
