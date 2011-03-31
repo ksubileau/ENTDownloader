@@ -278,8 +278,7 @@ public class LoginFrame extends javax.swing.JFrame {
 							}
 						});
 					}
-					quit.setText(CoreConfig.getString("LoginFrame.exitLabel")); //$NON-NLS-1$
-					quit.addActionListener(new MainFrame.ExitForm());
+					quit.setAction(new MainFrame.ExitAction());
 				}
 				loginPaneLayout.rowWeights = new double[] { 0.03, 0.0, 0.01,
 						0.01, 0.1, 0.0 };
@@ -290,14 +289,10 @@ public class LoginFrame extends javax.swing.JFrame {
 						20, 8 };
 			}
 			this.addWindowListener(new WindowAdapter() {
-				/**
-				 * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
-				 */
 				@Override
 				public void windowClosing(WindowEvent e) {
-					new MainFrame.ExitForm().actionPerformed(null);
+					new MainFrame.ExitAction().actionPerformed(null);
 				}
-
 			});
 			this.setIconImage(GuiMain.getAppIcon());
 			{
@@ -312,7 +307,6 @@ public class LoginFrame extends javax.swing.JFrame {
 				mdp.setBounds(188, 83, 194, 28);
 				quit.setBounds(0, 0, 100, 100);
 				quit.setPreferredSize(new java.awt.Dimension(47, 23));
-				quit.setMnemonic(java.awt.event.KeyEvent.VK_Q);
 			}
 
 			pack();

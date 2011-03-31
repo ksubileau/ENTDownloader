@@ -38,7 +38,6 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -96,7 +95,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem checkUpdate;
 	private JToggleButton detailsViewBtn;
 	private JToggleButton listViewBtn;
-	private JLabel userName;
+	private JLabel userNameLabel;
 	private ButtonGroup affichGroup;
 	private JRadioButtonMenuItem DetailItem;
 	private JRadioButtonMenuItem ListItem;
@@ -145,6 +144,38 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem homeMenuIt;
 	private JMenuItem nextDirMenuIt;
 	private JMenuItem prevDirMenuIt;
+	private Action refreshAction;
+	
+	/**
+	 * Actualise l'affichage du dossier courant.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class RefreshAction extends AbstractAction {
+
+		private static final long serialVersionUID = -2395918860597268331L;
+
+		/**
+		 * Construit une nouvelle action RefreshAction
+		 */
+		public RefreshAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Actualiser");
+			putValue(Action.NAME, "Actualiser");
+			ImageIcon icon = loadIcon("refresh.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					KeyEvent.VK_F5, 0));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			changeDirectory(".");
+		}
+		
+	}
 	
 	/**
 	 * Navigue vers le dossier racine.
@@ -153,9 +184,9 @@ public class MainFrame extends javax.swing.JFrame implements
 	 * @since 1.0.2
 	 */
 	private class HomeDirAction extends AbstractAction {
-
+		
 		private static final long serialVersionUID = -2395918860597268331L;
-
+		
 		/**
 		 * Construit une nouvelle action HomeDirAction
 		 */
@@ -169,7 +200,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_HOME,
 					ActionEvent.ALT_MASK
-				));
+			));
 		}
 		
 		@Override
@@ -333,7 +364,6 @@ public class MainFrame extends javax.swing.JFrame implements
 	 * Demande de téléchargement de un ou plusieurs fichiers
 	 * 
 	 * @author Kévin Subileau
-	 * @see Action
 	 */
 	private class DownloadAction extends AbstractAction {
 
@@ -344,30 +374,21 @@ public class MainFrame extends javax.swing.JFrame implements
 		public short mode;
 
 		/**
-		 * Initialise un nouvel objet DownloadAction
-		 * 
-		 * @param name
-		 *            Le nom de l'action
-		 * @param icon
-		 *            La petite icône pour cette action
+		 * Initialise un nouvel objet DownloadAction.
 		 */
-		public DownloadAction(String name, Icon icon) {
-			this(SELECTED, name, icon);
+		public DownloadAction() {
+			this(SELECTED);
 		}
 
 		/**
 		 * Initialise un nouvel objet DownloadAction
 		 * 
 		 * @param mode
-		 *            Définit la source de la liste des fichiers à téléchargé
-		 *            (sélection ou tous les fichiers)
-		 * @param name
-		 *            Le nom de l'action
-		 * @param icon
-		 *            La petite icône pour cette action
+		 *            Définit la source de la liste des fichiers à téléchargés
+		 *            (sélection ou tous les fichiers).
 		 */
-		public DownloadAction(short mode, String name, Icon icon) {
-			super(name, icon);
+		public DownloadAction(short mode) {
+			super();
 			setMode(mode);
 		}
 
@@ -389,11 +410,62 @@ public class MainFrame extends javax.swing.JFrame implements
 		}
 
 		public void setMode(short mode) {
-			if (mode != ALL && mode != SELECTED)
+			switch (mode) {
+			case ALL:
+				putValue(Action.SHORT_DESCRIPTION, 
+						"Télécharger tous les dossiers et fichiers" +
+						" du dossier courant");
+				putValue(Action.NAME, "Télécharger le dossier courant");
+				putValue(Action.LARGE_ICON_KEY, loadIcon("downall.png"));
+				putValue(Action.SMALL_ICON, loadIcon("downall16.png"));
+				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+						KeyEvent.VK_T,
+						ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK)
+				);
+				break;
+			case SELECTED:
+				putValue(Action.SHORT_DESCRIPTION, 
+						"Télécharger le(s) dossier(s) et fichier(s) " +
+						"sélectionné(s)");
+				putValue(Action.NAME, "Télécharger la sélection");
+				putValue(Action.LARGE_ICON_KEY, loadIcon("down.png"));
+				putValue(Action.SMALL_ICON, loadIcon("down16.png"));
+				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+						KeyEvent.VK_T, ActionEvent.CTRL_MASK)
+				);
+				break;
+			default:
 				return;
+			}
 			this.mode = mode;
 		}
 
+	}
+
+	/**
+	 * Quitte le programme.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	public static class ExitAction extends AbstractAction {
+		private static final long serialVersionUID = 4633538322805800580L;
+		//Attention : cette classe est également utilisée par le bouton quitter
+		//de la fenêtre de connexion.
+		public ExitAction() {
+			super();
+			putValue(Action.NAME, 
+					CoreConfig.getString("LoginFrame.exitLabel"));//$NON-NLS-1$
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Q);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.exit(0);
+		}
 	}
 
 	/**
@@ -402,16 +474,9 @@ public class MainFrame extends javax.swing.JFrame implements
 
 	public MainFrame() {
 		super();
-		dldAllAction = new DownloadAction(DownloadAction.ALL,
-				"Télécharger le dossier courant", loadIcon("downall16.png"));
-		dldAction = new DownloadAction("Télécharger la sélection",
-				loadIcon("down16.png"));
-		dldAction.putValue(Action.SHORT_DESCRIPTION,
-				"Télécharger le(s) dossier(s) et fichier(s) sélectionné(s)");
-		dldAction.putValue(Action.LARGE_ICON_KEY, loadIcon("down.png"));
-		dldAllAction.putValue(Action.LARGE_ICON_KEY, loadIcon("downall.png"));
-		dldAllAction.putValue(Action.SHORT_DESCRIPTION,
-				"Télécharger tous les dossiers et fichiers du dossier courant");
+		dldAllAction = new DownloadAction(DownloadAction.ALL);
+		dldAction = new DownloadAction();
+		refreshAction = new RefreshAction();
 		homeDirAction = new HomeDirAction();
 		parentDirAction = new ParentDirAction();
 		prevDirAction = new PreviousDirAction();
@@ -445,6 +510,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			getContentPane().setBackground(new java.awt.Color(240, 240, 240));
 			this.setJMenuBar(jMenuBar);
 			this.setMinimumSize(new Dimension(500, 350));
+			affichGroup = new ButtonGroup();
 			{
 				statusBar = new JStatusBar();
 				GridBagLayout statusBarLayout = new GridBagLayout();
@@ -487,14 +553,18 @@ public class MainFrame extends javax.swing.JFrame implements
 							0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 3, 0,
 									10), 0, 0));
-					statusBar.add(getUserName(), new GridBagConstraints(1, 0,
-							2, 1, 0.0, 0.0, GridBagConstraints.EAST,
-							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
-									6), 0, 0));
 					usedSpaceProgress.setPreferredSize(new Dimension(162, 23));
 					usedSpaceProgress.setMinimumSize(new Dimension(162, 19));
 					usedSpaceProgress.setStringPainted(true);
 					usedSpaceProgress.setVisible(false);
+				}
+				{
+					userNameLabel = new JLabel();
+					userNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+					statusBar.add(userNameLabel, new GridBagConstraints(1, 0,
+							2, 1, 0.0, 0.0, GridBagConstraints.EAST,
+							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
+									6), 0, 0));
 				}
 			}
 			{
@@ -518,7 +588,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					prevBtn.setFocusable(false);
 					prevBtn.setMargin(new Insets(0, 0, 0, 0));
 					prevBtn.setAction(prevDirAction);
-					prevBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
+					prevBtn.setHideActionText(true);
 					adressBar.add(prevBtn, new GridBagConstraints(0, 0, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 1, 0, 0), 0,
@@ -532,7 +602,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					nextBtn.setMaximumSize(new Dimension(24, 24));
 					nextBtn.setFocusable(false);
 					nextBtn.setAction(nextDirAction);
-					nextBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
+					nextBtn.setHideActionText(true);
 					adressBar.add(nextBtn, new GridBagConstraints(1, 0, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
@@ -546,7 +616,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					homeBtn.setMaximumSize(new Dimension(24, 24));
 					homeBtn.setFocusable(false);
 					homeBtn.setAction(homeDirAction);
-					homeBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
+					homeBtn.setHideActionText(true);
 					adressBar.add(homeBtn, new GridBagConstraints(2, 0, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
@@ -560,7 +630,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					parentBtn.setMaximumSize(new Dimension(24, 24));
 					parentBtn.setFocusable(false);
 					parentBtn.setAction(parentDirAction);
-					parentBtn.setText(""); //Ne pas afficher de texte dans la barre d'outils
+					parentBtn.setHideActionText(true);
 					adressBar.add(parentBtn, new GridBagConstraints(3, 0, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
@@ -584,23 +654,17 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					refreshBtn = new JButton();
-					adressBar.add(refreshBtn, new GridBagConstraints(5, 0, 1,
-							1, 0.0, 0.0, GridBagConstraints.CENTER,
-							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
-							0));
 					refreshBtn.setMargin(new Insets(0, 0, 0, 0));
 					refreshBtn.setMinimumSize(new Dimension(24, 24));
 					refreshBtn.setPreferredSize(new Dimension(24, 24));
 					refreshBtn.setMaximumSize(new Dimension(24, 24));
 					refreshBtn.setFocusable(false);
-					setIcon(refreshBtn, "refresh.png");
-					refreshBtn.setToolTipText("Actualiser");
-					refreshBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory(".");
-						}
-					});
+					refreshBtn.setAction(refreshAction);
+					refreshBtn.setHideActionText(true);
+					adressBar.add(refreshBtn, new GridBagConstraints(5, 0, 1,
+							1, 0.0, 0.0, GridBagConstraints.CENTER,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
 				}
 
 				{
@@ -661,35 +725,16 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						refreshItem = new JMenuItem();
 						fileMenu.add(refreshItem);
-						refreshItem.setText("Actualiser");
-						refreshItem.setAccelerator(KeyStroke.getKeyStroke(
-								KeyEvent.VK_F5, 0));
-						setIcon(refreshItem, "refresh.png");
-						for (int i = 0; i < refreshBtn.getActionListeners().length; i++) {
-							refreshItem.addActionListener(refreshBtn
-									.getActionListeners()[0]);
-						}
+						refreshItem.setAction(refreshAction);
 					}
 					{
 						dld = new JMenuItem();
 						dld.setAction(dldAction);
-						dld.setAccelerator(
-								KeyStroke.getKeyStroke(
-										java.awt.event.KeyEvent.VK_T,
-										ActionEvent.CTRL_MASK
-									)
-								);
 						fileMenu.add(dld);
 					}
 					{
 						dldAll = new JMenuItem();
 						dldAll.setAction(dldAllAction);
-						dldAll.setAccelerator(
-								KeyStroke.getKeyStroke(
-										java.awt.event.KeyEvent.VK_T,
-										ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK
-									)
-								);
 						fileMenu.add(dldAll);
 					}
 					{
@@ -699,13 +744,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						exit = new JMenuItem();
 						fileMenu.add(exit);
-						exit.setMnemonic(KeyEvent.VK_Q);
-						exit.setAccelerator(
-								KeyStroke.getKeyStroke(
-										KeyEvent.VK_Q, ActionEvent.CTRL_MASK)
-								);
-						exit.setText("Quitter");
-						exit.addActionListener(new ExitForm());
+						exit.setAction(new ExitAction());
 					}
 				}
 				{
@@ -750,7 +789,7 @@ public class MainFrame extends javax.swing.JFrame implements
 								setFileView(BriefView.class);
 							}
 						});
-						getAffichGroup().add(ListItem);
+						affichGroup.add(ListItem);
 					}
 					{
 						DetailItem = new JRadioButtonMenuItem();
@@ -763,7 +802,7 @@ public class MainFrame extends javax.swing.JFrame implements
 								setFileView(DetailView.class);
 							}
 						});
-						getAffichGroup().add(DetailItem);
+						affichGroup.add(DetailItem);
 					}
 				}
 				{
@@ -776,7 +815,8 @@ public class MainFrame extends javax.swing.JFrame implements
 						help.add(onlineHelp);
 						onlineHelp.setText("Aide en ligne...");
 						onlineHelp.setMnemonic(KeyEvent.VK_I);
-						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(
+								KeyEvent.VK_F1, 0));
 						onlineHelp.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								try {
@@ -1048,13 +1088,6 @@ public class MainFrame extends javax.swing.JFrame implements
 		}
 	}
 
-	public static class ExitForm implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			System.exit(0);
-		}
-	}
-
 	private String dirInfos() {
 		return entd.getNbDossiers() + " Dossier(s), " + entd.getNbFiles()
 				+ " Fichier(s)";
@@ -1105,12 +1138,12 @@ public class MainFrame extends javax.swing.JFrame implements
 			usedSpaceProgress.setVisible(true);
 			storageInfosLabel.setVisible(true);
 			jSeparator3.setVisible(true);
-			userName.setVisible(false);
+			userNameLabel.setVisible(false);
 		} else {
 			usedSpaceProgress.setVisible(false);
 			storageInfosLabel.setVisible(false);
 			jSeparator3.setVisible(false);
-			userName.setVisible(true);
+			userNameLabel.setVisible(true);
 		}
 	}
 
@@ -1187,23 +1220,8 @@ public class MainFrame extends javax.swing.JFrame implements
 		dldAction.setEnabled(!fileView.getSelectionModel().isSelectionEmpty());
 	}
 
-	private ButtonGroup getAffichGroup() {
-		if (affichGroup == null) {
-			affichGroup = new ButtonGroup();
-		}
-		return affichGroup;
-	}
-
 	public JPopupMenu getPopupMenu() {
 		return PopupMenu;
-	}
-
-	private JLabel getUserName() {
-		if (userName == null) {
-			userName = new JLabel();
-			userName.setHorizontalAlignment(SwingConstants.RIGHT);
-		}
-		return userName;
 	}
 
 	@Override
@@ -1212,7 +1230,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		parentDirAction.setEnabled(!adressField.getText().equals("/"));
 		statusInfo.setText(dirInfos());
 		setUsedSpace();
-		userName.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
+		userNameLabel.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
 		fileView.browseDirectory(entd.getDirectoryContent());
 	}
 
