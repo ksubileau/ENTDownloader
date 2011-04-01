@@ -45,18 +45,18 @@ public class BriefViewListComponentModel extends DefaultListModel {
 	 */
 	public void browseDirectory(final java.util.List<FS_Element> dirContent) {
 		Runnable code = new Runnable() {
-		    public void run() {
+			public void run() {
 				removeAllElements(); //removing the old rows
 				for (FS_Element item : dirContent) {
 					addElement(item);
 				}
-		    }
-		  };
+			}
+		};
 
-		  if (SwingUtilities.isEventDispatchThread()) {
-		    code.run();
-		  } else {
-		    SwingUtilities.invokeLater(code);
-		  }
+		if (SwingUtilities.isEventDispatchThread()) {
+			code.run();
+		} else {
+			SwingUtilities.invokeLater(code);
+		}
 	}
 }
