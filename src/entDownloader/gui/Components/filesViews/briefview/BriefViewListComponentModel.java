@@ -21,6 +21,7 @@
 package entDownloader.gui.Components.filesViews.briefview;
 
 import javax.swing.DefaultListModel;
+import javax.swing.SwingUtilities;
 
 import entDownloader.core.FS_Element;
 
@@ -35,11 +36,27 @@ public class BriefViewListComponentModel extends DefaultListModel {
 		super();
 	}
 
-	public void browseDirectory(java.util.List<FS_Element> dirContent) {
-		removeAllElements(); //removing the old rows
-		//FIXME Vue liste : Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException dans certains dossier, cause d'un affichage incomplet du dossier
-		for (FS_Element item : dirContent) {
-			addElement(item);
-		}
+	/**
+	 * Met à jour le contenu de la vue Liste.
+	 * Cette méthode est thread-safe, et sera toujours exécutée
+	 * dans l'Event Dispatcher Thread.
+	 * 
+	 * @param dirContent Le contenu du dossier courant qui sera affiché
+	 */
+	public void browseDirectory(final java.util.List<FS_Element> dirContent) {
+		Runnable code = new Runnable() {
+		    public void run() {
+				removeAllElements(); //removing the old rows
+				for (FS_Element item : dirContent) {
+					addElement(item);
+				}
+		    }
+		  };
+
+		  if (SwingUtilities.isEventDispatchThread()) {
+		    code.run();
+		  } else {
+		    SwingUtilities.invokeLater(code);
+		  }
 	}
 }
