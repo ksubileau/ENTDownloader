@@ -708,8 +708,7 @@ public class MainFrame extends javax.swing.JFrame implements
 				statusBar.setPreferredSize(new java.awt.Dimension(810, 25));
 				statusBar.setMinimumSize(new java.awt.Dimension(0, 25));
 				{
-					//setFileView(BriefView.class);
-					DetailItem.doClick();
+					setFileView(BriefView.class);
 					getContentPane().add(
 							fileView,
 							new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
