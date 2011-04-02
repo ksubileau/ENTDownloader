@@ -305,7 +305,7 @@ public class ProxyDialog extends javax.swing.JDialog {
 								}
 
 								ENTDownloader.getInstance().setProxy(
-										proxyAddr.getText(), port); //TODO Gestion erreur de saisi => Exception OutOfRangeException, UnknownHostException
+										proxyAddr.getText(), port);
 							} else if (pacBtn.isSelected()) {
 								if (pacLocation.getText().isEmpty()) {
 									JOptionPane
@@ -317,22 +317,36 @@ public class ProxyDialog extends javax.swing.JDialog {
 									pacLocation.grabFocus();
 									return;
 								}
-								//TODO Valider formulaire (gestion des exceptions)
+
 								try {
 									ENTDownloader.getInstance().setProxy(
 											pacLocation.getText());
-								} catch (URISyntaxException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (IllegalArgumentException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+								} catch (org.mozilla.javascript.RhinoException e) {
+									JOptionPane
+									.showMessageDialog(
+											ProxyDialog.this,
+											"<html>Le fichier indiqué n'est pas" +
+											" un fichier de configuration " +
+											"automatique (PAC) valide.</html>",
+											"Paramètre invalide",
+											JOptionPane.ERROR_MESSAGE);
+									return;
 								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									JOptionPane
+									.showMessageDialog(
+											ProxyDialog.this,
+											"<html><b>Le fichier de configuration automatique (PAC) indiqué est introuvable ou invalide</b>" +
+											"<ul>" +
+												"<li style=\"list-style-type:none;\">" +
+													"- Assurez-vous que le chemin ou l'adresse indiqué est valide<br>&nbsp;&nbsp; et accessible en lecture ;" +
+												"</li>" +
+												"<li style=\"list-style-type:none;\">" +
+													"- Vérifiez que le fichier indiqué est un fichier PAC conforme." +
+												"</li>" +
+											"</ul></html>",
+											"Paramètre invalide",
+											JOptionPane.ERROR_MESSAGE);
+									return;
 								}
 							}
 							ProxyDialog.this.setVisible(false);
