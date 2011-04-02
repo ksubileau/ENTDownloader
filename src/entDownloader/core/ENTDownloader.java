@@ -891,7 +891,12 @@ public class ENTDownloader extends Observable implements
 		//Efface la configuration précédente pour ne pas interférer avec l'accès au fichier PAC
 		setProxy((Proxy) null);
 
-		URL url = new URI(pacFile).toURL();
+		File localFile = new File(pacFile);
+		URL url;
+		if (localFile.canRead())
+			url = localFile.toURI().toURL();
+		else
+			url = new URI(pacFile).toURL();
 		URLConnection conn = url.openConnection();
 		PacProxySelector a = new PacProxySelector(new BufferedReader(
 				new InputStreamReader(conn.getInputStream())));
