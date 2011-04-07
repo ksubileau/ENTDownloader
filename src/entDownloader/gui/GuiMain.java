@@ -79,7 +79,7 @@ public class GuiMain {
 						} else {
 							++i;
 							try {
-								ENTDownloader.getInstance().setProxy(args[i]); //TODO Penser à adapter ici pour garder le nom du fichier pac
+								ENTDownloader.getInstance().setProxy(args[i]);
 							} catch (Exception e) {
 								System.err
 										.println("Impossible de définir le proxy à utiliser à partir du fichier"
