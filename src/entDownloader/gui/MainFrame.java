@@ -20,6 +20,7 @@
  */
 package entDownloader.gui;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -37,9 +38,9 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -87,13 +88,14 @@ public class MainFrame extends javax.swing.JFrame implements
 	private ENTDownloader entd = ENTDownloader.getInstance();
 
 	private JMenuItem dld;
+	private JMenu navigationMenu;
 	private JMenuItem onlineHelp;
 	private JMenuItem dldAll;
 	private JMenuItem website;
 	private JMenuItem checkUpdate;
 	private JToggleButton detailsViewBtn;
 	private JToggleButton listViewBtn;
-	private JLabel userName;
+	private JLabel userNameLabel;
 	private ButtonGroup affichGroup;
 	private JRadioButtonMenuItem DetailItem;
 	private JRadioButtonMenuItem ListItem;
@@ -120,7 +122,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenu help;
 	private JSeparator jSeparator1;
 	private JMenuItem exit;
-	private JMenu jMenu1;
+	private JMenu fileMenu;
 	private JMenuBar jMenuBar;
 	private JButton DownloadAll_tool;
 	private JStatusBar statusBar;
@@ -128,18 +130,240 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem refreshItem;
 	private DownloadAction dldAction;
 	private DownloadAction dldAllAction;
+	private HomeDirAction homeDirAction;
+	private ParentDirAction parentDirAction;
+	private JMenuItem parentMenuIt;
+	private PreviousDirAction prevDirAction;
+	private NextDirAction nextDirAction;
 
 	private LinkedList<String> historyList;
 	/**
 	 * Position du dossier courant dans la liste de l'historique
 	 */
 	private int historyPos;
+	private JMenuItem homeMenuIt;
+	private JMenuItem nextDirMenuIt;
+	private JMenuItem prevDirMenuIt;
+	private Action refreshAction;
+	
+	/**
+	 * Actualise l'affichage du dossier courant.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class RefreshAction extends AbstractAction {
 
+		private static final long serialVersionUID = -2395918860597268331L;
+
+		/**
+		 * Construit une nouvelle action RefreshAction
+		 */
+		public RefreshAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Actualiser");
+			putValue(Action.NAME, "Actualiser");
+			ImageIcon icon = loadIcon("refresh.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					KeyEvent.VK_F5, 0));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			changeDirectory(".");
+		}
+		
+	}
+	
+	/**
+	 * Navigue vers le dossier racine.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class HomeDirAction extends AbstractAction {
+		
+		private static final long serialVersionUID = -2395918860597268331L;
+		
+		/**
+		 * Construit une nouvelle action HomeDirAction
+		 */
+		public HomeDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Dossier racine");
+			putValue(Action.NAME, "Dossier racine");
+			ImageIcon icon = loadIcon("home.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_HOME,
+					ActionEvent.ALT_MASK
+			));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			changeDirectory("/");
+		}
+		
+	}
+	
+	/**
+	 * Navigue vers le dossier parent.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class ParentDirAction extends AbstractAction {
+		
+		private static final long serialVersionUID = 113366319192328568L;
+
+		/**
+		 * Construit une nouvelle action ParentDirAction
+		 */
+		public ParentDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Dossier parent");
+			putValue(Action.NAME, "Dossier parent");
+			ImageIcon icon = loadIcon("parent.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_UP,
+					ActionEvent.ALT_MASK
+			));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			changeDirectory("..");
+		}
+		
+	}
+	
+	/**
+	 * Retourne au dossier précédent dans l'historique de navigation.
+	 * Si l'on est déjà au plus ancien dossier visité, aucune action n'est
+	 * effectuée.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class PreviousDirAction extends AbstractAction {
+		
+		private static final long serialVersionUID = 193366319192328568L;
+		private AbstractAction nextDirAction;
+
+		/**
+		 * Construit une nouvelle action PreviousDirAction
+		 */
+		public PreviousDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Précédent");
+			putValue(Action.NAME, "Précédent");
+			ImageIcon icon = loadIcon("previous.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_LEFT,
+					ActionEvent.ALT_MASK
+			));
+		}
+		
+		public void setNextDirAction(AbstractAction nextDirAction) {
+			this.nextDirAction = nextDirAction;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if(historyPos <= 0)
+				return;
+
+			changeDirectory(historyList.get(historyPos - 1),
+					false);
+			--historyPos;
+			if(nextDirAction != null)
+			{
+				nextDirAction.setEnabled(true);
+				nextDirAction.putValue(Action.SHORT_DESCRIPTION, "Avancer à "
+						+ historyList.get(historyPos + 1));
+			}
+			if (historyPos < 1) {
+				setEnabled(false);
+				
+				putValue(Action.SHORT_DESCRIPTION, "Précédent");
+			} else {
+				putValue(Action.SHORT_DESCRIPTION, "Retour à "
+						+ historyList.get(historyPos - 1));
+			}
+		}
+		
+	}
+	
+	/**
+	 * Navigue vers le dossier suivant dans l'historique de navigation.
+	 * Si l'on est déjà au dossier le plus récemment visité, aucune action 
+	 * n'est effectuée.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	private class NextDirAction extends AbstractAction {
+		
+		private static final long serialVersionUID = 193366319192328568L;
+		private AbstractAction prevDirAction;
+		
+		/**
+		 * Construit une nouvelle action NextDirAction
+		 */
+		public NextDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Suivant");
+			putValue(Action.NAME, "Suivant");
+			ImageIcon icon = loadIcon("next.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_RIGHT,
+					ActionEvent.ALT_MASK
+			));
+		}
+		
+		public void setPreviousDirAction(AbstractAction prevDirAction) {
+			this.prevDirAction = prevDirAction;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			int historySize = historyList.size();
+			if(historyPos >= historySize -1)
+				return;
+
+			changeDirectory(historyList.get(historyPos + 1),
+					false);
+			++historyPos;
+			if (historyPos >= historySize - 1) {
+				setEnabled(false);
+			} else {
+				putValue(Action.SHORT_DESCRIPTION, "Avancer à "
+						+ historyList.get(historyPos + 1));
+			}
+			if(prevDirAction != null)
+			{
+				prevDirAction.setEnabled(true);
+				prevDirAction.putValue(Action.SHORT_DESCRIPTION, "Retour à "
+						+ historyList.get(historyPos - 1));
+			}
+		}
+		
+	}
+	
 	/**
 	 * Demande de téléchargement de un ou plusieurs fichiers
 	 * 
 	 * @author Kévin Subileau
-	 * @see Action
 	 */
 	private class DownloadAction extends AbstractAction {
 
@@ -150,30 +374,21 @@ public class MainFrame extends javax.swing.JFrame implements
 		public short mode;
 
 		/**
-		 * Initialise un nouvel objet DownloadAction
-		 * 
-		 * @param name
-		 *            Le nom de l'action
-		 * @param icon
-		 *            La petite icône pour cette action
+		 * Initialise un nouvel objet DownloadAction.
 		 */
-		public DownloadAction(String name, Icon icon) {
-			this(SELECTED, name, icon);
+		public DownloadAction() {
+			this(SELECTED);
 		}
 
 		/**
 		 * Initialise un nouvel objet DownloadAction
 		 * 
 		 * @param mode
-		 *            Définit la source de la liste des fichiers à téléchargé
-		 *            (sélection ou tous les fichiers)
-		 * @param name
-		 *            Le nom de l'action
-		 * @param icon
-		 *            La petite icône pour cette action
+		 *            Définit la source de la liste des fichiers à téléchargés
+		 *            (sélection ou tous les fichiers).
 		 */
-		public DownloadAction(short mode, String name, Icon icon) {
-			super(name, icon);
+		public DownloadAction(short mode) {
+			super();
 			setMode(mode);
 		}
 
@@ -195,11 +410,62 @@ public class MainFrame extends javax.swing.JFrame implements
 		}
 
 		public void setMode(short mode) {
-			if (mode != ALL && mode != SELECTED)
+			switch (mode) {
+			case ALL:
+				putValue(Action.SHORT_DESCRIPTION, 
+						"Télécharger tous les dossiers et fichiers" +
+						" du dossier courant");
+				putValue(Action.NAME, "Télécharger le dossier courant");
+				putValue(Action.LARGE_ICON_KEY, loadIcon("downall.png"));
+				putValue(Action.SMALL_ICON, loadIcon("downall16.png"));
+				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+						KeyEvent.VK_T,
+						ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK)
+				);
+				break;
+			case SELECTED:
+				putValue(Action.SHORT_DESCRIPTION, 
+						"Télécharger le(s) dossier(s) et fichier(s) " +
+						"sélectionné(s)");
+				putValue(Action.NAME, "Télécharger la sélection");
+				putValue(Action.LARGE_ICON_KEY, loadIcon("down.png"));
+				putValue(Action.SMALL_ICON, loadIcon("down16.png"));
+				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+						KeyEvent.VK_T, ActionEvent.CTRL_MASK)
+				);
+				break;
+			default:
 				return;
+			}
 			this.mode = mode;
 		}
 
+	}
+
+	/**
+	 * Quitte le programme.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.0.2
+	 */
+	public static class ExitAction extends AbstractAction {
+		private static final long serialVersionUID = 4633538322805800580L;
+		//Attention : cette classe est également utilisée par le bouton quitter
+		//de la fenêtre de connexion.
+		public ExitAction() {
+			super();
+			putValue(Action.NAME, 
+					CoreConfig.getString("LoginFrame.exitLabel"));//$NON-NLS-1$
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Q);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.exit(0);
+		}
 	}
 
 	/**
@@ -208,16 +474,17 @@ public class MainFrame extends javax.swing.JFrame implements
 
 	public MainFrame() {
 		super();
-		dldAllAction = new DownloadAction(DownloadAction.ALL,
-				"Télécharger le dossier courant", loadIcon("downall16.png"));
-		dldAction = new DownloadAction("Télécharger la sélection",
-				loadIcon("down16.png"));
-		dldAction.putValue(Action.SHORT_DESCRIPTION,
-				"Télécharger le(s) dossier(s) et fichier(s) sélectionné(s)");
-		dldAction.putValue(Action.LARGE_ICON_KEY, loadIcon("down.png"));
-		dldAllAction.putValue(Action.LARGE_ICON_KEY, loadIcon("downall.png"));
-		dldAllAction.putValue(Action.SHORT_DESCRIPTION,
-				"Télécharger tous les dossiers et fichiers du dossier courant");
+		dldAllAction = new DownloadAction(DownloadAction.ALL);
+		dldAction = new DownloadAction();
+		refreshAction = new RefreshAction();
+		homeDirAction = new HomeDirAction();
+		parentDirAction = new ParentDirAction();
+		prevDirAction = new PreviousDirAction();
+		prevDirAction.setEnabled(false);
+		nextDirAction = new NextDirAction();
+		nextDirAction.setEnabled(false);
+		prevDirAction.setNextDirAction(nextDirAction);
+		nextDirAction.setPreviousDirAction(prevDirAction);
 		historyList = new LinkedList<String>();
 		historyPos = 0;
 		initGUI();
@@ -242,7 +509,8 @@ public class MainFrame extends javax.swing.JFrame implements
 			this.setIconImage(GuiMain.getAppIcon());
 			getContentPane().setBackground(new java.awt.Color(240, 240, 240));
 			this.setJMenuBar(jMenuBar);
-			this.setMinimumSize(new java.awt.Dimension(500, 350));
+			this.setMinimumSize(new Dimension(500, 350));
+			affichGroup = new ButtonGroup();
 			{
 				statusBar = new JStatusBar();
 				GridBagLayout statusBarLayout = new GridBagLayout();
@@ -252,8 +520,7 @@ public class MainFrame extends javax.swing.JFrame implements
 				statusBarLayout.columnWidths = new int[] { 50, 50, 7 };
 				statusBar.setLayout(statusBarLayout);
 				statusBar.setBackground(new java.awt.Color(240, 240, 240));
-				statusBar
-						.setMaximumSize(new java.awt.Dimension(2147483647, 46));
+				statusBar.setMaximumSize(new Dimension(2147483647, 46));
 				{
 					statusInfo = new JLabel();
 					statusBar.add(statusInfo, new GridBagConstraints(0, 0, 1,
@@ -286,23 +553,25 @@ public class MainFrame extends javax.swing.JFrame implements
 							0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 3, 0,
 									10), 0, 0));
-					statusBar.add(getUserName(), new GridBagConstraints(1, 0,
+					usedSpaceProgress.setPreferredSize(new Dimension(162, 23));
+					usedSpaceProgress.setMinimumSize(new Dimension(162, 19));
+					usedSpaceProgress.setStringPainted(true);
+					usedSpaceProgress.setVisible(false);
+				}
+				{
+					userNameLabel = new JLabel();
+					userNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+					statusBar.add(userNameLabel, new GridBagConstraints(1, 0,
 							2, 1, 0.0, 0.0, GridBagConstraints.EAST,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
 									6), 0, 0));
-					usedSpaceProgress.setPreferredSize(new java.awt.Dimension(
-							162, 23));
-					usedSpaceProgress.setMinimumSize(new java.awt.Dimension(
-							162, 19));
-					usedSpaceProgress.setStringPainted(true);
-					usedSpaceProgress.setVisible(false);
 				}
 			}
 			{
 				adressBar = new JToolBar();
 				adressBar.setFloatable(false);
 				adressBar.setSize(810, 20);
-				adressBar.setMargin(new java.awt.Insets(0, 5, 0, 5));
+				adressBar.setMargin(new Insets(0, 5, 0, 5));
 				GridBagLayout adressBarLayout = new GridBagLayout();
 				adressBarLayout.rowWeights = new double[] { 1.0 };
 				adressBarLayout.rowHeights = new int[] { 20 };
@@ -313,106 +582,59 @@ public class MainFrame extends javax.swing.JFrame implements
 				adressBar.setLayout(adressBarLayout);
 				{
 					prevBtn = new JButton();
+					prevBtn.setMinimumSize(new Dimension(24, 24));
+					prevBtn.setPreferredSize(new Dimension(21, 21));
+					prevBtn.setMaximumSize(new Dimension(24, 24));
+					prevBtn.setFocusable(false);
+					prevBtn.setMargin(new Insets(0, 0, 0, 0));
+					prevBtn.setAction(prevDirAction);
+					prevBtn.setHideActionText(true);
 					adressBar.add(prevBtn, new GridBagConstraints(0, 0, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 1, 0, 0), 0,
 							0));
-					setIcon(prevBtn, "previous.png");
-					prevBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					prevBtn.setPreferredSize(new java.awt.Dimension(21, 21));
-					prevBtn.setMaximumSize(new java.awt.Dimension(24, 24));
-					prevBtn.setFocusable(false);
-					prevBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					prevBtn.setToolTipText("Précédent");
-					prevBtn.setEnabled(false);
-					prevBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory(historyList.get(historyPos - 1),
-									false);
-							--historyPos;
-							nextBtn.setEnabled(true);
-							nextBtn.setToolTipText("Avancer à "
-									+ historyList.get(historyPos + 1));
-							if (historyPos < 1) {
-								prevBtn.setEnabled(false);
-								prevBtn.setToolTipText("Précédent");
-							} else {
-								prevBtn.setToolTipText("Retour à "
-										+ historyList.get(historyPos - 1));
-							}
-						}
-					});
 				}
 				{
 					nextBtn = new JButton();
+					nextBtn.setMargin(new Insets(0, 0, 0, 0));
+					nextBtn.setMinimumSize(new Dimension(24, 24));
+					nextBtn.setPreferredSize(new Dimension(24, 24));
+					nextBtn.setMaximumSize(new Dimension(24, 24));
+					nextBtn.setFocusable(false);
+					nextBtn.setAction(nextDirAction);
+					nextBtn.setHideActionText(true);
 					adressBar.add(nextBtn, new GridBagConstraints(1, 0, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
-					setIcon(nextBtn, "next.png");
-					nextBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					nextBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					nextBtn.setPreferredSize(new java.awt.Dimension(24, 24));
-					nextBtn.setMaximumSize(new java.awt.Dimension(24, 24));
-					nextBtn.setFocusable(false);
-					nextBtn.setToolTipText("Suivant");
-					nextBtn.setEnabled(false);
-					nextBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory(historyList.get(historyPos + 1),
-									false);
-							++historyPos;
-							if (historyPos >= historyList.size() - 1) {
-								nextBtn.setEnabled(false);
-							} else {
-								nextBtn.setToolTipText("Avancer à "
-										+ historyList.get(historyPos + 1));
-							}
-							prevBtn.setEnabled(true);
-						}
-					});
 				}
 				{
 					homeBtn = new JButton();
+					homeBtn.setMargin(new Insets(0, 0, 0, 0));
+					homeBtn.setMinimumSize(new Dimension(24, 24));
+					homeBtn.setPreferredSize(new Dimension(24, 24));
+					homeBtn.setMaximumSize(new Dimension(24, 24));
+					homeBtn.setFocusable(false);
+					homeBtn.setAction(homeDirAction);
+					homeBtn.setHideActionText(true);
 					adressBar.add(homeBtn, new GridBagConstraints(2, 0, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
-					setIcon(homeBtn, "home.png");
-					homeBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					homeBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					homeBtn.setPreferredSize(new java.awt.Dimension(24, 24));
-					homeBtn.setMaximumSize(new java.awt.Dimension(24, 24));
-					homeBtn.setFocusable(false);
-					homeBtn.setToolTipText("Dossier racine");
-					homeBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory("/");
-						}
-					});
 				}
 				{
 					parentBtn = new JButton();
+					parentBtn.setMargin(new Insets(0, 0, 0, 0));
+					parentBtn.setMinimumSize(new Dimension(24, 24));
+					parentBtn.setPreferredSize(new Dimension(24, 24));
+					parentBtn.setMaximumSize(new Dimension(24, 24));
+					parentBtn.setFocusable(false);
+					parentBtn.setAction(parentDirAction);
+					parentBtn.setHideActionText(true);
 					adressBar.add(parentBtn, new GridBagConstraints(3, 0, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
-					setIcon(parentBtn, "parent.png");
-					parentBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					parentBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					parentBtn.setPreferredSize(new java.awt.Dimension(24, 24));
-					parentBtn.setMaximumSize(new java.awt.Dimension(24, 24));
-					parentBtn.setFocusable(false);
-					parentBtn.setToolTipText("Dossier parent");
-					parentBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory("..");
-						}
-					});
 				}
 				{
 					adressField = new JTextField();
@@ -432,23 +654,17 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					refreshBtn = new JButton();
+					refreshBtn.setMargin(new Insets(0, 0, 0, 0));
+					refreshBtn.setMinimumSize(new Dimension(24, 24));
+					refreshBtn.setPreferredSize(new Dimension(24, 24));
+					refreshBtn.setMaximumSize(new Dimension(24, 24));
+					refreshBtn.setFocusable(false);
+					refreshBtn.setAction(refreshAction);
+					refreshBtn.setHideActionText(true);
 					adressBar.add(refreshBtn, new GridBagConstraints(5, 0, 1,
 							1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
-					refreshBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
-					refreshBtn.setMinimumSize(new java.awt.Dimension(24, 24));
-					refreshBtn.setPreferredSize(new java.awt.Dimension(24, 24));
-					refreshBtn.setMaximumSize(new java.awt.Dimension(24, 24));
-					refreshBtn.setFocusable(false);
-					setIcon(refreshBtn, "refresh.png");
-					refreshBtn.setToolTipText("Actualiser");
-					refreshBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							changeDirectory(".");
-						}
-					});
 				}
 
 				{
@@ -458,12 +674,12 @@ public class MainFrame extends javax.swing.JFrame implements
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 					setIcon(listViewBtn, "listview.png");
-					listViewBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
+					listViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					listViewBtn.setToolTipText("Vue liste");
-					listViewBtn.setMinimumSize(new java.awt.Dimension(24, 24));
+					listViewBtn.setMinimumSize(new Dimension(24, 24));
 					listViewBtn
-							.setPreferredSize(new java.awt.Dimension(24, 24));
-					listViewBtn.setMaximumSize(new java.awt.Dimension(24, 24));
+							.setPreferredSize(new Dimension(24, 24));
+					listViewBtn.setMaximumSize(new Dimension(24, 24));
 					listViewBtn.setFocusable(false);
 					listViewBtn.addActionListener(new ActionListener() {
 						@Override
@@ -480,14 +696,14 @@ public class MainFrame extends javax.swing.JFrame implements
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 					setIcon(detailsViewBtn, "detailsview.png");
-					detailsViewBtn.setMargin(new java.awt.Insets(0, 0, 0, 0));
+					detailsViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					detailsViewBtn.setToolTipText("Vue détails");
 					detailsViewBtn
-							.setMinimumSize(new java.awt.Dimension(24, 24));
-					detailsViewBtn.setPreferredSize(new java.awt.Dimension(24,
+							.setMinimumSize(new Dimension(24, 24));
+					detailsViewBtn.setPreferredSize(new Dimension(24,
 							24));
 					detailsViewBtn
-							.setMaximumSize(new java.awt.Dimension(24, 24));
+							.setMaximumSize(new Dimension(24, 24));
 					detailsViewBtn.setFocusable(false);
 					detailsViewBtn.addActionListener(new ActionListener() {
 						@Override
@@ -502,100 +718,105 @@ public class MainFrame extends javax.swing.JFrame implements
 				jMenuBar = new JMenuBar();
 				setJMenuBar(jMenuBar);
 				{
-					jMenu1 = new JMenu();
-					jMenuBar.add(jMenu1);
-					jMenu1.setText("Fichier");
+					fileMenu = new JMenu();
+					jMenuBar.add(fileMenu);
+					fileMenu.setText("Fichier");
+					fileMenu.setMnemonic(KeyEvent.VK_F);
 					{
 						refreshItem = new JMenuItem();
-						jMenu1.add(refreshItem);
-						refreshItem.setText("Actualiser");
-						refreshItem.setAccelerator(KeyStroke.getKeyStroke(
-								KeyEvent.VK_F5, 0));
-						setIcon(refreshItem, "refresh.png");
-						for (int i = 0; i < refreshBtn.getActionListeners().length; i++) {
-							refreshItem.addActionListener(refreshBtn
-									.getActionListeners()[0]);
-						}
+						fileMenu.add(refreshItem);
+						refreshItem.setAction(refreshAction);
 					}
 					{
 						dld = new JMenuItem();
 						dld.setAction(dldAction);
-						dld.setAccelerator(
-								KeyStroke.getKeyStroke(
-										java.awt.event.KeyEvent.VK_T,
-										ActionEvent.CTRL_MASK
-									)
-								);
-						jMenu1.add(dld);
+						fileMenu.add(dld);
 					}
 					{
 						dldAll = new JMenuItem();
 						dldAll.setAction(dldAllAction);
-						dldAll.setAccelerator(
-								KeyStroke.getKeyStroke(
-										java.awt.event.KeyEvent.VK_T,
-										ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK
-									)
-								);
-						jMenu1.add(dldAll);
-					}
-					{
-						affichMenu = new JMenu();
-						jMenu1.add(affichMenu);
-						affichMenu.setText("Affichage");
-						{
-							ListItem = new JRadioButtonMenuItem();
-							affichMenu.add(ListItem);
-							setIcon(ListItem, "listview.png");
-							ListItem.setText("Liste");
-							ListItem.addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									setFileView(BriefView.class);
-								}
-							});
-							getAffichGroup().add(ListItem);
-						}
-						{
-							DetailItem = new JRadioButtonMenuItem();
-							affichMenu.add(DetailItem);
-							setIcon(DetailItem, "detailsview.png");
-							DetailItem.setText("Détails");
-							DetailItem.addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									setFileView(DetailView.class);
-								}
-							});
-							getAffichGroup().add(DetailItem);
-						}
+						fileMenu.add(dldAll);
 					}
 					{
 						jSeparator1 = new JSeparator();
-						jMenu1.add(jSeparator1);
+						fileMenu.add(jSeparator1);
 					}
 					{
 						exit = new JMenuItem();
-						jMenu1.add(exit);
-						exit.setAccelerator(
-								KeyStroke.getKeyStroke(
-										java.awt.event.KeyEvent.VK_Q,
-										ActionEvent.CTRL_MASK
-									)
-								);
-						exit.setText("Quitter");
-						exit.addActionListener(new ExitForm());
+						fileMenu.add(exit);
+						exit.setAction(new ExitAction());
+					}
+				}
+				{
+					navigationMenu = new JMenu();
+					jMenuBar.add(navigationMenu);
+					navigationMenu.setText("Navigation");
+					navigationMenu.setMnemonic(KeyEvent.VK_N);
+					{
+						homeMenuIt = new JMenuItem();
+						homeMenuIt.setAction(homeDirAction);
+						navigationMenu.add(homeMenuIt);
+					}
+					{
+						parentMenuIt = new JMenuItem();
+						parentMenuIt.setAction(parentDirAction);
+						navigationMenu.add(parentMenuIt);
+					}
+					{
+						prevDirMenuIt = new JMenuItem();
+						prevDirMenuIt.setAction(prevDirAction);
+						navigationMenu.add(prevDirMenuIt);
+					}
+					{
+						nextDirMenuIt = new JMenuItem();
+						nextDirMenuIt.setAction(nextDirAction);
+						navigationMenu.add(nextDirMenuIt);
+					}
+				}
+				{
+					affichMenu = new JMenu();
+					jMenuBar.add(affichMenu);
+					affichMenu.setText("Affichage");
+					affichMenu.setMnemonic(KeyEvent.VK_A);
+					{
+						ListItem = new JRadioButtonMenuItem();
+						affichMenu.add(ListItem);
+						setIcon(ListItem, "listview.png");
+						ListItem.setText("Liste");
+						ListItem.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								setFileView(BriefView.class);
+							}
+						});
+						affichGroup.add(ListItem);
+					}
+					{
+						DetailItem = new JRadioButtonMenuItem();
+						affichMenu.add(DetailItem);
+						setIcon(DetailItem, "detailsview.png");
+						DetailItem.setText("Détails");
+						DetailItem.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								setFileView(DetailView.class);
+							}
+						});
+						affichGroup.add(DetailItem);
 					}
 				}
 				{
 					help = new JMenu();
 					jMenuBar.add(help);
 					help.setText("Aide");
+					help.setMnemonic(KeyEvent.VK_I);
 					{
 						onlineHelp = new JMenuItem();
 						help.add(onlineHelp);
 						onlineHelp.setText("Aide en ligne...");
-						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+						onlineHelp.setMnemonic(KeyEvent.VK_I);
+						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(
+								KeyEvent.VK_F1, 0));
 						onlineHelp.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								try {
@@ -617,6 +838,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						website = new JMenuItem();
 						help.add(website);
 						website.setText("Site Web");
+						website.setMnemonic(KeyEvent.VK_W);
 						website.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -629,6 +851,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						checkUpdate = new JMenuItem();
 						help.add(checkUpdate);
 						checkUpdate.setText("Rechercher des mises à jour...");
+						checkUpdate.setMnemonic(KeyEvent.VK_M);
 						checkUpdate.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -640,30 +863,25 @@ public class MainFrame extends javax.swing.JFrame implements
 											new UpdaterGui(MainFrame.this, true);
 										} catch (final Exception e) {
 											SwingUtilities
-													.invokeLater(new Runnable() {
-														@Override
-														public void run() {
-															JOptionPane
-																	.showMessageDialog(
-																			MainFrame.this,
-																			"<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>"
-																					+ e.toString()
-																					+ "</b></html>",
-																			"ENTDownloader - Erreur",
-																			JOptionPane.ERROR_MESSAGE);
-														}
-													});
+											.invokeLater(new Runnable() {
+												@Override
+												public void run() {
+													JOptionPane
+													.showMessageDialog(
+															MainFrame.this,
+															"<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>"
+															+ e.toString()
+															+ "</b></html>",
+															"ENTDownloader - Erreur",
+															JOptionPane.ERROR_MESSAGE);
+												}
+											});
 										}
 									}
 								}, "Updater").start();
 							}
 						});
 					}
-					/*{
-						guide = new JMenuItem();
-						help.add(guide);
-						guide.setText("Guide de l'utilisateur");
-					}*/
 					{
 						jSeparator2 = new JSeparator();
 						help.add(jSeparator2);
@@ -673,6 +891,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						about = new JMenuItem();
 						help.add(about);
 						about.setText("A propos");
+						about.setMnemonic(KeyEvent.VK_P);
 						about.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -697,16 +916,16 @@ public class MainFrame extends javax.swing.JFrame implements
 								GridBagConstraints.NORTHWEST,
 								GridBagConstraints.HORIZONTAL, new Insets(0, 0,
 										0, 0), 0, 0));
-				adressBar.setPreferredSize(new java.awt.Dimension(810, 30));
-				adressBar.setMinimumSize(new java.awt.Dimension(15, 30));
+				adressBar.setPreferredSize(new Dimension(810, 30));
+				adressBar.setMinimumSize(new Dimension(15, 30));
 				getContentPane().add(
 						statusBar,
 						new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
 								GridBagConstraints.SOUTHWEST,
 								GridBagConstraints.HORIZONTAL, new Insets(0, 0,
 										0, 0), 0, 0));
-				statusBar.setPreferredSize(new java.awt.Dimension(810, 25));
-				statusBar.setMinimumSize(new java.awt.Dimension(0, 25));
+				statusBar.setPreferredSize(new Dimension(810, 25));
+				statusBar.setMinimumSize(new Dimension(0, 25));
 				{
 					setFileView(BriefView.class);
 					getContentPane().add(
@@ -720,8 +939,8 @@ public class MainFrame extends javax.swing.JFrame implements
 				toolBar.setBackground(new java.awt.Color(240, 240, 240));
 				toolBar.setForeground(new java.awt.Color(0, 0, 0));
 				toolBar.setSize(810, 54);
-				toolBar.setPreferredSize(new java.awt.Dimension(810, 50));
-				toolBar.setMinimumSize(new java.awt.Dimension(15, 50));
+				toolBar.setPreferredSize(new Dimension(810, 50));
+				toolBar.setMinimumSize(new Dimension(15, 50));
 				{
 					Download_tool = makeToolbarButton(dldAction);
 					DownloadAll_tool = makeToolbarButton(dldAllAction);
@@ -820,7 +1039,7 @@ public class MainFrame extends javax.swing.JFrame implements
 
 		//Create and initialize the button.
 		JButton button = new JButton();
-		button.setPreferredSize(new java.awt.Dimension(50, 50));
+		button.setPreferredSize(new Dimension(50, 50));
 		button.setSize(50, 50);
 		button.setFocusable(false);
 		button.setActionCommand(actionCommand);
@@ -839,7 +1058,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	protected JButton makeToolbarButton(Action action) {
 		//Create and initialize the button.
 		JButton button = new JButton(action);
-		button.setPreferredSize(new java.awt.Dimension(50, 50));
+		button.setPreferredSize(new Dimension(50, 50));
 		button.setSize(50, 50);
 		button.setFocusable(false);
 		button.setHideActionText(true);
@@ -865,13 +1084,6 @@ public class MainFrame extends javax.swing.JFrame implements
 		ImageIcon icon = loadIcon(imageName);
 		if (icon != null) {
 			btn.setIcon(icon);
-		}
-	}
-
-	public static class ExitForm implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			System.exit(0);
 		}
 	}
 
@@ -925,12 +1137,12 @@ public class MainFrame extends javax.swing.JFrame implements
 			usedSpaceProgress.setVisible(true);
 			storageInfosLabel.setVisible(true);
 			jSeparator3.setVisible(true);
-			userName.setVisible(false);
+			userNameLabel.setVisible(false);
 		} else {
 			usedSpaceProgress.setVisible(false);
 			storageInfosLabel.setVisible(false);
 			jSeparator3.setVisible(false);
-			userName.setVisible(true);
+			userNameLabel.setVisible(true);
 		}
 	}
 
@@ -949,7 +1161,34 @@ public class MainFrame extends javax.swing.JFrame implements
 			fileView.browseDirectory(entd.getDirectoryContent());
 		} catch (IllegalStateException e) {
 		}
+		
+		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
+				put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),"enterPressedAction");
+		
+		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
+				put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,0),"prevDirAction");
 
+		fileView.getViewActionMap().put("prevDirAction", prevDirAction);
+		fileView.getViewActionMap().put("enterPressedAction", new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switch(fileView.getSelectedFilesCount()) {
+				case 0:
+					break;
+				case 1:
+					GuiBroadcaster
+					.fireDoubleClickOnRow(new DoubleClickOnRowEvent(
+							(FS_Element) fileView.getSelectedFile()));
+					break;
+				default:
+					dldAction.actionPerformed(null);
+					break;
+				}
+			}
+		});
+		
 		if (BriefView.class == view) {
 			listViewBtn.setSelected(true);
 			detailsViewBtn.setSelected(false);
@@ -980,32 +1219,17 @@ public class MainFrame extends javax.swing.JFrame implements
 		dldAction.setEnabled(!fileView.getSelectionModel().isSelectionEmpty());
 	}
 
-	private ButtonGroup getAffichGroup() {
-		if (affichGroup == null) {
-			affichGroup = new ButtonGroup();
-		}
-		return affichGroup;
-	}
-
 	public JPopupMenu getPopupMenu() {
 		return PopupMenu;
-	}
-
-	private JLabel getUserName() {
-		if (userName == null) {
-			userName = new JLabel();
-			userName.setHorizontalAlignment(SwingConstants.RIGHT);
-		}
-		return userName;
 	}
 
 	@Override
 	public void onDirectoryChanged(DirectoryChangedEvent event) {
 		adressField.setText(entd.getDirectoryPath());
-		parentBtn.setEnabled(!adressField.getText().equals("/"));
+		parentDirAction.setEnabled(!adressField.getText().equals("/"));
 		statusInfo.setText(dirInfos());
 		setUsedSpace();
-		userName.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
+		userNameLabel.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
 		fileView.browseDirectory(entd.getDirectoryContent());
 	}
 
@@ -1044,11 +1268,11 @@ public class MainFrame extends javax.swing.JFrame implements
 			--histSize;
 		}
 		historyPos = histSize - 1;
-		nextBtn.setEnabled(false);
-		nextBtn.setToolTipText("Suivant");
+		nextDirAction.setEnabled(false);
+		nextDirAction.putValue(Action.SHORT_DESCRIPTION, "Suivant");
 		if (histSize > 1) {
-			prevBtn.setEnabled(true);
-			prevBtn.setToolTipText("Retour à "
+			prevDirAction.setEnabled(true);
+			prevDirAction.putValue(Action.SHORT_DESCRIPTION, "Retour à "
 					+ historyList.get(historyPos - 1));
 		}
 	}

@@ -49,9 +49,6 @@ public class DetailsTable extends JTable {
 		this.getTableHeader().setReorderingAllowed(false);
 		this.setShowGrid(false);
 		this.setSelectionBackground(new Color(208, 227, 252));
-		//Remove default enter key action
-		getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
-				put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),"none");
 
 		//this.setColumnSelectionAllowed(false);
 		//this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

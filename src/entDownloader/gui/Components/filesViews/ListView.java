@@ -24,6 +24,8 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.KeyListener;
 
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -141,5 +143,43 @@ public abstract class ListView extends JPanel {
 	 */
 	public void addKeyListenerOnView(KeyListener keyListener) {
 		getViewComponent().addKeyListener(keyListener);
+	}
+	
+	/**
+	 * Returns the InputMap that is used when the view component
+	 * has focus. This is convenience method 
+	 * for {@link #getViewInputMap(int) getInputMap(WHEN_FOCUSED)}.
+	 *  
+	 * @return the InputMap used when the view component 
+	 * 			(JTable or a JList) has focus.
+	 * @since 1.0.2
+	 */
+	public InputMap getViewInputMap() {
+		return getViewComponent().getInputMap();
+	}
+	
+	/**
+	 * Returns the InputMap that is used by the view component 
+	 * (JTable or a JList) during condition.
+	 *  
+	 * @param condition one of WHEN_IN_FOCUSED_WINDOW, 
+	 * 					WHEN_FOCUSED, WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+	 * @return the InputMap for the specified condition
+	 * @since 1.0.2
+	 */
+	public InputMap getViewInputMap(int condition) {
+		return getViewComponent().getInputMap(condition);
+	}
+	
+	/**
+	 * Returns the ActionMap used to determine what Action to fire for 
+	 * particular KeyStroke binding. The returned ActionMap, unless 
+	 * otherwise set, will have the ActionMap from the UI set as the parent.
+	 * 
+	 * @return the ActionMap containing the key/action bindings
+	 * @since 1.0.2
+	 */
+	public ActionMap getViewActionMap() {
+		return getViewComponent().getActionMap();
 	}
 }
