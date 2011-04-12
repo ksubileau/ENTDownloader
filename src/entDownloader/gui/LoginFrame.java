@@ -328,9 +328,11 @@ public class LoginFrame extends javax.swing.JFrame {
 					try {
 						if (ENTDownloader.getInstance().login(id.getText(),
 								new String(mdp.getPassword()))) {
-							((MainFrame) GuiMain.getMainFrame())
-									.changeDirectory("/");
-							GuiMain.getMainFrame().setVisible(true);
+							MainFrame mainFrame = (MainFrame) GuiMain.getMainFrame();
+							mainFrame.changeDirectory("/");
+							mainFrame.setExtendedState(mainFrame.getExtendedState()
+									| javax.swing.JFrame.MAXIMIZED_BOTH);;
+							mainFrame.setVisible(true);
 							dispose();
 						} else {
 							restartAfterFailed(true);
