@@ -103,7 +103,8 @@ public class Updater {
 					java.net.URLEncoder.encode(
 							CoreConfig.getString("ProductInfo.version"),
 							"UTF-8")));
-			stream = url.openStream();
+			stream = url.openConnection(ENTDownloader.getInstance().getProxy())
+					.getInputStream();
 			xmlUpdateInformation = constructeur.parse(stream);
 
 			Element racine = xmlUpdateInformation.getDocumentElement();
