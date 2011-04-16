@@ -185,6 +185,7 @@ public class Browser {
 				response += ligne;
 			}
 		} catch (ConnectException e1) {
+			//TODO Essayer de générer cette exception; elle permet de détecter un mauvais port sur proxy, mais besoin de la lancer tel quel pour cela, et pas dans une UnknownHost : est possible ss pb ?
 			UnknownHostException ex = new UnknownHostException();
 			ex.initCause(e1);
 			throw new UnknownHostException();
