@@ -31,6 +31,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.text.ParseException;
 
 import javax.swing.ImageIcon;
@@ -338,6 +339,39 @@ public class LoginFrame extends javax.swing.JFrame {
 							restartAfterFailed(true);
 						}
 					} catch (IOException e) {
+						InetSocketAddress proxyAddress = 
+							(InetSocketAddress) ENTDownloader.getInstance().
+								getProxy().address();
+						
+						if (proxyAddress != null && e.getClass() == 
+								java.net.UnknownHostException.class
+								&& e.getMessage() == proxyAddress.getHostName()) 
+						{
+							//L'erreur est due à une mauvaise configuration
+							//de proxy.
+							restartAfterFailed(false);
+							JOptionPane
+							.showMessageDialog(
+									loginPane,
+									"<html><b>ENTDownloader est configuré pour utiliser un serveur proxy mais celui-ci est introuvable.</b><br>" +
+									"<ul>" +
+										"<li style=\"list-style-type:none;\">" +
+											"- Assurez-vous que les paramètres de proxy sont corrects ;" +
+										"</li>" +
+										"<li style=\"list-style-type:none;\">" +
+											"- Vérifiez que la connexion réseau de votre ordinateur fonctionne ;" +
+										"</li>" +
+										"<li style=\"list-style-type:none;\">" +
+											"- Si votre ordinateur ou votre réseau est protégé par un pare-feu,<br>" +
+											"&nbsp;&nbsp;&nbsp;assurez-vous qu'ENTDownloader a l'autorisation " +
+											"d'accéder au Web." +
+										"</li>" +
+									"</ul></html>",
+									"ENTDownloader - Serveur proxy introuvable",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						else //Une autre erreur, non liée au proxy.
+						{
 						JOptionPane
 								.showMessageDialog(
 										loginPane,
@@ -346,6 +380,7 @@ public class LoginFrame extends javax.swing.JFrame {
 										"ENTDownloader - Service indisponible",
 										JOptionPane.ERROR_MESSAGE);
 						System.exit(1);
+						}
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
