@@ -22,10 +22,8 @@ package net.sf.entDownloader.shell;
 
 import static net.sf.entDownloader.core.Misc.addZeroBefore;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedList;

@@ -22,7 +22,6 @@ package net.sf.entDownloader.gui.Components.filesViews.detailview;
 
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 

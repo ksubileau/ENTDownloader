@@ -22,7 +22,6 @@ package net.sf.entDownloader.core;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * The <code>Stack</code> class represents a last-in-first-out (LIFO) stack of

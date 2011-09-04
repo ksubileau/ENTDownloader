@@ -35,14 +35,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Observable;
 
 import net.sf.entDownloader.core.events.AuthenticationSucceededEvent;
 import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
-import net.sf.entDownloader.core.events.DownloadedBytesEvent;
-import net.sf.entDownloader.core.events.DownloadedBytesListener;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
