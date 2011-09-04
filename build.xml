@@ -47,7 +47,7 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
     	<!-- Définition du numéro de version du logiciel-->
     	<replaceregexp match="(ProductInfo.version)=(.*)" replace="\1=${output.freeVersion}" byline="true" >
-			<fileset file="${basedir}/src/entDownloader/ressources/configuration.properties" />
+			<fileset file="${basedir}/src/net/sf/entDownloader/ressources/configuration.properties" />
 		</replaceregexp>
     	<!-- Compilation -->
         <javac debug="false" destdir="bin" source="${source}" target="${target}">
@@ -70,12 +70,12 @@
         <antcall target="build"/>
     </target>
     <target name="ENTDownloader - GUI">
-        <java classname="entDownloader.Main" failonerror="true" fork="yes">
+        <java classname="net.sf.entDownloader.Main" failonerror="true" fork="yes">
             <classpath refid="ENTDownloader.classpath"/>
         </java>
     </target>
     <target name="ENTDownloader - Shell">
-        <java classname="entDownloader.Main" failonerror="true" fork="yes">
+        <java classname="net.sf.entDownloader.Main" failonerror="true" fork="yes">
             <arg line="-nogui"/>
             <classpath refid="ENTDownloader.classpath"/>
         </java>
@@ -125,7 +125,7 @@
 			use="true" 
 			version="true">
 			<packageset dir="src">
-				<include name="entDownloader/**"/>
+				<include name="net/sf/entDownloader/**"/>
 			</packageset>
 		</javadoc>
 	</target>
@@ -139,7 +139,7 @@
 	  <jar basedir="${basedir}/bin" jarfile="${jarPath}">
 	  	<manifest>
 	  		<attribute name="Manifest-Version" value="1.0" />
-	  		<attribute name="Main-Class" value="entDownloader.Main"/>
+	  		<attribute name="Main-Class" value="net.sf.entDownloader.Main"/>
 	  	</manifest>
 	  	<fileset dir="${basedir}/lib/pac/"/>
 	  </jar>
