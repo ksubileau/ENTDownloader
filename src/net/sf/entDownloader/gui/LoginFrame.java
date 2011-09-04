@@ -327,8 +327,7 @@ public class LoginFrame extends javax.swing.JFrame {
 					overlay.setVisible(true);
 					loginPane.setVisible(false);
 					try {
-						if (ENTDownloader.getInstance().login(id.getText(),
-								new String(mdp.getPassword()))) {
+						if (ENTDownloader.getInstance().login(id.getText(), mdp.getPassword())) {
 							MainFrame mainFrame = (MainFrame) GuiMain.getMainFrame();
 							mainFrame.changeDirectory("/");
 							mainFrame.setExtendedState(mainFrame.getExtendedState()

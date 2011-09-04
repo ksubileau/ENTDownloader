@@ -64,11 +64,6 @@ public final class CoreConfig {
 	/** Adresse d'actualisation du dossier courant */
 	public static final String refreshDirURL = rootURL
 			+ "tag.{tag}.render.userLayoutRootNode.target.{uP_root}.uP?modeDav=show_current_dir_mode#{uP_root}";
-	/**
-	 * Active ou désactive la reconnexion automatique après l'expiration de la
-	 * session
-	 */
-	public static final boolean autoLogin = true;
 
 	/**
 	 * Adresse de téléchargement des informations de mise à jour.

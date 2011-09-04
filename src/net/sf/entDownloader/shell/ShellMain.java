@@ -49,7 +49,6 @@ import net.sf.entDownloader.shell.progressBar.ProgressBar;
 
 public final class ShellMain {
 	private static String login;
-	private static String password;
 	private static final String productName = CoreConfig
 			.getString("ProductInfo.name");
 	private static final String productVersion = CoreConfig
@@ -242,7 +241,8 @@ public final class ShellMain {
 			System.out.println("Login ENT : " + login);
 		}
 
-		while (password == null || password.isEmpty()) {
+		char[] password = null;
+		while (password == null || password.length == 0) {
 			/*if (debug) {
 				System.out.print("Mot de passe : ");
 				password = sc.nextLine();
@@ -256,11 +256,10 @@ public final class ShellMain {
 			}*/
 
 			try {
-				password = new String(System.console().readPassword(
-						"Mot de passe : "));
+				password = System.console().readPassword("Mot de passe : ");
 			} catch (Exception e) {
 				System.out.print("Mot de passe : ");
-				password = sc.nextLine();
+				password = sc.nextLine().toCharArray();
 			}
 		}
 
@@ -284,7 +283,8 @@ public final class ShellMain {
 		}
 		checkUpdate();
 		//Effacer le mot de passe de la mémoire
-		//password = null; //TODO Choix à faire : reconnection automatique => stockage du mot de passe non sécurisé ; ou effacement du mot de passe
+		java.util.Arrays.fill(password, ' ');
+		password = null;
 		//Lecture des commandes
 		System.out.print("\n" + login + "@ent.u-clermont1.fr:"
 				+ entd.getDirectoryPath() + ">");
@@ -449,30 +449,8 @@ public final class ShellMain {
 		try {
 			entd.changeDirectory(name);
 		} catch (ENTUnauthenticatedUserException e) {
-			if (CoreConfig.autoLogin) {
-				String currentPath = entd.getDirectoryPath();
-				try {
-					if (!entd.login(login, password)) { //TODO Test expiration de session et généralisation aux autres méthodes.
-						pg.setVisible(false);
-						System.err
-								.println("La session a expirée et la tentative de reconnection a échoué. Veuillez vous reconnectez manuellement en relançant le programme.");
-						System.exit(1);
-					} else {
-						cd("/");
-						cd((ENTPath.isAbsolute(name) ? "" : (currentPath + "/"))
-								+ name); //TODO Risque de boucle !! (Peu probable mais pas impossible)
-						pg.setVisible(false);
-					}
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			} else {
-				System.err
-						.println("La session a expirée, veuillez vous reconnectez en relançant le programme.");
-				System.exit(1);
-			}
-
+			System.err.println("La session a expirée, veuillez vous reconnectez en relançant le programme.");
+			System.exit(1);
 		} catch (ENTDirectoryNotFoundException e) {
 			if (pg.isVisible()) {
 				pg.setVisible(false);

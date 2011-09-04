@@ -129,7 +129,7 @@ public class ENTDownloader extends Observable implements
 	 * @return True en cas de réussite, ou false si l'authentification a échoué.
 	 * @throws ParseException Impossible d'obtenir les informations de session.
 	 */
-	public boolean login(String login, String password)
+	public boolean login(String login, char[] password)
 			throws java.io.IOException, ParseException {
 		setStatus(ENTStatus.LOGIN);
 
@@ -153,7 +153,7 @@ public class ENTDownloader extends Observable implements
 		browser.setMethod(Browser.Method.POST);
 		browser.setParam("_eventId", "submit");
 		browser.setParam("username", login);
-		browser.setParam("password", password);
+		browser.setParam("password", new String(password));
 		browser.setParam("lt", ticket.get(1).toString());
 		browser.setFollowRedirects(false);
 		loginPage = browser.perform();
