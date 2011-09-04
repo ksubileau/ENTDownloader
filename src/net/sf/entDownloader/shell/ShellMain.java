@@ -525,39 +525,3 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		writeStatusMessage("Authentification réussie, initialisation...");
 	}
 }
-
-@Deprecated
-class PwdConsole {
-	@Deprecated
-	public static String getPasswd(String prompt) throws Exception {
-		ConsoleEraser consoleEraser = new ConsoleEraser();
-		System.out.print(prompt);
-		BufferedReader stdin = new BufferedReader(new InputStreamReader(
-				System.in));
-		consoleEraser.start();
-		System.out.print("\b");
-		String pass = stdin.readLine();
-		consoleEraser.halt();
-		System.out.print("\b");
-		return pass;
-	}
-}
-
-@Deprecated
-class ConsoleEraser extends Thread {
-	private boolean running = true;
-
-	public void run() {
-		while (running) {
-			System.out.print("\b ");
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-			}
-		}
-	}
-
-	public synchronized void halt() {
-		running = false;
-	}
-}
