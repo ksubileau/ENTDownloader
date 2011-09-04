@@ -37,8 +37,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Observable;
 
-import com.ziesemer.utils.pacProxySelector.PacProxySelector;
-
+import net.sf.entDownloader.core.events.AuthenticationSucceededEvent;
 import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
@@ -50,6 +49,8 @@ import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
+
+import com.ziesemer.utils.pacProxySelector.PacProxySelector;
 
 /* Bug possible :
  * Statut incorrect après une exception quelconque : cela peut poser problème.
@@ -98,7 +99,7 @@ public class ENTDownloader extends Observable implements
 
 	private ENTStatus status = ENTStatus.DISCONNECTED;
 
-	/** 
+	/**
 	 * Enregistre le fichier PAC utilisé pour la configuration du proxy le
 	 * cas échéant. Si aucun proxy n'est utilisé ou si la configuration ne
 	 * provient pas d'un fichier PAC, cette variable vaut null.
@@ -164,6 +165,9 @@ public class ENTDownloader extends Observable implements
 			return false;
 		}
 		setStatus(ENTStatus.INITIALIZE);
+		Broadcaster
+				.fireAuthenticationSucceeded(new AuthenticationSucceededEvent(
+						login));
 
 		browser.setUrl(browser.getHeaderField("Location"));
 		browser.clearParam();
@@ -764,7 +768,8 @@ public class ENTDownloader extends Observable implements
 	 * 
 	 * @param o L'élément à rechercher
 	 * @return L'index de la première occurrence de l'élément spécifié dans la
-	 *         liste {@link net.sf.entDownloader.core.ENTDownloader#directoryContent
+	 *         liste
+	 *         {@link net.sf.entDownloader.core.ENTDownloader#directoryContent
 	 *         directoryContent}, ou -1 si la liste ne contient pas cet élément.
 	 * @throws IllegalStateException Si le répertoire courant n'a pas été
 	 *             chargé.
@@ -856,9 +861,9 @@ public class ENTDownloader extends Observable implements
 		return browser.getProxy();
 	}
 
-	/** 
+	/**
 	 * Retourne le fichier PAC utilisé pour la configuration du proxy le
-	 * cas échéant. 
+	 * cas échéant.
 	 * 
 	 * Si aucun proxy n'est utilisé ou si la configuration ne
 	 * provient pas d'un fichier PAC, cette méthode retourne <code>null</code>.
@@ -885,7 +890,8 @@ public class ENTDownloader extends Observable implements
 	 * @throws URISyntaxException
 	 * @throws MalformedURLException
 	 * @throws IOException
-	 * @see <a href="http://en.wikipedia.org/wiki/Proxy_auto-config"> PAC File on Wikipedia</a>
+	 * @see <a href="http://en.wikipedia.org/wiki/Proxy_auto-config"> PAC File
+	 *      on Wikipedia</a>
 	 */
 	public void setProxy(String pacFile) throws Exception {
 		//Efface la configuration précédente pour ne pas interférer avec l'accès au fichier PAC
@@ -893,10 +899,11 @@ public class ENTDownloader extends Observable implements
 
 		File localFile = new File(pacFile);
 		URL url;
-		if (localFile.canRead())
+		if (localFile.canRead()) {
 			url = localFile.toURI().toURL();
-		else
+		} else {
 			url = new URI(pacFile).toURL();
+		}
 		URLConnection conn = url.openConnection();
 		PacProxySelector a = new PacProxySelector(new BufferedReader(
 				new InputStreamReader(conn.getInputStream())));

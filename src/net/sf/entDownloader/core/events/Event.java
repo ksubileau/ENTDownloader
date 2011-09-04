@@ -33,23 +33,27 @@ public abstract class Event {
 	/**
 	 * Indique un changement de répertoire en cours.
 	 */
-	public static final int CHANGING_DIR_TYPE = 1;
+	public static final int AUTHENTICATION_SUCCEEDED_TYPE = 1;
+	/**
+	 * Indique un changement de répertoire en cours.
+	 */
+	public static final int CHANGING_DIR_TYPE = 2;
 	/**
 	 * Indique un changement de répertoire terminé.
 	 */
-	public static final int CHANGED_DIR_TYPE = 2;
+	public static final int CHANGED_DIR_TYPE = 3;
 	/**
 	 * Indique que des octets ont été reçus durant un téléchargement.
 	 */
-	public static final int DOWNLOADED_BYTES_TYPE = 3;
+	public static final int DOWNLOADED_BYTES_TYPE = 4;
 	/**
 	 * Indique le début d'un téléchargement.
 	 */
-	public static final int START_DOWNLOAD_TYPE = 4;
+	public static final int START_DOWNLOAD_TYPE = 5;
 	/**
 	 * Indique la fin d'un téléchargement.
 	 */
-	public static final int END_DOWNLOAD_TYPE = 5;
+	public static final int END_DOWNLOAD_TYPE = 6;
 
 	protected Event() {
 	}

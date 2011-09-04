@@ -65,6 +65,28 @@ public class Broadcaster {
 		return wh.values().iterator();
 	}
 
+	/** Ajoute un observateur sur l'événement AuthenticationSucceeded */
+	public static void addAuthenticationSucceededListener(
+			AuthenticationSucceededListener listener) {
+		addListener(AuthenticationSucceededListener.class, listener);
+	}
+
+	/** Supprime un observateur sur l'événement AuthenticationSucceeded */
+	public static void removeAuthenticationSucceededListener(
+			AuthenticationSucceededListener listener) {
+		removeListener(AuthenticationSucceededListener.class, listener);
+	}
+
+	/** Avertit tous les observateurs de l'événement AuthenticationSucceeded */
+	public static void fireAuthenticationSucceeded(AuthenticationSucceededEvent event) {
+		Iterator<BroadcastListener> it = getListenerIterator(AuthenticationSucceededListener.class);
+		AuthenticationSucceededListener listener;
+		while (it.hasNext()) {
+			listener = (AuthenticationSucceededListener) it.next();
+			listener.onAuthenticationSucceeded(event);
+		}
+	}
+
 	/** Ajoute un observateur sur l'événement DirectoryChanging */
 	public static void addDirectoryChangingListener(
 			DirectoryChangingListener listener) {
