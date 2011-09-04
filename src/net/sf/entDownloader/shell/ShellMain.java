@@ -31,23 +31,35 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Scanner;
 
 import net.sf.entDownloader.core.CoreConfig;
 import net.sf.entDownloader.core.ENTDownloader;
-import net.sf.entDownloader.core.ENTPath;
 import net.sf.entDownloader.core.FS_Element;
 import net.sf.entDownloader.core.FS_File;
 import net.sf.entDownloader.core.Updater;
+import net.sf.entDownloader.core.events.AuthenticationSucceededEvent;
+import net.sf.entDownloader.core.events.AuthenticationSucceededListener;
+import net.sf.entDownloader.core.events.Broadcaster;
+import net.sf.entDownloader.core.events.DirectoryChangedEvent;
+import net.sf.entDownloader.core.events.DirectoryChangedListener;
+import net.sf.entDownloader.core.events.DirectoryChangingEvent;
+import net.sf.entDownloader.core.events.DirectoryChangingListener;
+import net.sf.entDownloader.core.events.DownloadedBytesEvent;
+import net.sf.entDownloader.core.events.DownloadedBytesListener;
+import net.sf.entDownloader.core.events.EndDownloadEvent;
+import net.sf.entDownloader.core.events.EndDownloadListener;
+import net.sf.entDownloader.core.events.StartDownloadEvent;
+import net.sf.entDownloader.core.events.StartDownloadListener;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.shell.progressBar.ProgressBar;
 
-public final class ShellMain {
+public final class ShellMain implements AuthenticationSucceededListener,
+		DirectoryChangedListener, DirectoryChangingListener,
+		StartDownloadListener, DownloadedBytesListener, EndDownloadListener {
 	private static String login;
 	private static final String productName = CoreConfig
 			.getString("ProductInfo.name");
@@ -61,100 +73,20 @@ public final class ShellMain {
 			.getString("ProductInfo.website");
 	private ProgressBar pg;
 	private ENTDownloader entd;
+	private FS_File downloadingFile;
+	private long sizeDownloaded;
 
 	public ShellMain(String[] args) {
 		System.out.println(productName + " v" + productVersion);
 		entd = ENTDownloader.getInstance();
 		pg = new ProgressBar(false);
 		pg.setVisible(false);
-		entd.addObserver(new Observer() {
-			boolean enabledWrite = true;
-			FS_File file = null;
-
-			@Override
-			public void update(Observable o, Object arg) {
-				boolean pgvisible;
-				String message = null;
-
-				switch (((ENTDownloader) o).getStatus()) {
-				case START_DOWNLOAD:
-					file = (FS_File) arg;
-					message = "Téléchargement du fichier " + file.getName()
-							+ " en cours...";
-					pg.setDeterminate(true);
-					break;
-				case END_DOWNLOAD:
-					enabledWrite = true;
-					file = null;
-					message = "Téléchargement terminé.";
-					pg.setVisible(false);
-					pg.setDeterminate(false);
-					pg.setVisible(false);
-					break;
-				case CHANGEDIR:
-					pg.setVisible(true);
-					String path = arg.toString();
-					if (path.equals("..")) {
-						path = "parent";
-					} else if (path.equals("/") || path.equals("~")
-							|| path.isEmpty()) {
-						path = "racine";
-					}
-
-					if (path.equals(".")) {
-						message = "Actualisation en cours...";
-					} else {
-						message = "Chargement du dossier " + path
-								+ " en cours...";
-					}
-					break;
-				case CHANGEDIR_END:
-					pg.setVisible(false);
-					message = "Chargement réussi.";
-					break;
-				case INITIALIZE:
-					message = "Authentification réussie, initialisation...";
-					break;
-				case INITIALIZING_END:
-					pg.setVisible(false);
-					message = "Initialisation terminée.";
-					break;
-				case LOGIN:
-					message = "Connexion en cours...";
-					break;
-				case INVALID_CREDENTIALS:
-					pg.setVisible(false);
-					break;
-				default:
-					message = (arg != null ? arg.toString() : "");
-					break;
-				}
-
-				if (enabledWrite && message != null && !message.isEmpty()) {
-					pgvisible = pg.isVisible();
-					if (pgvisible) {
-						pg.setVisible(false);
-					}
-					System.out.flush();
-					System.out.println("  => " + message);
-					if (pgvisible) {
-						pg.setVisible(pgvisible);
-					}
-				}
-
-				switch (((ENTDownloader) o).getStatus()) {
-				case START_DOWNLOAD:
-					enabledWrite = false;
-					break;
-				case DOWNLOADING:
-					pg.setValue((int) (((Long) arg) * 100 / file.getSize()));
-					break;
-				case LOGIN:
-					pg.setVisible(true);
-					break;
-				}
-			}
-		});
+		Broadcaster.addAuthenticationSucceededListener(this);
+		Broadcaster.addDirectoryChangedListener(this);
+		Broadcaster.addDirectoryChangingListener(this);
+		Broadcaster.addStartDownloadListener(this);
+		Broadcaster.addDownloadedBytesListener(this);
+		Broadcaster.addEndDownloadListener(this);
 
 		//Analyse des arguments
 		for (int i = 0; i < args.length; i++) {
@@ -243,18 +175,6 @@ public final class ShellMain {
 
 		char[] password = null;
 		while (password == null || password.length == 0) {
-			/*if (debug) {
-				System.out.print("Mot de passe : ");
-				password = sc.nextLine();
-			}
-			else {
-				try {
-					password = PwdConsole.getPasswd("Mot de passe :  ");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}*/
-
 			try {
 				password = System.console().readPassword("Mot de passe : ");
 			} catch (Exception e) {
@@ -264,11 +184,16 @@ public final class ShellMain {
 		}
 
 		try {
+			writeStatusMessage("Connexion en cours...");
+			pg.setVisible(true);
 			if (!entd.login(login, password)) {
+				pg.setVisible(false);
 				System.err
 						.println("Echec d'authentification : Login ou mot de passe incorrect.");
 				return;
 			}
+			pg.setVisible(false);
+			writeStatusMessage("Initialisation terminée.");
 			cd("/");
 		} catch (java.io.IOException e2) {
 			if (pg.isVisible()) {
@@ -282,7 +207,7 @@ public final class ShellMain {
 			e.printStackTrace();
 		}
 		checkUpdate();
-		//Effacer le mot de passe de la mémoire
+		//Effacement du mot de passe de la mémoire
 		java.util.Arrays.fill(password, ' ');
 		password = null;
 		//Lecture des commandes
@@ -449,7 +374,8 @@ public final class ShellMain {
 		try {
 			entd.changeDirectory(name);
 		} catch (ENTUnauthenticatedUserException e) {
-			System.err.println("La session a expirée, veuillez vous reconnectez en relançant le programme.");
+			System.err
+					.println("La session a expirée, veuillez vous reconnectez en relançant le programme.");
 			System.exit(1);
 		} catch (ENTDirectoryNotFoundException e) {
 			if (pg.isVisible()) {
@@ -531,6 +457,73 @@ public final class ShellMain {
 		System.out.println();
 	}
 
+	private void writeStatusMessage(String message) {
+		boolean pgvisible;
+		if (message != null && !message.isEmpty()) {
+			pgvisible = pg.isVisible();
+			if (pgvisible) {
+				pg.setVisible(false);
+			}
+			System.out.flush();
+			System.out.println("  => " + message);
+			if (pgvisible) {
+				pg.setVisible(pgvisible);
+			}
+		}
+	}
+
+	@Override
+	public void onDirectoryChanged(DirectoryChangedEvent event) {
+		pg.setVisible(false);
+		writeStatusMessage("Chargement réussi.");
+	}
+
+	@Override
+	public void onDirectoryChanging(DirectoryChangingEvent event) {
+		pg.setVisible(true);
+		String path = event.getDirectory().toString();
+		if (path.equals("..")) {
+			path = "parent";
+		} else if (path.equals("/") || path.equals("~") || path.isEmpty()) {
+			path = "racine";
+		}
+
+		if (path.equals(".")) {
+			writeStatusMessage("Actualisation en cours...");
+		} else {
+			writeStatusMessage("Chargement du dossier " + path + " en cours...");
+		}
+	}
+
+	@Override
+	public void onStartDownload(StartDownloadEvent e) {
+		downloadingFile = e.getFile();
+		sizeDownloaded = 0;
+		pg.setDeterminate(true);
+		writeStatusMessage("Téléchargement du fichier "
+				+ downloadingFile.getName() + " en cours...");
+	}
+
+	@Override
+	public void onEndDownload(EndDownloadEvent e) {
+		downloadingFile = null;
+		pg.setVisible(false);
+		pg.setDeterminate(false);
+		pg.setVisible(false);
+		writeStatusMessage("Téléchargement terminé.");
+	}
+
+	@Override
+	public void onDownloadedBytes(DownloadedBytesEvent e) {
+		sizeDownloaded += e.getBytesDownloaded();
+		pg.setValue((int) (((Long) sizeDownloaded) * 100 / downloadingFile
+				.getSize()));
+	}
+
+	@Override
+	public void onAuthenticationSucceeded(AuthenticationSucceededEvent event) {
+		writeStatusMessage("Authentification réussie, initialisation...");
+	}
 }
 
 @Deprecated
