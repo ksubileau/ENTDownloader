@@ -62,8 +62,7 @@ import com.ziesemer.utils.pacProxySelector.PacProxySelector;
  * getInstance()} pour
  * obtenir l'instance de la classe.
  */
-public class ENTDownloader extends Observable implements
-		DownloadedBytesListener {
+public class ENTDownloader {
 
 	/** L'instance statique */
 	private static ENTDownloader instance;
@@ -91,13 +90,8 @@ public class ENTDownloader extends Observable implements
 	/** Espace disque total */
 	private int capacity = -1;
 
-	/** Progression de téléchargement */
-	private long sizeDownloaded = 0;
-
 	/** Instance d'un navigateur utilisé pour la communication avec le serveur */
 	private Browser browser;
-
-	private ENTStatus status = ENTStatus.DISCONNECTED;
 
 	/**
 	 * Enregistre le fichier PAC utilisé pour la configuration du proxy le
@@ -119,7 +113,6 @@ public class ENTDownloader extends Observable implements
 
 	private ENTDownloader() {
 		browser = new Browser();
-		Broadcaster.addDownloadedBytesListener(this);
 	}
 
 	/**
@@ -132,8 +125,6 @@ public class ENTDownloader extends Observable implements
 	 */
 	public boolean login(String login, char[] password)
 			throws java.io.IOException, ParseException {
-		setStatus(ENTStatus.LOGIN);
-
 		if (isLogin == true)
 			return true;
 
@@ -161,10 +152,8 @@ public class ENTDownloader extends Observable implements
 		browser.setMethod(Browser.Method.GET);
 
 		if (Misc.preg_match("<div id=\"erreur\">", loginPage)) {
-			setStatus(ENTStatus.INVALID_CREDENTIALS);
 			return false;
 		}
-		setStatus(ENTStatus.INITIALIZE);
 		Broadcaster
 				.fireAuthenticationSucceeded(new AuthenticationSucceededEvent(
 						login));
@@ -186,7 +175,6 @@ public class ENTDownloader extends Observable implements
 		setUserName(rootPage);
 		directoryContent = null;
 		path = null;
-		setStatus(ENTStatus.INITIALIZING_END);
 		return true;
 	}
 
@@ -270,7 +258,6 @@ public class ENTDownloader extends Observable implements
 			ParseException, IOException {
 		if (path == null)
 			throw new NullPointerException();
-		setStatus(ENTStatus.CHANGEDIR, path);
 
 		DirectoryChangingEvent changingevent = new DirectoryChangingEvent(); //Préparation des événements
 		changingevent.setSource(this);
@@ -285,7 +272,6 @@ public class ENTDownloader extends Observable implements
 
 			changedevent.setDirectory(path);
 			Broadcaster.fireDirectoryChanged(changedevent);
-			setStatus(ENTStatus.CHANGEDIR_END);
 			return;
 		}
 
@@ -323,7 +309,6 @@ public class ENTDownloader extends Observable implements
 				submitDirectory(splitPath[i]);
 			}
 		}
-		setStatus(ENTStatus.CHANGEDIR_END);
 
 		changedevent.setDirectory(path);
 		Broadcaster.fireDirectoryChanged(changedevent);
@@ -465,7 +450,6 @@ public class ENTDownloader extends Observable implements
 
 		FS_File file = (FS_File) directoryContent.get(pos);
 
-		setStatus(ENTStatus.START_DOWNLOAD, file);
 		Broadcaster.fireStartDownload(new StartDownloadEvent(file));
 
 		if (destination == null || destination.isEmpty()) {
@@ -484,9 +468,7 @@ public class ENTDownloader extends Observable implements
 		browser.setParam("downloadFile", name);
 		browser.setFollowRedirects(false);
 		browser.setCookieField("JSESSIONID", sessionid);
-		sizeDownloaded = 0;
 		browser.downloadFile(destination);
-		setStatus(ENTStatus.END_DOWNLOAD, file);
 		Broadcaster.fireEndDownload(new EndDownloadEvent(file));
 	}
 
@@ -785,49 +767,6 @@ public class ENTDownloader extends Observable implements
 			++i;
 		}
 		return -1;
-	}
-
-	/**
-	 * @deprecated Depuis la version 1.0.0, utilisez les événements du
-	 *             package <code>net.sf.entDownloader.core.events</code>
-	 */
-	@Deprecated
-	private void setStatus(ENTStatus status) {
-		setStatus(status, null);
-	}
-
-	/**
-	 * @deprecated Depuis la version 1.0.0, utilisez les événements du
-	 *             package <code>net.sf.entDownloader.core.events</code>
-	 */
-	@Deprecated
-	private void setStatus(ENTStatus status, Object arg) {
-		this.status = status;
-		setChanged();
-		notifyObservers(arg);
-		if (status == ENTStatus.END_DOWNLOAD
-				|| status == ENTStatus.INITIALIZING_END
-				|| status == ENTStatus.CHANGEDIR_END) {
-			this.status = ENTStatus.READY;
-		}
-		if (status == ENTStatus.INVALID_CREDENTIALS) {
-			this.status = ENTStatus.DISCONNECTED;
-		}
-	}
-
-	/**
-	 * @deprecated Depuis la version 1.0.0, utilisez les événements du
-	 *             package <code>net.sf.entDownloader.core.events</code>
-	 */
-	@Deprecated
-	public ENTStatus getStatus() {
-		return status;
-	}
-
-	@Override
-	public void onDownloadedBytes(DownloadedBytesEvent e) {
-		sizeDownloaded += e.getBytesDownloaded();
-		setStatus(ENTStatus.DOWNLOADING, sizeDownloaded);
 	}
 
 	/**
