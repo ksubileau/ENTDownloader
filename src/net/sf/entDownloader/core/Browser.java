@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.NoRouteToHostException;
@@ -41,7 +42,6 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DownloadedBytesEvent;
@@ -53,18 +53,9 @@ import net.sf.entDownloader.core.events.DownloadedBytesEvent;
  * 
  */
 public class Browser {
-	/**
-	 * TODO Amélioration de la gestion des cookies : attribut path et secure,
-	 * ...
-	 * Voir :
-	 * - http://www.java2s.com/Tutorial/Java/0320__Network/
-	 * GettingtheCookiesfromanHTTPConnection.htm
-	 * - http://www.google.fr/search?hl=fr&q=setting+cookie+httpurlconnection+
-	 * java&aq=f&aqi=&aql=&oq=&gs_rfai=
-	 */
 
 	private Map<String, String> argv;
-	private Map<String, String> cookies = new HashMap<String, String>(8);
+	private List<HttpCookie> cookies;
 	private Map<String, List<String>> headerFields = null;
 	private String url;
 	private String encodedParam;
@@ -162,9 +153,7 @@ public class Browser {
 					.openConnection(proxy);
 			conn.setInstanceFollowRedirects(followRedirects);
 			conn.setDoOutput(true);
-			if (cookies != null && !cookies.isEmpty()) {
-				conn.setRequestProperty("Cookie", getCookie());
-			}
+			setupCookie(conn);
 
 			if (method == Method.POST) {
 				//envoi de la requête
@@ -197,13 +186,15 @@ public class Browser {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(writer != null)
+				if (writer != null) {
 					writer.close();
+				}
 			} catch (IOException e) {
 			}
 			try {
-				if(reader != null)
+				if (reader != null) {
 					reader.close();
+				}
 			} catch (IOException e) {
 			}
 		}
@@ -247,9 +238,7 @@ public class Browser {
 					.openConnection(proxy);
 			conn.setInstanceFollowRedirects(followRedirects);
 			conn.setDoOutput(true);
-			if (cookies != null && !cookies.isEmpty()) {
-				conn.setRequestProperty("Cookie", getCookie());
-			}
+			setupCookie(conn);
 
 			if (method == Method.POST) {
 				//envoi de la requête
@@ -349,68 +338,70 @@ public class Browser {
 	}
 
 	/**
-	 * Retourne les cookies actuellement définis dans une Map
-	 */
-	public Map<String, String> getCookieMap() {
-		return cookies;
-	}
-
-	/**
-	 * Redéfinit les cookies envoyés dans les requêtes suivantes. Les précédents
-	 * cookies sont écrasés
+	 * Installe les cookies actuellement définis sur la connexion indiquée.
 	 * 
-	 * @param cookies
-	 *            Cookies à définir, sous la forme d'une Map dont la clé
-	 *            représente le nom du champ.
+	 * @param urlConnection La connexion sur laquelle on souhaite définir les
+	 *            cookies.
 	 */
-	public void setCookie(Map<String, String> cookies) {
-		this.cookies = cookies;
-	}
+	private void setupCookie(URLConnection urlConnection) {
+		if (cookies != null && !cookies.isEmpty()) {
+			String cookieString = "";
+			boolean isFirst = true;
 
-	/**
-	 * Retourne les cookies actuellement définis tel qu'ils sont envoyés dans la
-	 * requête HTTP.
-	 */
-	public String getCookie() {
-		String cookie = "";
-		boolean isFirst = true;
-		if (!cookies.isEmpty()) {
-			for (String string : cookies.keySet()) {
+			for (HttpCookie cookie : cookies) {
 				if (!isFirst) {
-					cookie += "; ";
+					cookieString += "; ";
 				}
-				String str = string;
-				cookie += str;
-				str = cookies.get(str);
-				if (str != null) {
-					cookie += "=" + str;
-				}
-				isFirst &= false;
+				cookieString += cookie.toString();
+				isFirst = false;
 			}
+			urlConnection.setRequestProperty("Cookie", cookieString);
 		}
-		return cookie;
 	}
 
 	/**
 	 * Retourne la valeur du champ de cookie portant le nom
 	 * <code>fieldname</code>, ou null si ce champ n'existe pas.
 	 * 
-	 * @param fieldname Le nom du champ de cookie souhaité
+	 * @param name Le nom du champ de cookie souhaité
 	 * @return La valeur du champ de cookie demandé, ou null si le champ n'est
 	 *         pas défini.
 	 */
-	public String getCookieField(String fieldname) {
-		return cookies.get(fieldname);
+	public String getCookieValueByName(String name) {
+		HttpCookie cookie = getCookieByName(name);
+
+		return cookie != null ? cookie.getValue() : null;
+	}
+
+	/**
+	 * Retourne le cookie portant le nom indiqué.
+	 * 
+	 * @param name Le nom du cookie recherché.
+	 * @return Le cookie portant le nom indiqué, ou null si ce dernier n'existe
+	 *         pas.
+	 */
+	public HttpCookie getCookieByName(String name) {
+		for (HttpCookie cookie : cookies) {
+			if (cookie.getName().equals(name))
+				return cookie;
+		}
+		return null;
 	}
 
 	/**
 	 * Ajoute ou redéfinit la valeur du champ de cookie spécifié
 	 * 
-	 * @param fieldname Le nom du champ de cookie à définir
+	 * @param name Le nom du champ de cookie à définir
 	 * @param value La valeur du champ de cookie <i>fieldname</i>.
 	 */
-	public void setCookieField(String fieldname, String value) {
-		cookies.put(fieldname, value);
+	public void setCookieField(String name, String value) {
+		HttpCookie cookie = getCookieByName(name);
+		if (cookie == null) {
+			cookie = new HttpCookie(name, value);
+			cookies.add(cookie);
+		} else {
+			cookie.setValue(value);
+		}
 	}
 
 	/**
@@ -423,10 +414,13 @@ public class Browser {
 	/**
 	 * Supprime le champ de cookie spécifié
 	 * 
-	 * @param fieldname Le champ à supprimer
+	 * @param name Le champ à supprimer
 	 */
-	public void delCookie(String fieldname) {
-		cookies.remove(fieldname);
+	public void delCookie(String name) {
+		HttpCookie cookie = getCookieByName(name);
+		if (cookie != null) {
+			cookies.remove(cookie);
+		}
 	}
 
 	/**
@@ -436,26 +430,10 @@ public class Browser {
 	 * @param cookie Cookies à définir
 	 */
 	public void setCookies(String cookie) {
-		if (cookie != null && !cookie.isEmpty()) {
-			cookies.clear();
-			StringTokenizer st = new StringTokenizer(cookie, ";");
-			int equalPos;
+		if (cookie == null)
+			return;
 
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-				equalPos = token.indexOf("=");
-				String name;
-				String value;
-				if (equalPos != -1) {
-					name = token.substring(0, equalPos).trim();
-					value = token.substring(equalPos + 1);
-				} else {
-					name = token.trim();
-					value = null;
-				}
-				cookies.put(name, value);
-			}
-		}
+		cookies = HttpCookie.parse(cookie);
 	}
 
 	/**

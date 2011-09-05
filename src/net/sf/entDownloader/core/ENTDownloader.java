@@ -158,7 +158,7 @@ public class ENTDownloader {
 		browser.setUrl(browser.getHeaderField("Location"));
 		browser.clearParam();
 		browser.perform();
-		sessionid = browser.getCookieField("JSESSIONID");
+		sessionid = browser.getCookieValueByName("JSESSIONID");
 
 		isLogin = true;
 
