@@ -60,9 +60,9 @@ import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.shell.progressBar.ProgressBar;
 
 public final class ShellMain implements AuthenticationSucceededListener,
-		DirectoryChangedListener, DirectoryChangingListener, FileAlreadyExistsListener,
-		StartDownloadListener, DownloadedBytesListener, EndDownloadListener,
-		DownloadAbortListener {
+		DirectoryChangedListener, DirectoryChangingListener,
+		FileAlreadyExistsListener, StartDownloadListener,
+		DownloadedBytesListener, EndDownloadListener, DownloadAbortListener {
 	private static String login;
 	private static final String productName = CoreConfig
 			.getString("ProductInfo.name");
@@ -541,20 +541,29 @@ public final class ShellMain implements AuthenticationSucceededListener,
 
 	@Override
 	public void onFileAlreadyExists(FileAlreadyExistsEvent e) {
+		boolean isDeterminate = pg.isDeterminate();
+		boolean isVisible = pg.isVisible();
 		pg.setVisible(false);
 		pg.setDeterminate(false);
 		pg.setVisible(false);
+
 		Scanner sc = new Scanner(System.in);
 		String choice = null;
-			while (choice == null || choice.isEmpty() || (!choice.equalsIgnoreCase("o") && !choice.equalsIgnoreCase("n"))) {
-				System.out.print("Le fichier "+e.getFile().getName()+" existe déjà. Voulez-vous l'écraser ? : ");
-				try {
-					choice = sc.nextLine();
-				} catch (NoSuchElementException e1) {
-					System.out.println();
-					return;
-				}
+		while (choice == null
+				|| choice.isEmpty()
+				|| (!choice.equalsIgnoreCase("o") && !choice
+						.equalsIgnoreCase("n"))) {
+			System.out.print("Un fichier portant le nom \"" + e.getFile().getName()
+					+ "\" existe déjà. Voulez-vous l'écraser ? [Oui|Non] : ");
+			try {
+				choice = sc.nextLine();
+			} catch (NoSuchElementException e1) {
+				System.out.println();
+				return;
 			}
-			e.abortDownload = choice.equalsIgnoreCase("n");
+		}
+		e.abortDownload = choice.equalsIgnoreCase("n");
+		pg.setDeterminate(isDeterminate);
+		pg.setVisible(isVisible);
 	}
 }
