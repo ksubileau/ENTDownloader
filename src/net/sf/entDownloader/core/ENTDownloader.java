@@ -128,10 +128,10 @@ public class ENTDownloader {
 		browser.setUrl(CoreConfig.loginURL);
 		browser.setFollowRedirects(false);
 
-		String loginPage = browser.perform();
+		String loginPage = browser.getPage();
 		if (browser.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
 			browser.setUrl(browser.getHeaderField("Location"));
-			loginPage = browser.perform();
+			loginPage = browser.getPage();
 		}
 
 		List<String> ticket = new ArrayList<String>();
@@ -145,7 +145,7 @@ public class ENTDownloader {
 		browser.setParam("password", new String(password));
 		browser.setParam("lt", ticket.get(1).toString());
 		browser.setFollowRedirects(false);
-		loginPage = browser.perform();
+		loginPage = browser.getPage();
 		browser.setMethod(Browser.Method.GET);
 
 		if (Misc.preg_match("<div id=\"erreur\">", loginPage)) {
@@ -157,7 +157,7 @@ public class ENTDownloader {
 
 		browser.setUrl(browser.getHeaderField("Location"));
 		browser.clearParam();
-		browser.perform();
+		browser.getPage();
 		sessionid = browser.getCookieValueByName("JSESSIONID");
 
 		isLogin = true;
@@ -166,7 +166,7 @@ public class ENTDownloader {
 		browser.setUrl(CoreConfig.rootURL);
 		browser.clearParam();
 		String rootPage = null;
-		rootPage = browser.perform();
+		rootPage = browser.getPage();
 		setStockageUrlParams(rootPage);
 		this.login = login;
 		setUserName(rootPage);
@@ -379,7 +379,7 @@ public class ENTDownloader {
 		browser.setFollowRedirects(false);
 		browser.setCookieField("JSESSIONID", sessionid);
 		String pageContent = null;
-		pageContent = browser.perform();
+		pageContent = browser.getPage();
 
 		if (browser.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& browser.getHeaderField("Location").equals(

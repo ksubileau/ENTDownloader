@@ -33,6 +33,7 @@ import java.net.ConnectException;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.NoRouteToHostException;
 import java.net.Proxy;
 import java.net.URL;
@@ -133,42 +134,11 @@ public class Browser {
 	 * @return Le texte renvoyé par le serveur (code HTML ou XML par exemple).
 	 * @throws IOException La connexion a échoué.
 	 */
-	public String perform() throws IOException {
-		OutputStreamWriter writer = null;
+	public String getPage() throws IOException {
 		BufferedReader reader = null;
 		String response = "";
 		try {
-			//Encodage des paramètres de la requête
-			encodeParam();
-
-			//création de la connexion
-			URL url;
-			if (method == Method.POST) {
-				url = new URL(this.url);
-			} else {
-				url = new URL(this.url + encodedParam);
-			}
-
-			HttpURLConnection conn = (HttpURLConnection) url
-					.openConnection(proxy);
-			conn.setInstanceFollowRedirects(followRedirects);
-			conn.setDoOutput(true);
-			setupCookie(conn);
-
-			if (method == Method.POST) {
-				//envoi de la requête
-				writer = new OutputStreamWriter(conn.getOutputStream());
-				writer.write(encodedParam);
-				writer.flush();
-			}
-
-			//lecture de la réponse
-			setCookies(conn.getHeaderField("Set-Cookie"));
-			responseCode = conn.getResponseCode();
-			headerFields = conn.getHeaderFields();
-
-			reader = new BufferedReader(new InputStreamReader(
-					conn.getInputStream()));
+			reader = new BufferedReader(new InputStreamReader(performRequest()));
 			String ligne;
 			while ((ligne = reader.readLine()) != null) {
 				response += ligne;
@@ -185,12 +155,6 @@ public class Browser {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (writer != null) {
-					writer.close();
-				}
-			} catch (IOException e) {
-			}
 			try {
 				if (reader != null) {
 					reader.close();
@@ -211,8 +175,6 @@ public class Browser {
 	 */
 	public void downloadFile(String destinationPath)
 			throws FileNotFoundException {
-		//TODO Factorisation avec perform et lancement d'exception.
-		OutputStreamWriter writer = null;
 		InputStream reader = null;
 		FileOutputStream writeFile = null;
 
@@ -223,35 +185,7 @@ public class Browser {
 			File dpath = new File(fpath.getParent());
 			dpath.mkdirs();
 
-			//Encodage des paramètres de la requête
-			encodeParam();
-
-			//création de la connexion
-			URL url;
-			if (method == Method.POST) {
-				url = new URL(this.url);
-			} else {
-				url = new URL(this.url + encodedParam);
-			}
-
-			HttpURLConnection conn = (HttpURLConnection) url
-					.openConnection(proxy);
-			conn.setInstanceFollowRedirects(followRedirects);
-			conn.setDoOutput(true);
-			setupCookie(conn);
-
-			if (method == Method.POST) {
-				//envoi de la requête
-				writer = new OutputStreamWriter(conn.getOutputStream());
-				writer.write(encodedParam);
-				writer.flush();
-			}
-
-			//lecture de la réponse
-			setCookies(conn.getHeaderField("Set-Cookie"));
-			responseCode = conn.getResponseCode();
-			headerFields = conn.getHeaderFields();
-			reader = conn.getInputStream();
+			reader = performRequest();
 
 			writeFile = new FileOutputStream(destinationPath);
 			byte[] buffer = new byte[1024];
@@ -268,16 +202,59 @@ public class Browser {
 			e.printStackTrace();
 		} finally {
 			try {
-				writer.close();
-			} catch (Exception e) {
-			}
-			try {
 				reader.close();
 			} catch (Exception e) {
 			}
 			try {
 				writeFile.close();
 			} catch (Exception e) {
+			}
+		}
+	}
+
+	/**
+	 * Effectue la requête précédemment configuré et retourne un InputStream
+	 * permettant de lire la réponse renvoyée par le serveur.
+	 * 
+	 * @return Un InputStream permettant de lire la réponse renvoyée par le
+	 *         serveur.
+	 */
+	private InputStream performRequest() throws UnsupportedEncodingException,
+			MalformedURLException, IOException {
+		OutputStreamWriter writer = null;
+		//Encodage des paramètres de la requête
+		encodeParam();
+
+		//création de la connexion
+		URL url;
+		if (method == Method.POST) {
+			url = new URL(this.url);
+		} else {
+			url = new URL(this.url + encodedParam);
+		}
+
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+		conn.setInstanceFollowRedirects(followRedirects);
+		conn.setDoOutput(true);
+		setupCookie(conn);
+
+		try {
+			if (method == Method.POST) {
+				//envoi de la requête
+				writer = new OutputStreamWriter(conn.getOutputStream());
+				writer.write(encodedParam);
+				writer.flush();
+			}
+
+			//lecture de la réponse
+			setCookies(conn.getHeaderField("Set-Cookie"));
+			responseCode = conn.getResponseCode();
+			headerFields = conn.getHeaderFields();
+
+			return conn.getInputStream();
+		} finally {
+			if (writer != null) {
+				writer.close();
 			}
 		}
 	}
