@@ -54,6 +54,11 @@ public abstract class Event {
 	 * Indique la fin d'un téléchargement.
 	 */
 	public static final int END_DOWNLOAD_TYPE = 6;
+	/**
+	 * Indique que le téléchargement d'un fichier vers l'emplacement sélectionné
+	 * risque d'écraser un fichier existant.
+	 */
+	public static final int FILE_ALREADY_EXISTS_TYPE = 7;
 
 	protected Event() {
 	}

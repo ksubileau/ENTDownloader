@@ -41,6 +41,7 @@ import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
+import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
@@ -457,6 +458,23 @@ public class ENTDownloader {
 					System.getProperty("file.separator"))) {
 				destination += name;
 			}
+		}
+		
+		//Vérification de l'existence d'un fichier portant le nom indiqué
+		File fpath = new File(destination).getCanonicalFile();
+		if(fpath.exists())
+		{
+			FileAlreadyExistsEvent fileAlreadyExistsEvent = new FileAlreadyExistsEvent(file);
+			Broadcaster.fireFileAlreadyExists(fileAlreadyExistsEvent);
+			System.out.println("Warning : File exists !");
+			if(fileAlreadyExistsEvent.abortDownload)
+			{
+				//TODO Nouvel événement DownloadAbort ?
+				Broadcaster.fireEndDownload(new EndDownloadEvent(file));
+				System.out.println("Download aborted !");
+				return;
+			}
+			System.out.println("Download anyway, file overwritten !");
 		}
 
 		browser.clearParam();

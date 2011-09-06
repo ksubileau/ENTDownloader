@@ -47,6 +47,8 @@ import net.sf.entDownloader.core.events.DownloadedBytesEvent;
 import net.sf.entDownloader.core.events.DownloadedBytesListener;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
 import net.sf.entDownloader.core.events.EndDownloadListener;
+import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
+import net.sf.entDownloader.core.events.FileAlreadyExistsListener;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartDownloadListener;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
@@ -56,7 +58,7 @@ import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.shell.progressBar.ProgressBar;
 
 public final class ShellMain implements AuthenticationSucceededListener,
-		DirectoryChangedListener, DirectoryChangingListener,
+		DirectoryChangedListener, DirectoryChangingListener, FileAlreadyExistsListener,
 		StartDownloadListener, DownloadedBytesListener, EndDownloadListener {
 	private static String login;
 	private static final String productName = CoreConfig
@@ -85,6 +87,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addStartDownloadListener(this);
 		Broadcaster.addDownloadedBytesListener(this);
 		Broadcaster.addEndDownloadListener(this);
+		Broadcaster.addFileAlreadyExistsListener(this);
 
 		//Analyse des arguments
 		for (int i = 0; i < args.length; i++) {
@@ -521,5 +524,25 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	@Override
 	public void onAuthenticationSucceeded(AuthenticationSucceededEvent event) {
 		writeStatusMessage("Authentification réussie, initialisation...");
+	}
+
+	@Override
+	public void onFileAlreadyExists(FileAlreadyExistsEvent e) {
+		pg.setVisible(false);
+		pg.setDeterminate(false);
+		pg.setVisible(false);
+		Scanner sc = new Scanner(System.in);
+		String choice = null;
+			while (choice == null || choice.isEmpty() || (!choice.equalsIgnoreCase("o") && !choice.equalsIgnoreCase("n"))) {
+				System.out.print("Le fichier "+e.getFile().getName()+" existe déjà. Voulez-vous l'écraser ? : ");
+				try {
+					choice = sc.nextLine();
+				} catch (NoSuchElementException e1) {
+					System.out.println();
+					return;
+				}
+				System.out.print(choice);
+			}
+			e.abortDownload = choice.equalsIgnoreCase("n");
 	}
 }
