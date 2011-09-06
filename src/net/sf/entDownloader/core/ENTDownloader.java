@@ -40,6 +40,7 @@ import net.sf.entDownloader.core.events.AuthenticationSucceededEvent;
 import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
+import net.sf.entDownloader.core.events.DownloadAbortEvent;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
 import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
@@ -466,15 +467,14 @@ public class ENTDownloader {
 		{
 			FileAlreadyExistsEvent fileAlreadyExistsEvent = new FileAlreadyExistsEvent(file);
 			Broadcaster.fireFileAlreadyExists(fileAlreadyExistsEvent);
-			System.out.println("Warning : File exists !");
+//			System.out.println("Warning : File exists !");
 			if(fileAlreadyExistsEvent.abortDownload)
 			{
-				//TODO Nouvel événement DownloadAbort ?
-				Broadcaster.fireEndDownload(new EndDownloadEvent(file));
-				System.out.println("Download aborted !");
+				Broadcaster.fireDownloadAbort(new DownloadAbortEvent(file));
+//				System.out.println("Download aborted !");
 				return;
 			}
-			System.out.println("Download anyway, file overwritten !");
+//			System.out.println("Download anyway, file overwritten !");
 		}
 
 		browser.clearParam();

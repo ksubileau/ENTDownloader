@@ -1,5 +1,5 @@
 /*
- *  EndDownloadEvent.java
+ *  DownloadAbortEvent.java
  *      
  *  Copyright 2010-2011 Kévin Subileau. 
  *
@@ -24,30 +24,30 @@ import net.sf.entDownloader.core.FS_File;
 
 /**
  * Un événement qui indique que le téléchargement d'un
- * fichier s'est terminé normalement.
+ * fichier a été abandonné.
  */
-public class EndDownloadEvent extends Event {
+public class DownloadAbortEvent extends Event {
 
 	private FS_File file;
 
 	/**
-	 * Construit un nouvel évènement EndDownloadEvent.
+	 * Construit un nouvel évènement DownloadAbortEvent.
 	 */
-	public EndDownloadEvent() {
+	public DownloadAbortEvent() {
 		this(null);
 	}
 
 	/**
-	 * Construit un nouvel évènement EndDownloadEvent.
+	 * Construit un nouvel évènement DownloadAbortEvent.
 	 * 
-	 * @param file Le fichier dont le téléchargement s'est terminé.
+	 * @param file Le fichier dont le téléchargement a été annulé.
 	 */
-	public EndDownloadEvent(FS_File file) {
+	public DownloadAbortEvent(FS_File file) {
 		setFile(file);
 	}
 
 	/**
-	 * Définit le fichier pour lequel le téléchargement s'est terminé.
+	 * Définit le fichier pour lequel le téléchargement a été abandonné.
 	 * 
 	 * @param file
 	 */
@@ -56,7 +56,7 @@ public class EndDownloadEvent extends Event {
 	}
 
 	/**
-	 * Retourne le fichier dont le téléchargement s'est terminé.
+	 * Retourne le fichier dont le téléchargement a été annulé.
 	 */
 	public FS_File getFile() {
 		return file;
@@ -64,11 +64,11 @@ public class EndDownloadEvent extends Event {
 
 	/**
 	 * Retourne le type d'événement porté par cette instance. Ici, retourne
-	 * {@link Event#END_DOWNLOAD_TYPE}
+	 * {@link Event#DOWNLOAD_ABORT_TYPE}
 	 */
 	@Override
 	public int getType() {
-		return END_DOWNLOAD_TYPE;
+		return DOWNLOAD_ABORT_TYPE;
 	}
 
 }

@@ -43,6 +43,8 @@ import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangedListener;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingListener;
+import net.sf.entDownloader.core.events.DownloadAbortEvent;
+import net.sf.entDownloader.core.events.DownloadAbortListener;
 import net.sf.entDownloader.core.events.DownloadedBytesEvent;
 import net.sf.entDownloader.core.events.DownloadedBytesListener;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
@@ -59,7 +61,8 @@ import net.sf.entDownloader.shell.progressBar.ProgressBar;
 
 public final class ShellMain implements AuthenticationSucceededListener,
 		DirectoryChangedListener, DirectoryChangingListener, FileAlreadyExistsListener,
-		StartDownloadListener, DownloadedBytesListener, EndDownloadListener {
+		StartDownloadListener, DownloadedBytesListener, EndDownloadListener,
+		DownloadAbortListener {
 	private static String login;
 	private static final String productName = CoreConfig
 			.getString("ProductInfo.name");
@@ -87,6 +90,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addStartDownloadListener(this);
 		Broadcaster.addDownloadedBytesListener(this);
 		Broadcaster.addEndDownloadListener(this);
+		Broadcaster.addDownloadAbortListener(this);
 		Broadcaster.addFileAlreadyExistsListener(this);
 
 		//Analyse des arguments
@@ -515,6 +519,15 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	}
 
 	@Override
+	public void onDownloadAbort(DownloadAbortEvent e) {
+		downloadingFile = null;
+		pg.setVisible(false);
+		pg.setDeterminate(false);
+		pg.setVisible(false);
+		writeStatusMessage("Téléchargement annulé.");
+	}
+
+	@Override
 	public void onDownloadedBytes(DownloadedBytesEvent e) {
 		sizeDownloaded += e.getBytesDownloaded();
 		pg.setValue((int) (((Long) sizeDownloaded) * 100 / downloadingFile
@@ -541,7 +554,6 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					System.out.println();
 					return;
 				}
-				System.out.print(choice);
 			}
 			e.abortDownload = choice.equalsIgnoreCase("n");
 	}

@@ -59,6 +59,10 @@ public abstract class Event {
 	 * risque d'écraser un fichier existant.
 	 */
 	public static final int FILE_ALREADY_EXISTS_TYPE = 7;
+	/**
+	 * Indique que le téléchargement d'un fichier a été annulé.
+	 */
+	public static final int DOWNLOAD_ABORT_TYPE = 8;
 
 	protected Event() {
 	}
