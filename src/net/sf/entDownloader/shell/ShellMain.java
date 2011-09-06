@@ -236,43 +236,44 @@ public final class ShellMain implements AuthenticationSucceededListener,
 						get((command.length > 1) ? command[1] : "",
 								(command.length > 2) ? command[2] : null);
 					} else if (command[0].equals("getall")) { //TODO Creer un dossier eponyme au dossier courant comme destination si cette derniere n'est pas indiquée au lieu d'enregistrer directement dans le dossier courant local ??
-						if (command.length > 1
-								&& (command[1].startsWith("-R") || command[1]
-										.startsWith("-r"))) {
-							try {
-								System.out
-										.println(entd
-												.getAllFiles(
-														(command.length > 2) ? command[command.length - 1]
-																: null,
-														(command[1].length() > 2) ? Integer
-																.parseInt(command[1]
-																		.substring(2))
-																: -1)
-												+ " fichier(s) téléchargé(s)");
-							} catch (NumberFormatException e2) {
-								System.err
-										.println("ENTDownloader: getall: Un nombre entier est attendu après l'option -R.");
-							} catch (ENTInvalidFS_ElementTypeException e) {
-								System.err
-										.println("ENTDownloader: getall: Impossible de créer le répertoire requis : un fichier portant le même nom existe.");
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
+						int maxdepth = 0;
+						String destination = null;
+
+						try {
+							//Analyse des paramètres, le cas échéant.
+							for (int i = 1; i < command.length; i++) {
+								String param = command[i];
+								//Active la récursivité.
+								if (param.startsWith("-R")
+										|| param.startsWith("-r")) {
+
+									if (param.length() > 2) {
+										//Lecture de la profondeur maximale 
+										//de récursivité.
+										maxdepth = Integer.parseInt(param
+												.substring(2));
+									} else {
+										//Pas de profondeur maximale.
+										maxdepth = -1;
+									}
+								} else if (i == command.length - 1) {
+									//Le dernier argument, s'il n'est pas reconnu 
+									//ci-dessus, est le dossier de destination.
+									destination = param;
+								}
 							}
-						} else {
-							try {
-								System.out.println(entd.getAllFiles(
-										(command.length > 1) ? command[1]
-												: null, 0)
-										+ " fichier(s) téléchargé(s)");
-							} catch (ENTInvalidFS_ElementTypeException e) {
-								System.err
-										.println("ENTDownloader: getall: Impossible de créer le répertoire requis : un fichier portant le même nom existe.");
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+
+							System.out.println(entd.getAllFiles(destination,
+									maxdepth) + " fichier(s) téléchargé(s)");
+						} catch (NumberFormatException e2) {
+							System.err
+									.println("ENTDownloader: getall: Un nombre entier est attendu après l'option -R.");
+						} catch (ENTInvalidFS_ElementTypeException e) {
+							System.err
+									.println("ENTDownloader: getall: Impossible de créer le répertoire requis : un fichier portant le même nom existe.");
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
 					} else if (command[0].equals("refresh")) {
 						cd(".");
@@ -553,7 +554,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 				|| choice.isEmpty()
 				|| (!choice.equalsIgnoreCase("o") && !choice
 						.equalsIgnoreCase("n"))) {
-			System.out.print("Un fichier portant le nom \"" + e.getFile().getName()
+			System.out.print("Un fichier portant le nom \""
+					+ e.getFile().getName()
 					+ "\" existe déjà. Voulez-vous l'écraser ? [Oui|Non] : ");
 			try {
 				choice = sc.nextLine();
