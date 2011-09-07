@@ -91,7 +91,6 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addDownloadedBytesListener(this);
 		Broadcaster.addEndDownloadListener(this);
 		Broadcaster.addDownloadAbortListener(this);
-		Broadcaster.addFileAlreadyExistsListener(this);
 
 		//Analyse des arguments
 		for (int i = 0; i < args.length; i++) {
@@ -238,6 +237,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					} else if (command[0].equals("getall")) { //TODO Creer un dossier eponyme au dossier courant comme destination si cette derniere n'est pas indiquée au lieu d'enregistrer directement dans le dossier courant local ??
 						int maxdepth = 0;
 						String destination = null;
+						boolean overwrite = false;
 
 						try {
 							//Analyse des paramètres, le cas échéant.
@@ -256,6 +256,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 										//Pas de profondeur maximale.
 										maxdepth = -1;
 									}
+								} else if (param.equalsIgnoreCase("-y")) {
+									overwrite = true;
 								} else if (i == command.length - 1) {
 									//Le dernier argument, s'il n'est pas reconnu 
 									//ci-dessus, est le dossier de destination.
@@ -263,8 +265,14 @@ public final class ShellMain implements AuthenticationSucceededListener,
 								}
 							}
 
+							if (!overwrite) {
+								Broadcaster.addFileAlreadyExistsListener(this);
+							}
+
 							System.out.println(entd.getAllFiles(destination,
 									maxdepth) + " fichier(s) téléchargé(s)");
+
+							Broadcaster.removeFileAlreadyExistsListener(this);
 						} catch (NumberFormatException e2) {
 							System.err
 									.println("ENTDownloader: getall: Un nombre entier est attendu après l'option -R.");
