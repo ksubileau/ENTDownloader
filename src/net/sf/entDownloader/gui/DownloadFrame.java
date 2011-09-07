@@ -34,6 +34,8 @@ import javax.swing.JProgressBar;
 import javax.swing.WindowConstants;
 
 import net.sf.entDownloader.core.FS_File;
+import net.sf.entDownloader.gui.events.GuiBroadcaster;
+import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
 
 public class DownloadFrame extends javax.swing.JDialog {
 	//TODO checkbox fermer après téléchargement
@@ -99,6 +101,7 @@ public class DownloadFrame extends javax.swing.JDialog {
 				//TODO Générer un événement et traiter dans Downloader pour éviter apparition messagebox d'écrasement après annulation.
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					GuiBroadcaster.fireRequestDownloadAbort(new RequestDownloadAbortEvent());
 					DownloadFrame.this.dispose();
 				}
 			});

@@ -1,5 +1,5 @@
 /*
- *  GuiEvent.java
+ *  RequestDownloadAbortEvent.java
  *      
  *  Copyright 2010-2011 Kévin Subileau. 
  *
@@ -20,22 +20,24 @@
  */
 package net.sf.entDownloader.gui.events;
 
-import net.sf.entDownloader.core.events.Event;
-
-public abstract class GuiEvent extends Event {
+/**
+ * Un événement qui indique que l'utilisateur a demandé
+ * l'annulation du ou des téléchargement(s) en cours.
+ */
+public class RequestDownloadAbortEvent extends GuiEvent {
 
 	/**
-	 * Indique que l'utilisateur a double-cliqué sur une ligne de l'affichage
-	 * Détail.
+	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * {@link GuiEvent#REQUEST_DOWNLOAD_ABORT_TYPE}
 	 */
-	public static final int DOUBLE_CLICK_ON_ROW_TYPE = 101;
-	/**
-	 * Indique que l'utilisateur a demandé l'annulation du ou des
-	 * téléchargement(s) en cours.
-	 */
-	public static final int REQUEST_DOWNLOAD_ABORT_TYPE = 102;
-
 	@Override
-	public abstract int getType();
+	public int getType() {
+		return GuiEvent.REQUEST_DOWNLOAD_ABORT_TYPE;
+	}
 
+	/**
+	 * Construit un nouvel évènement RequestDownloadAbortEvent.
+	 */
+	public RequestDownloadAbortEvent() {
+	}
 }
