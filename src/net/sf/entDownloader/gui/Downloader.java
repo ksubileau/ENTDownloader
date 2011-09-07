@@ -238,6 +238,14 @@ public class Downloader extends SwingWorker<Void, Void> implements
 				System.err.println("Impossible d'ouvrir " + saveas.getPath());
 			}
 		}
+
+		dispose();
+	}
+
+	private void dispose() {
+		Broadcaster.removeDownloadedBytesListener(this);
+		Broadcaster.removeStartDownloadListener(this);
+		Broadcaster.removeEndDownloadListener(this);
 	}
 
 	private boolean isThereDirectories() {
