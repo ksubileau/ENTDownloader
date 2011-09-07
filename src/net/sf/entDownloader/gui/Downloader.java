@@ -49,9 +49,12 @@ import net.sf.entDownloader.core.events.FileAlreadyExistsListener;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartDownloadListener;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
+import net.sf.entDownloader.gui.events.GuiBroadcaster;
+import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
+import net.sf.entDownloader.gui.events.RequestDownloadAbortListener;
 
 public class Downloader extends SwingWorker<Void, Void> implements
-		StartDownloadListener, DownloadedBytesListener, EndDownloadListener, FileAlreadyExistsListener {
+		StartDownloadListener, DownloadedBytesListener, EndDownloadListener, FileAlreadyExistsListener, RequestDownloadAbortListener {
 
 	private DownloadFrame downloadFrame;
 	private List<FS_Element> downList;
@@ -87,6 +90,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			JFileChooser saveasChooser) {
 		this.parent = owner;
 		downloadFrame = new DownloadFrame(owner);
+		GuiBroadcaster.addRequestDownloadAbortListener(this);
 
 		if (downloadList != null) {
 			downList = new ArrayList<FS_Element>(downloadList);
@@ -246,6 +250,8 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		Broadcaster.removeDownloadedBytesListener(this);
 		Broadcaster.removeStartDownloadListener(this);
 		Broadcaster.removeEndDownloadListener(this);
+		Broadcaster.removeFileAlreadyExistsListener(this);
+		GuiBroadcaster.removeRequestDownloadAbortListener(this);
 	}
 
 	private boolean isThereDirectories() {
@@ -295,6 +301,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 	@Override
 	public void onFileAlreadyExists(FileAlreadyExistsEvent e) {
+		//TODO Amélioration : Oui pour tous / non pour tous (ou case a cocher ne plus demander)
 		int choice = JOptionPane
 		.showConfirmDialog(
 				downloadFrame,
@@ -304,6 +311,12 @@ public class Downloader extends SwingWorker<Void, Void> implements
 				JOptionPane.QUESTION_MESSAGE);
 		
 		e.abortDownload = (choice == JOptionPane.NO_OPTION);
+	}
+
+	@Override
+	public void onRequestDownloadAbort(RequestDownloadAbortEvent event) {
+		downloadFrame.dispose();
+		dispose();
 	}
 
 	public void startDownload() {
