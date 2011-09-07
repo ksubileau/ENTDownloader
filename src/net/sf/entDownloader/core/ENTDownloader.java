@@ -468,13 +468,10 @@ public class ENTDownloader {
 			FileAlreadyExistsEvent fileAlreadyExistsEvent = new FileAlreadyExistsEvent(
 					file);
 			Broadcaster.fireFileAlreadyExists(fileAlreadyExistsEvent);
-			//			System.out.println("Warning : File exists !");
 			if (fileAlreadyExistsEvent.abortDownload) {
 				Broadcaster.fireDownloadAbort(new DownloadAbortEvent(file));
-				//				System.out.println("Download aborted !");
 				return false;
 			}
-			//			System.out.println("Download anyway, file overwritten !");
 		}
 
 		browser.clearParam();

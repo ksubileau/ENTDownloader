@@ -96,6 +96,7 @@ public class DownloadFrame extends javax.swing.JDialog {
 			abort.setText("Annuler");
 			abort.setBounds(308, 95, 79, 26);
 			abort.addActionListener(new ActionListener() {
+				//TODO Générer un événement et traiter dans Downloader pour éviter apparition messagebox d'écrasement après annulation.
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					DownloadFrame.this.dispose();
