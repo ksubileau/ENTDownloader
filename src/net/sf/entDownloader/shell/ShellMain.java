@@ -289,7 +289,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					} else if (command[0].equals("info")) {
 						infos(entd);
 					} else if (command[0].equals("exit")) {
-						break;
+						System.exit(0);
 					} else if (!command[0].isEmpty() || command.length != 1) {
 						System.err.println("ENTDownloader: " + command[0]
 								+ ": command not found");
