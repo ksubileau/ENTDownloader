@@ -271,7 +271,6 @@ public final class ShellMain implements AuthenticationSucceededListener,
 							System.out.println(entd.getAllFiles(destination,
 									maxdepth) + " fichier(s) téléchargé(s)");
 
-							Broadcaster.removeFileAlreadyExistsListener(this);
 						} catch (NumberFormatException e2) {
 							System.err
 									.println("ENTDownloader: getall: Un nombre entier est attendu après l'option -R.");
@@ -281,6 +280,11 @@ public final class ShellMain implements AuthenticationSucceededListener,
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
+						} finally {
+							if (!overwrite) {
+								Broadcaster
+										.removeFileAlreadyExistsListener(this);
+							}
 						}
 					} else if (command[0].equals("refresh")) {
 						cd(".");
@@ -418,6 +422,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			System.err.println("ENTDownloader: get: Nom de fichier manquant");
 			return;
 		}
+		Broadcaster.addFileAlreadyExistsListener(this);
 		try {
 			entd.getFile(name, destination);
 		} catch (ENTFileNotFoundException e) {
@@ -434,6 +439,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					+ ": N'est pas un fichier");
 		} catch (IOException e3) {
 			e3.getLocalizedMessage();
+		} finally {
+			Broadcaster.removeFileAlreadyExistsListener(this);
 		}
 	}
 
@@ -569,7 +576,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			}
 		}
 		e.abortDownload = choice.equalsIgnoreCase("n");
-		
+
 		if (isDeterminate) {
 			pg.setDeterminate(true);
 		}
