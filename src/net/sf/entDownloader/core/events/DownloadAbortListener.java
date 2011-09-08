@@ -1,5 +1,5 @@
 /*
- *  EndDownloadListener.java
+ *  DownloadAbortListener.java
  *      
  *  Copyright 2010-2011 Kévin Subileau. 
  *
@@ -21,16 +21,14 @@
 package net.sf.entDownloader.core.events;
 
 /**
- * Informe les observateurs que le téléchargement d'un fichier s'est terminé 
- * normalement.
+ * Informe les observateurs que le téléchargement d'un fichier a été annulé.
  */
-public interface EndDownloadListener extends BroadcastListener {
+public interface DownloadAbortListener extends BroadcastListener {
 
 	/**
-	 * Appelée lorsque le téléchargement d'un fichier s'est terminé normalement.
-	 * Voir la documentation de la classe
-	 * {@link net.sf.entDownloader.core.events.EndDownloadEvent EndDownloadEvent}
-	 * pour plus d'informations à propos de cet événement.
+	 * Appelée lorsque le téléchargement d'un fichier a été annulé. Voir la
+	 * documentation de {@link DownloadAbortEvent} pour plus d'informations à
+	 * propos de cet événement.
 	 */
-	public void onEndDownload(EndDownloadEvent e);
+	public void onDownloadAbort(DownloadAbortEvent e);
 }

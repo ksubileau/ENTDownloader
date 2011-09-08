@@ -1,5 +1,5 @@
 /*
- *  EndDownloadListener.java
+ *  FileAlreadyExistsListener.java
  *      
  *  Copyright 2010-2011 Kévin Subileau. 
  *
@@ -21,16 +21,16 @@
 package net.sf.entDownloader.core.events;
 
 /**
- * Informe les observateurs que le téléchargement d'un fichier s'est terminé 
- * normalement.
+ * Informe les observateurs que le téléchargement d'un fichier vers
+ * l'emplacement sélectionné risque d'écraser un fichier existant.
  */
-public interface EndDownloadListener extends BroadcastListener {
+public interface FileAlreadyExistsListener extends BroadcastListener {
 
 	/**
-	 * Appelée lorsque le téléchargement d'un fichier s'est terminé normalement.
-	 * Voir la documentation de la classe
-	 * {@link net.sf.entDownloader.core.events.EndDownloadEvent EndDownloadEvent}
-	 * pour plus d'informations à propos de cet événement.
+	 * Appelée lorsque le téléchargement d'un fichier vers l'emplacement
+	 * sélectionné risque d'écraser un fichier existant. Voir la documentation
+	 * de {@link FileAlreadyExistsEvent} pour plus d'informations à propos de
+	 * cet événement.
 	 */
-	public void onEndDownload(EndDownloadEvent e);
+	public void onFileAlreadyExists(FileAlreadyExistsEvent e);
 }

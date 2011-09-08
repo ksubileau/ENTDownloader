@@ -29,6 +29,11 @@ public abstract class GuiEvent extends Event {
 	 * Détail.
 	 */
 	public static final int DOUBLE_CLICK_ON_ROW_TYPE = 101;
+	/**
+	 * Indique que l'utilisateur a demandé l'annulation du ou des
+	 * téléchargement(s) en cours.
+	 */
+	public static final int REQUEST_DOWNLOAD_ABORT_TYPE = 102;
 
 	@Override
 	public abstract int getType();

@@ -1,5 +1,5 @@
 /*
- *  EndDownloadListener.java
+ *  RequestDownloadAbortListener.java
  *      
  *  Copyright 2010-2011 Kévin Subileau. 
  *
@@ -18,19 +18,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.entDownloader.core.events;
+package net.sf.entDownloader.gui.events;
+
+import net.sf.entDownloader.core.events.BroadcastListener;
 
 /**
- * Informe les observateurs que le téléchargement d'un fichier s'est terminé 
- * normalement.
+ * Informe les observateurs que l'utilisateur a demandé l'annulation du ou des
+ * téléchargement(s) en cours.
  */
-public interface EndDownloadListener extends BroadcastListener {
+public interface RequestDownloadAbortListener extends BroadcastListener {
 
 	/**
-	 * Appelée lorsque le téléchargement d'un fichier s'est terminé normalement.
-	 * Voir la documentation de la classe
-	 * {@link net.sf.entDownloader.core.events.EndDownloadEvent EndDownloadEvent}
-	 * pour plus d'informations à propos de cet événement.
+	 * Appelée lorsque l'utilisateur a demandé l'annulation du ou des
+	 * téléchargement(s) en cours. Voir la documentation de
+	 * {@link RequestDownloadAbortEvent} pour plus d'informations à propos de
+	 * cet événement.
 	 */
-	public void onEndDownload(EndDownloadEvent e);
+	public void onRequestDownloadAbort(RequestDownloadAbortEvent event);
 }

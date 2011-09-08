@@ -1,5 +1,5 @@
 /*
- *  EndDownloadEvent.java
+ *  FileAlreadyExistsEvent.java
  *      
  *  Copyright 2010-2011 Kévin Subileau. 
  *
@@ -24,30 +24,31 @@ import net.sf.entDownloader.core.FS_File;
 
 /**
  * Un événement qui indique que le téléchargement d'un
- * fichier s'est terminé normalement.
+ * fichier débute.
  */
-public class EndDownloadEvent extends Event {
+public class FileAlreadyExistsEvent extends Event {
 
 	private FS_File file;
+	public boolean abortDownload = false;
 
 	/**
-	 * Construit un nouvel évènement EndDownloadEvent.
+	 * Construit un nouvel évènement FileAlreadyExistsEvent.
 	 */
-	public EndDownloadEvent() {
+	public FileAlreadyExistsEvent() {
 		this(null);
 	}
 
 	/**
-	 * Construit un nouvel évènement EndDownloadEvent.
+	 * Construit un nouvel évènement FileAlreadyExistsEvent.
 	 * 
-	 * @param file Le fichier dont le téléchargement s'est terminé.
+	 * @param file Le fichier dont le téléchargement débute.
 	 */
-	public EndDownloadEvent(FS_File file) {
+	public FileAlreadyExistsEvent(FS_File file) {
 		setFile(file);
 	}
 
 	/**
-	 * Définit le fichier pour lequel le téléchargement s'est terminé.
+	 * Définit le fichier pour lequel le téléchargement débute.
 	 * 
 	 * @param file
 	 */
@@ -56,7 +57,7 @@ public class EndDownloadEvent extends Event {
 	}
 
 	/**
-	 * Retourne le fichier dont le téléchargement s'est terminé.
+	 * Retourne le fichier dont le téléchargement débute.
 	 */
 	public FS_File getFile() {
 		return file;
@@ -64,11 +65,11 @@ public class EndDownloadEvent extends Event {
 
 	/**
 	 * Retourne le type d'événement porté par cette instance. Ici, retourne
-	 * {@link Event#END_DOWNLOAD_TYPE}
+	 * {@link Event#FILE_ALREADY_EXISTS_TYPE}
 	 */
 	@Override
 	public int getType() {
-		return END_DOWNLOAD_TYPE;
+		return FILE_ALREADY_EXISTS_TYPE;
 	}
 
 }

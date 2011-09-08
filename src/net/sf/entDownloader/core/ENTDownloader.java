@@ -40,7 +40,9 @@ import net.sf.entDownloader.core.events.AuthenticationSucceededEvent;
 import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
+import net.sf.entDownloader.core.events.DownloadAbortEvent;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
+import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
@@ -148,9 +150,8 @@ public class ENTDownloader {
 		loginPage = browser.getPage();
 		browser.setMethod(Browser.Method.GET);
 
-		if (Misc.preg_match("<div id=\"erreur\">", loginPage)) {
+		if (Misc.preg_match("<div id=\"erreur\">", loginPage))
 			return false;
-		}
 		Broadcaster
 				.fireAuthenticationSucceeded(new AuthenticationSucceededEvent(
 						login));
@@ -433,8 +434,10 @@ public class ENTDownloader {
 	 * @throws IOException
 	 * @see Misc#tildeToHome(String)
 	 * @see Browser#downloadFile(String)
+	 * @return <code>True</code> si le téléchargement du fichier s'est terminé
+	 *         normalement, <code>false</code> sinon.
 	 */
-	public void getFile(String name, String destination) throws IOException {
+	public boolean getFile(String name, String destination) throws IOException {
 		if (isLogin == false)
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
@@ -459,6 +462,18 @@ public class ENTDownloader {
 			}
 		}
 
+		//Vérification de l'existence d'un fichier portant le nom indiqué
+		File fpath = new File(destination).getCanonicalFile();
+		if (fpath.exists()) {
+			FileAlreadyExistsEvent fileAlreadyExistsEvent = new FileAlreadyExistsEvent(
+					file);
+			Broadcaster.fireFileAlreadyExists(fileAlreadyExistsEvent);
+			if (fileAlreadyExistsEvent.abortDownload) {
+				Broadcaster.fireDownloadAbort(new DownloadAbortEvent(file));
+				return false;
+			}
+		}
+
 		browser.clearParam();
 		browser.setUrl(urlBuilder(CoreConfig.downloadFileURL));
 		browser.setMethod(Browser.Method.POST);
@@ -467,6 +482,7 @@ public class ENTDownloader {
 		browser.setCookieField("JSESSIONID", sessionid);
 		browser.downloadFile(destination);
 		Broadcaster.fireEndDownload(new EndDownloadEvent(file));
+		return true;
 	}
 
 	/**
@@ -478,9 +494,11 @@ public class ENTDownloader {
 	 * @param name
 	 *            Le nom du fichier à télécharger.
 	 * @throws IOException
+	 * @return <code>True</code> si le téléchargement du fichier s'est terminé
+	 *         normalement, <code>false</code> sinon.
 	 */
-	public void getFile(String name) throws IOException {
-		getFile(name, name);
+	public boolean getFile(String name) throws IOException {
+		return getFile(name, name);
 	}
 
 	/**
@@ -552,8 +570,9 @@ public class ENTDownloader {
 				directoryContent);
 		for (FS_Element e : directoryContentcp)
 			if (e.isFile()) {
-				getFile(e.getName(), destination);
-				++i;
+				if (getFile(e.getName(), destination)) {
+					++i;
+				}
 			} else if (maxdepth != 0) {
 				try {
 					submitDirectory(e.getName());

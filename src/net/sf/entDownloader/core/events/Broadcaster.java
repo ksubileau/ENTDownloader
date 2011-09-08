@@ -193,4 +193,44 @@ public class Broadcaster {
 			listener.onEndDownload(event);
 		}
 	}
+
+	/** Ajoute un observateur sur l'événement DownloadAbort */
+	public static void addDownloadAbortListener(DownloadAbortListener listener) {
+		addListener(DownloadAbortListener.class, listener);
+	}
+
+	/** Supprime un observateur sur l'événement DownloadAbort */
+	public static void removeDownloadAbortListener(DownloadAbortListener listener) {
+		removeListener(DownloadAbortListener.class, listener);
+	}
+
+	/** Avertit tous les observateurs de l'événement DownloadAbort */
+	public static void fireDownloadAbort(DownloadAbortEvent event) {
+		Iterator<BroadcastListener> it = getListenerIterator(DownloadAbortListener.class);
+		DownloadAbortListener listener;
+		while (it.hasNext()) {
+			listener = (DownloadAbortListener) it.next();
+			listener.onDownloadAbort(event);
+		}
+	}
+
+	/** Ajoute un observateur sur l'événement FileAlreadyExists */
+	public static void addFileAlreadyExistsListener(FileAlreadyExistsListener listener) {
+		addListener(FileAlreadyExistsListener.class, listener);
+	}
+
+	/** Supprime un observateur sur l'événement FileAlreadyExists */
+	public static void removeFileAlreadyExistsListener(FileAlreadyExistsListener listener) {
+		removeListener(FileAlreadyExistsListener.class, listener);
+	}
+
+	/** Avertit tous les observateurs de l'événement FileAlreadyExists */
+	public static void fireFileAlreadyExists(FileAlreadyExistsEvent event) {
+		Iterator<BroadcastListener> it = getListenerIterator(FileAlreadyExistsListener.class);
+		FileAlreadyExistsListener listener;
+		while (it.hasNext()) {
+			listener = (FileAlreadyExistsListener) it.next();
+			listener.onFileAlreadyExists(event);
+		}
+	}
 }

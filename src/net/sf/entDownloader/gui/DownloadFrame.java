@@ -34,6 +34,8 @@ import javax.swing.JProgressBar;
 import javax.swing.WindowConstants;
 
 import net.sf.entDownloader.core.FS_File;
+import net.sf.entDownloader.gui.events.GuiBroadcaster;
+import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
 
 public class DownloadFrame extends javax.swing.JDialog {
 	//TODO checkbox fermer après téléchargement
@@ -98,7 +100,7 @@ public class DownloadFrame extends javax.swing.JDialog {
 			abort.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					DownloadFrame.this.dispose();
+					GuiBroadcaster.fireRequestDownloadAbort(new RequestDownloadAbortEvent());
 				}
 			});
 		}

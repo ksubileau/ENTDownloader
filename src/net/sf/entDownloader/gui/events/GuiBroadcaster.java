@@ -49,4 +49,27 @@ public class GuiBroadcaster {
 			listener.onDoubleClickOnRow(event);
 		}
 	}
+
+	/** Ajoute un observateur sur l'événement RequestDownloadAbort */
+	public static void addRequestDownloadAbortListener(
+			RequestDownloadAbortListener listener) {
+		Broadcaster.addListener(RequestDownloadAbortListener.class, listener);
+	}
+
+	/** Supprime un observateur sur l'événement RequestDownloadAbort */
+	public static void removeRequestDownloadAbortListener(
+			RequestDownloadAbortListener listener) {
+		Broadcaster.removeListener(RequestDownloadAbortListener.class, listener);
+	}
+
+	/** Avertit tous les observateurs de l'événement RequestDownloadAbort */
+	public static void fireRequestDownloadAbort(RequestDownloadAbortEvent event) {
+		Iterator<BroadcastListener> it = Broadcaster
+				.getListenerIterator(RequestDownloadAbortListener.class);
+		RequestDownloadAbortListener listener;
+		while (it.hasNext()) {
+			listener = (RequestDownloadAbortListener) it.next();
+			listener.onRequestDownloadAbort(event);
+		}
+	}
 }
