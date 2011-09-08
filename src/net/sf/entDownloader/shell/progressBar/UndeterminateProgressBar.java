@@ -26,7 +26,7 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
 public class UndeterminateProgressBar implements IProgressBar {
-	private boolean visible = true;
+	private boolean visible = false;
 	private int width = 50;
 	private int symbolePosition = 0;
 	private int symbMoveSens = 1;

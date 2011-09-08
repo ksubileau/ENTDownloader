@@ -37,16 +37,28 @@ public class ProgressBar implements IProgressBar {
 	}
 
 	public final void setDeterminate(boolean isDeterminate) {
-		//BUG Prise en compte de la visibilité
+		Boolean isVisible = null;
+		
 		if (this.isDeterminate == isDeterminate && progBar != null)
 			return;
+		
+		if(progBar != null)
+		{
+			isVisible = progBar.isVisible();
+		}
 
 		if (isDeterminate) {
 			progBar = new DeterminateProgressBar();
 		} else {
 			progBar = new UndeterminateProgressBar();
 		}
+		
 		this.isDeterminate = isDeterminate;
+		
+		if(isVisible != null && isVisible != progBar.isVisible())
+		{
+			progBar.setVisible(isVisible);
+		}
 	}
 
 	@Override

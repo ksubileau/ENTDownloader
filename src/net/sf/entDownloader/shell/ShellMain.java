@@ -83,7 +83,6 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		System.out.println(productName + " v" + productVersion);
 		entd = ENTDownloader.getInstance();
 		pg = new ProgressBar(false);
-		pg.setVisible(false);
 		Broadcaster.addAuthenticationSucceededListener(this);
 		Broadcaster.addDirectoryChangedListener(this);
 		Broadcaster.addDirectoryChangingListener(this);
@@ -523,7 +522,6 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		downloadingFile = null;
 		pg.setVisible(false);
 		pg.setDeterminate(false);
-		pg.setVisible(false);
 		writeStatusMessage("Téléchargement terminé.");
 	}
 
@@ -532,7 +530,6 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		downloadingFile = null;
 		pg.setVisible(false);
 		pg.setDeterminate(false);
-		pg.setVisible(false);
 		writeStatusMessage("Téléchargement annulé.");
 	}
 
@@ -554,7 +551,6 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		boolean isVisible = pg.isVisible();
 		pg.setVisible(false);
 		pg.setDeterminate(false);
-		pg.setVisible(false);
 
 		Scanner sc = new Scanner(System.in);
 		String choice = null;
@@ -573,7 +569,12 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			}
 		}
 		e.abortDownload = choice.equalsIgnoreCase("n");
-		pg.setDeterminate(isDeterminate);
-		pg.setVisible(isVisible);
+		
+		if (isDeterminate) {
+			pg.setDeterminate(true);
+		}
+		if (isVisible) {
+			pg.setVisible(true);
+		}
 	}
 }

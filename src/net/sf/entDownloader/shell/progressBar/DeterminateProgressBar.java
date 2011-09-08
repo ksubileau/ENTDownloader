@@ -22,7 +22,7 @@ package net.sf.entDownloader.shell.progressBar;
 
 public class DeterminateProgressBar implements IProgressBar {
 	private int value = 0;
-	private boolean visible = true;
+	private boolean visible = false;
 	private int width = 50;
 	private String progressLine = "";
 
