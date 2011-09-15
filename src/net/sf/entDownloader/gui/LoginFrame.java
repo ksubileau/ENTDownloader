@@ -382,8 +382,16 @@ public class LoginFrame extends javax.swing.JFrame {
 						System.exit(1);
 						}
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
+						JOptionPane
+						.showMessageDialog(
+								loginPane,
+								"Une erreur est survenue durant la procédure de connexion. Veuillez réessayer ultérieurement.\n\n"
+										+ "Si le problème persiste, merci de nous le signalez afin que l'on puisse le corriger dans les plus brefs délais.\n"
+										+ "Visitez notre site Internet pour plus d'informations sur les moyens mis à votre disposition pour nous contacter.",
+								"ENTDownloader - Connexion impossible",
+								JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
+						System.exit(1);
 					}
 				}
 
