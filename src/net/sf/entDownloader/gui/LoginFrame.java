@@ -120,7 +120,8 @@ public class LoginFrame extends javax.swing.JFrame {
 				}
 				{
 					cancel = new JButton();
-					overlay.add(cancel);
+					//FIXME Réactivation du bouton d'annulation de la connexion une fois le bug résolu.
+					//overlay.add(cancel);
 					cancel.setText(CoreConfig
 							.getString("LoginFrame.btnAnnuler")); //$NON-NLS-1$
 					cancel.setBounds(170, 118, 81, 29);
