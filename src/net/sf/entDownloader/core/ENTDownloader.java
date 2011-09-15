@@ -140,12 +140,18 @@ public class ENTDownloader {
 		Misc.preg_match(
 				"input type=\"hidden\" name=\"lt\" value=\"([0-9a-zA-Z\\-]+)\" />",
 				loginPage, ticket);
+		
+		List<String> execution = new ArrayList<String>();
+		Misc.preg_match(
+				"input type=\"hidden\" name=\"execution\" value=\"([0-9a-zA-Z]+)\" />",
+				loginPage, execution);
 
 		browser.setMethod(Browser.Method.POST);
 		browser.setParam("_eventId", "submit");
 		browser.setParam("username", login);
 		browser.setParam("password", new String(password));
 		browser.setParam("lt", ticket.get(1).toString());
+		browser.setParam("execution", execution.get(1).toString());
 		browser.setFollowRedirects(false);
 		loginPage = browser.getPage();
 		browser.setMethod(Browser.Method.GET);
