@@ -31,8 +31,8 @@ public interface RequestDownloadAbortListener extends BroadcastListener {
 	/**
 	 * Appelée lorsque l'utilisateur a demandé l'annulation du ou des
 	 * téléchargement(s) en cours. Voir la documentation de
-	 * {@link RequestDownloadAbortEvent} pour plus d'informations à propos de
-	 * cet événement.
+	 * {@link net.sf.entDownloader.gui.events.RequestDownloadAbortEvent}
+	 * pour plus d'informations à propos de cet événement.
 	 */
 	public void onRequestDownloadAbort(RequestDownloadAbortEvent event);
 }

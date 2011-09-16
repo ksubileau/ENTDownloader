@@ -122,11 +122,11 @@ public class BriefView extends ListView {
 		return files;
 	}
 
-	@Override 
+	@Override
 	public int getSelectedFilesCount() {
 		return list.getSelectedIndices().length;
 	}
-	
+
 	@Override
 	public void addListSelectionListener(ListSelectionListener listener) {
 		list.getSelectionModel().addListSelectionListener(listener);

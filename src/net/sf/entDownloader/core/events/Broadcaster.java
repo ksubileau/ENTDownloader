@@ -78,7 +78,8 @@ public class Broadcaster {
 	}
 
 	/** Avertit tous les observateurs de l'événement AuthenticationSucceeded */
-	public static void fireAuthenticationSucceeded(AuthenticationSucceededEvent event) {
+	public static void fireAuthenticationSucceeded(
+			AuthenticationSucceededEvent event) {
 		Iterator<BroadcastListener> it = getListenerIterator(AuthenticationSucceededListener.class);
 		AuthenticationSucceededListener listener;
 		while (it.hasNext()) {
@@ -200,7 +201,8 @@ public class Broadcaster {
 	}
 
 	/** Supprime un observateur sur l'événement DownloadAbort */
-	public static void removeDownloadAbortListener(DownloadAbortListener listener) {
+	public static void removeDownloadAbortListener(
+			DownloadAbortListener listener) {
 		removeListener(DownloadAbortListener.class, listener);
 	}
 
@@ -215,12 +217,14 @@ public class Broadcaster {
 	}
 
 	/** Ajoute un observateur sur l'événement FileAlreadyExists */
-	public static void addFileAlreadyExistsListener(FileAlreadyExistsListener listener) {
+	public static void addFileAlreadyExistsListener(
+			FileAlreadyExistsListener listener) {
 		addListener(FileAlreadyExistsListener.class, listener);
 	}
 
 	/** Supprime un observateur sur l'événement FileAlreadyExists */
-	public static void removeFileAlreadyExistsListener(FileAlreadyExistsListener listener) {
+	public static void removeFileAlreadyExistsListener(
+			FileAlreadyExistsListener listener) {
 		removeListener(FileAlreadyExistsListener.class, listener);
 	}
 

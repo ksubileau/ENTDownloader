@@ -54,7 +54,8 @@ import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
 import net.sf.entDownloader.gui.events.RequestDownloadAbortListener;
 
 public class Downloader extends SwingWorker<Void, Void> implements
-		StartDownloadListener, DownloadedBytesListener, EndDownloadListener, FileAlreadyExistsListener, RequestDownloadAbortListener {
+		StartDownloadListener, DownloadedBytesListener, EndDownloadListener,
+		FileAlreadyExistsListener, RequestDownloadAbortListener {
 
 	private DownloadFrame downloadFrame;
 	private List<FS_Element> downList;
@@ -303,13 +304,14 @@ public class Downloader extends SwingWorker<Void, Void> implements
 	public void onFileAlreadyExists(FileAlreadyExistsEvent e) {
 		//TODO Amélioration : Oui pour tous / non pour tous (ou case a cocher ne plus demander)
 		int choice = JOptionPane
-		.showConfirmDialog(
-				downloadFrame,
-				"<html>Un fichier portant le nom \""+e.getFile().getName()+"\" existe déjà à cet emplacement.<br>Voulez-vous écraser le fichier existant et le remplacer par le fichier en cours de téléchargement ?<b></html>",
-				"ENTDownloader - Téléchargement",
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE);
-		
+				.showConfirmDialog(
+						downloadFrame,
+						"<html>Un fichier portant le nom \""
+								+ e.getFile().getName()
+								+ "\" existe déjà à cet emplacement.<br>Voulez-vous écraser le fichier existant et le remplacer par le fichier en cours de téléchargement ?<b></html>",
+						"ENTDownloader - Téléchargement",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
 		e.abortDownload = (choice == JOptionPane.NO_OPTION);
 	}
 

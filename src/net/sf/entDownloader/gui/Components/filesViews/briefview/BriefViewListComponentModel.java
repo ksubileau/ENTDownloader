@@ -45,6 +45,7 @@ public class BriefViewListComponentModel extends DefaultListModel {
 	 */
 	public void browseDirectory(final java.util.List<FS_Element> dirContent) {
 		Runnable code = new Runnable() {
+			@Override
 			public void run() {
 				removeAllElements(); //removing the old rows
 				for (FS_Element item : dirContent) {

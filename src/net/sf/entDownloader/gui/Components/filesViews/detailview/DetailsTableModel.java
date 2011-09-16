@@ -51,11 +51,11 @@ public class DetailsTableModel extends AbstractTableModel {
 	}
 
 	/**
-	 * Returns the {@link net.sf.entDownloader.core.FS_Element FS_Element} 
-	 * found at the specific index.
+	 * Returns the {@link net.sf.entDownloader.core.FS_Element FS_Element} found
+	 * at the specific index.
 	 * 
-	 * @return The {@link net.sf.entDownloader.core.FS_Element FS_Element} 
-	 * found at the specific index.
+	 * @return The {@link net.sf.entDownloader.core.FS_Element FS_Element} found
+	 *         at the specific index.
 	 */
 	public FS_Element getFileAt(int index) {
 		FS_Element file = null;
@@ -77,7 +77,8 @@ public class DetailsTableModel extends AbstractTableModel {
 			Vector<Object> v = new Vector<Object>();
 			v.addElement(el);
 
-			v.addElement(net.sf.entDownloader.gui.Misc.getFileTypeDescription(el));
+			v.addElement(net.sf.entDownloader.gui.Misc
+					.getFileTypeDescription(el));
 
 			if (el.isDirectory()) {
 				v.addElement("");

@@ -38,12 +38,11 @@ public class ProgressBar implements IProgressBar {
 
 	public final void setDeterminate(boolean isDeterminate) {
 		Boolean isVisible = null;
-		
+
 		if (this.isDeterminate == isDeterminate && progBar != null)
 			return;
-		
-		if(progBar != null)
-		{
+
+		if (progBar != null) {
 			isVisible = progBar.isVisible();
 		}
 
@@ -52,11 +51,10 @@ public class ProgressBar implements IProgressBar {
 		} else {
 			progBar = new UndeterminateProgressBar();
 		}
-		
+
 		this.isDeterminate = isDeterminate;
-		
-		if(isVisible != null && isVisible != progBar.isVisible())
-		{
+
+		if (isVisible != null && isVisible != progBar.isVisible()) {
 			progBar.setVisible(isVisible);
 		}
 	}

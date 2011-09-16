@@ -83,9 +83,9 @@ public class DetailView extends ListView {
 					int selectedRow = table.rowAtPoint(event.getPoint());
 					if (selectedRow < 0) {
 						table.clearSelection();
-					} else if (!table.isRowSelected(selectedRow)){
-						table.getSelectionModel().setSelectionInterval(selectedRow,
-								selectedRow);
+					} else if (!table.isRowSelected(selectedRow)) {
+						table.getSelectionModel().setSelectionInterval(
+								selectedRow, selectedRow);
 					}
 
 					((MainFrame) GuiMain.getMainFrame()).getPopupMenu().show(
@@ -130,8 +130,8 @@ public class DetailView extends ListView {
 		}
 		return files;
 	}
-	
-	@Override 
+
+	@Override
 	public int getSelectedFilesCount() {
 		return table.getSelectedRowCount();
 	}

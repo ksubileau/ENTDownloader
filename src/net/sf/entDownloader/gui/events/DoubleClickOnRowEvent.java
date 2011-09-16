@@ -48,7 +48,7 @@ public class DoubleClickOnRowEvent extends GuiEvent {
 	 * Construit un nouvel évènement DoubleClickOnRowEvent.
 	 * 
 	 * @param target Le {@link net.sf.entDownloader.core.FS_Element FS_Element}
-	 * sur lequel on a double-cliqué.
+	 *            sur lequel on a double-cliqué.
 	 */
 	public DoubleClickOnRowEvent(FS_Element target) {
 		setTarget(target);
@@ -57,16 +57,16 @@ public class DoubleClickOnRowEvent extends GuiEvent {
 	private FS_Element target;
 
 	/**
-	 * Retourne le {@link net.sf.entDownloader.core.FS_Element FS_Element} 
-	 * sur lequel on a double-cliqué.
+	 * Retourne le {@link net.sf.entDownloader.core.FS_Element FS_Element} sur
+	 * lequel on a double-cliqué.
 	 */
 	public FS_Element getTarget() {
 		return target;
 	}
 
 	/**
-	 * Définit le {@link net.sf.entDownloader.core.FS_Element FS_Element} 
-	 * sur lequel on a double-cliqué.
+	 * Définit le {@link net.sf.entDownloader.core.FS_Element FS_Element} sur
+	 * lequel on a double-cliqué.
 	 */
 	public void setTarget(FS_Element target) {
 		this.target = target;

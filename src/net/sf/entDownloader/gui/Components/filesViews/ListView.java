@@ -82,15 +82,14 @@ public abstract class ListView extends JPanel {
 	 * @return the current selected files.
 	 */
 	public abstract FS_Element[] getSelectedFiles();
-	
+
 	/**
 	 * This method returns the number of selected files from the view.
 	 * 
 	 * @return the number of selected files.
 	 * @since 1.0.2
 	 */
-	public int getSelectedFilesCount()
-	{
+	public int getSelectedFilesCount() {
 		return getSelectedFiles().length;
 	}
 
@@ -135,45 +134,45 @@ public abstract class ListView extends JPanel {
 
 	/**
 	 * Adds the specified key listener to receive key events from the view
-	 * component (JTable or a JList). If keyListener is null, no exception 
+	 * component (JTable or a JList). If keyListener is null, no exception
 	 * is thrown and no action is performed.
-	 *  
+	 * 
 	 * @param keyListener the key listener to add
 	 * @since 1.0.2
 	 */
 	public void addKeyListenerOnView(KeyListener keyListener) {
 		getViewComponent().addKeyListener(keyListener);
 	}
-	
+
 	/**
 	 * Returns the InputMap that is used when the view component
-	 * has focus. This is convenience method 
+	 * has focus. This is convenience method
 	 * for {@link #getViewInputMap(int) getInputMap(WHEN_FOCUSED)}.
-	 *  
-	 * @return the InputMap used when the view component 
-	 * 			(JTable or a JList) has focus.
+	 * 
+	 * @return the InputMap used when the view component
+	 *         (JTable or a JList) has focus.
 	 * @since 1.0.2
 	 */
 	public InputMap getViewInputMap() {
 		return getViewComponent().getInputMap();
 	}
-	
+
 	/**
-	 * Returns the InputMap that is used by the view component 
+	 * Returns the InputMap that is used by the view component
 	 * (JTable or a JList) during condition.
-	 *  
-	 * @param condition one of WHEN_IN_FOCUSED_WINDOW, 
-	 * 					WHEN_FOCUSED, WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+	 * 
+	 * @param condition one of WHEN_IN_FOCUSED_WINDOW,
+	 *            WHEN_FOCUSED, WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
 	 * @return the InputMap for the specified condition
 	 * @since 1.0.2
 	 */
 	public InputMap getViewInputMap(int condition) {
 		return getViewComponent().getInputMap(condition);
 	}
-	
+
 	/**
-	 * Returns the ActionMap used to determine what Action to fire for 
-	 * particular KeyStroke binding. The returned ActionMap, unless 
+	 * Returns the ActionMap used to determine what Action to fire for
+	 * particular KeyStroke binding. The returned ActionMap, unless
 	 * otherwise set, will have the ActionMap from the UI set as the parent.
 	 * 
 	 * @return the ActionMap containing the key/action bindings

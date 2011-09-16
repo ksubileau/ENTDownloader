@@ -20,9 +20,7 @@
  */
 package net.sf.entDownloader.gui;
 
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -101,7 +99,8 @@ public class DownloadFrame extends javax.swing.JDialog {
 			abort.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					GuiBroadcaster.fireRequestDownloadAbort(new RequestDownloadAbortEvent());
+					GuiBroadcaster
+							.fireRequestDownloadAbort(new RequestDownloadAbortEvent());
 				}
 			});
 		}

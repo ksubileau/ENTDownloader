@@ -29,8 +29,8 @@ public interface FileAlreadyExistsListener extends BroadcastListener {
 	/**
 	 * Appelée lorsque le téléchargement d'un fichier vers l'emplacement
 	 * sélectionné risque d'écraser un fichier existant. Voir la documentation
-	 * de {@link FileAlreadyExistsEvent} pour plus d'informations à propos de
-	 * cet événement.
+	 * de {@link net.sf.entDownloader.core.events.FileAlreadyExistsEvent} 
+	 * pour plus d'informations à propos de cet événement.
 	 */
 	public void onFileAlreadyExists(FileAlreadyExistsEvent e);
 }

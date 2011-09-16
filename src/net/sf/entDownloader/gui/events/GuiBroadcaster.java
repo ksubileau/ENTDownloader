@@ -59,7 +59,8 @@ public class GuiBroadcaster {
 	/** Supprime un observateur sur l'événement RequestDownloadAbort */
 	public static void removeRequestDownloadAbortListener(
 			RequestDownloadAbortListener listener) {
-		Broadcaster.removeListener(RequestDownloadAbortListener.class, listener);
+		Broadcaster
+				.removeListener(RequestDownloadAbortListener.class, listener);
 	}
 
 	/** Avertit tous les observateurs de l'événement RequestDownloadAbort */

@@ -27,8 +27,9 @@ public interface DownloadAbortListener extends BroadcastListener {
 
 	/**
 	 * Appelée lorsque le téléchargement d'un fichier a été annulé. Voir la
-	 * documentation de {@link DownloadAbortEvent} pour plus d'informations à
-	 * propos de cet événement.
+	 * documentation de 
+	 * {@link net.sf.entDownloader.core.events.DownloadAbortEvent} 
+	 * pour plus d'informations à propos de cet événement.
 	 */
 	public void onDownloadAbort(DownloadAbortEvent e);
 }

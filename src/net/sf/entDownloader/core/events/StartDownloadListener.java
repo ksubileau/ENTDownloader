@@ -27,8 +27,9 @@ public interface StartDownloadListener extends BroadcastListener {
 
 	/**
 	 * Appelée lorsque le téléchargement d'un fichier débute. Voir la
-	 * documentation de {@link StartDownloadEvent} pour plus d'informations à
-	 * propos de cet événement.
+	 * documentation de 
+	 * {@link net.sf.entDownloader.core.events.StartDownloadEvent} 
+	 * pour plus d'informations à propos de cet événement.
 	 */
 	public void onStartDownload(StartDownloadEvent e);
 }
