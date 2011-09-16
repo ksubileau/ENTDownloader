@@ -385,9 +385,10 @@ public class LoginFrame extends javax.swing.JFrame {
 						JOptionPane
 						.showMessageDialog(
 								loginPane,
-								"Une erreur est survenue durant la procédure de connexion. Veuillez réessayer ultérieurement.\n\n"
-										+ "Si le problème persiste, merci de nous le signalez afin que l'on puisse le corriger dans les plus brefs délais.\n"
-										+ "Visitez notre site Internet pour plus d'informations sur les moyens mis à votre disposition pour nous contacter.",
+								"<html>Une erreur est survenue durant la procédure de connexion. Veuillez réessayer ultérieurement.<br><br>"
+										+ "Si le problème persiste, merci de nous le signaler à l'adresse <a href=\"mailto:"
+										+ CoreConfig.getString("ProductInfo.email") + "\">"
+										+ CoreConfig.getString("ProductInfo.email") + "</a>.</html>",
 								"ENTDownloader - Connexion impossible",
 								JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
