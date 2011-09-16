@@ -163,13 +163,12 @@
 		<zip destfile="${output.publish.dir}/${targetdir}/${ant.project.name}_${output.freeVersion}.zip">
 			<fileset file="${output.publish.dir}/${targetdir}/${ant.project.name}.exe" erroronmissingdir="true"/>
 			<fileset file="license.txt" erroronmissingdir="true"/>
-			<fileset file="../ENTDownloader.bin" erroronmissingdir="true"/>
+			<fileset file="ENTDownloader.bin" erroronmissingdir="true"/>
 			<fileset file="${jarPath}" erroronmissingdir="true"/>
 			<fileset file="${output.manPath}" erroronmissingdir="true"/>
 		</zip>
 		<zip destfile="${output.publish.dir}/${targetdir}/${ant.project.name}_${output.freeVersion}_src.zip">
 			<fileset dir="${basedir}" excludes="bin/**, changelog.txt, *.jardesc, jarManifest, build.xml, .git/**, .gitignore, doc/**"/>
-			<fileset file="license.txt" erroronmissingdir="true"/>
 		</zip>
 		<!--<zip destfile="${output.publish.dir}/${targetdir}/${ant.project.name}_${output.freeVersion}_doc.zip">
 			<fileset dir="${basedir}/doc"/>
