@@ -20,6 +20,8 @@
     <property name="launch4j.dir" location="C:\Program Files (x86)\launch4j" />
 	<!-- Emplacement du manuel -->
     <!--<property name="output.manPath" location="${basedir}/../ENTDownloader.pdf" />-->
+	<!-- Utilisation du compilateur d'Eclipse -->
+    <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	<taskdef name="launch4j"
 	    classname="net.sf.launch4j.ant.Launch4jTask"
 	    classpath="${launch4j.dir}/launch4j.jar
@@ -50,7 +52,7 @@
 			<fileset file="${basedir}/src/net/sf/entDownloader/ressources/configuration.properties" />
 		</replaceregexp>
     	<!-- Compilation -->
-        <javac debug="false" destdir="bin" source="${source}" target="${target}">
+        <javac debug="false" destdir="bin" source="${source}" target="${target}" encoding="UTF-8">
             <src path="src"/>
             <classpath refid="ENTDownloader.classpath"/>
         </javac>
