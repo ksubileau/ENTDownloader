@@ -170,7 +170,7 @@
 			<fileset file="${output.manPath}" erroronmissingdir="true"/>
 		</zip>
 		<zip destfile="${output.publish.dir}/${targetdir}/${ant.project.name}_${output.freeVersion}_src.zip">
-			<fileset dir="${basedir}" excludes="bin/**, changelog.txt, *.jardesc, jarManifest, build.xml, .git/**, .gitignore, doc/**"/>
+			<fileset dir="${basedir}" excludes="bin/**, changelog.txt, ENTDownloaderDoxyfile, *.jardesc, jarManifest, build.xml, .git/**, .gitignore, doc/**"/>
 		</zip>
 		<!--<zip destfile="${output.publish.dir}/${targetdir}/${ant.project.name}_${output.freeVersion}_doc.zip">
 			<fileset dir="${basedir}/doc"/>
