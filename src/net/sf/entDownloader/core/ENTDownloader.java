@@ -673,6 +673,59 @@ public class ENTDownloader {
 	}
 
 	/**
+	 * Créé un nouveau dossier dans le répertoire courant.
+	 * 
+	 * @param dirname Nom du nouveau dossier
+	 */
+	public void createDirectory(String dirname) throws ParseException,
+			IOException {
+		//TODO Relecture du code, test, simplification si possible
+		//Gestion des erreurs (dossier ou fichier existant, caractères interdits)
+		//Evénements de création d'un dossier
+		//Dossier parent (option -p de mkdir) ?
+		if (isLogin == false)
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		browser.clearParam();
+		browser.setUrl(urlBuilder(CoreConfig.goIntoDirectoryURL));
+		browser.setMethod(Browser.Method.POST);
+		browser.setParam("Submit", "Créer le dossier");
+		browser.setParam("modeDav", "create_dir_mode");
+		browser.setParam("new_dir", dirname);
+		browser.setFollowRedirects(false);
+		browser.setCookieField("JSESSIONID", sessionid);
+		String pageContent = null;
+		pageContent = browser.getPage();
+
+		//TODO Utile dans ce contexte ? tester.
+		if (browser.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& browser.getHeaderField("Location").equals(
+						CoreConfig.loginRequestURL)) {
+			isLogin = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
+
+		//TODO doit on le faire ici ?
+		setStockageUrlParams(pageContent);
+		if (capacity < 0) {
+			//TODO doit on le faire ici ?
+			setStorageProperties(pageContent);
+		}
+		/*
+			if (pageContent.isEmpty()
+					|| Misc.preg_match(
+							"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br /></font>",
+							pageContent))
+				throw new ENTDirectoryNotFoundException(name);*/
+		//TODO doit on le faire ici ?
+		parsePage(pageContent);
+	}
+
+	/**
 	 * Analyse le contenu de la page passé en paramètre afin de déterminer les
 	 * dossiers et fichiers contenus dans le dossier courant.
 	 * 

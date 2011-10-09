@@ -293,6 +293,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 										.removeFileAlreadyExistsListener(this);
 							}
 						}
+					} else if (command[0].equals("mkdir")) {
+						mkdir((command.length > 1) ? command[1] : null);
 					} else if (command[0].equals("refresh")) {
 						cd(".");
 					} else if (command[0].equals("lpwd")) {
@@ -448,6 +450,33 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			e3.getLocalizedMessage();
 		} finally {
 			Broadcaster.removeFileAlreadyExistsListener(this);
+		}
+	}
+
+	private void mkdir(String dirname) {
+		if (dirname == null || dirname.isEmpty()) {
+			System.err
+					.println("ENTDownloader: mkdir: Nom du dossier à créer manquant");
+			return;
+		}
+		//TODO Broadcaster.addDirectoryCreatedListener(this);
+		try {
+			entd.createDirectory(dirname);
+			//TODO ENTFileExistsException
+		} catch (ENTFileNotFoundException e) {
+			System.err
+					.println("ENTDownloader: Impossible de créer le répertoire \""
+							+ dirname + "\" : Le fichier existe.");
+		} catch (IOException e3) {
+			e3.getLocalizedMessage();
+		} catch (ParseException e) {
+			if (pg.isVisible()) {
+				pg.setVisible(false);
+			}
+			System.err
+					.println("ENTDownloader: Une erreur est survenue lors de la création du répertoire");
+		} finally {
+			//Broadcaster.removeDirectoryCreatedListener(this);
 		}
 	}
 
