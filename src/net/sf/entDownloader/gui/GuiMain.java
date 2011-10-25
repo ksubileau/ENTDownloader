@@ -51,8 +51,10 @@ public class GuiMain {
 										+ "Le rendu visuel peut être dégradé.");
 					}
 				}
+				boolean checkUpdate = true;
 				appIcon = new ImageIcon(getClass().getClassLoader()
-						.getResource("net/sf/entDownloader/ressources/appico.png"))
+						.getResource(
+								"net/sf/entDownloader/ressources/appico.png"))
 						.getImage();
 				LoginFrame loginFrame = new LoginFrame();
 				loginFrame.setLocationRelativeTo(null);
@@ -128,18 +130,23 @@ public class GuiMain {
 											+ proxyPort + ".");
 							i += 2;
 						}
+					} else if (argv.equalsIgnoreCase("-noupdate")) {
+						checkUpdate = false;
 					}
 				}
-				//Lancement de l'updater dans un thread séparé.
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							new UpdaterGui(mainFrame);
-						} catch (Exception e) {
+
+				if (checkUpdate) {
+					//Lancement de l'updater dans un thread séparé.
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								new UpdaterGui(mainFrame);
+							} catch (Exception e) {
+							}
 						}
-					}
-				}, "Updater").start();
+					}, "Updater").start();
+				}
 			}
 
 		});

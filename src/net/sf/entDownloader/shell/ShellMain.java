@@ -83,6 +83,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		System.out.println(productName + " v" + productVersion);
 		entd = ENTDownloader.getInstance();
 		pg = new ProgressBar(false);
+		boolean checkUpdate = true;
 		Broadcaster.addAuthenticationSucceededListener(this);
 		Broadcaster.addDirectoryChangedListener(this);
 		Broadcaster.addDirectoryChangingListener(this);
@@ -158,6 +159,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 									+ ".");
 					i += 2;
 				}
+			} else if (argv.equalsIgnoreCase("-noupdate")) {
+				checkUpdate = false;
 			}
 		}
 
@@ -209,7 +212,11 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		checkUpdate();
+
+		if (checkUpdate) {
+			checkUpdate();
+		}
+
 		//Effacement du mot de passe de la mémoire
 		java.util.Arrays.fill(password, ' ');
 		password = null;
