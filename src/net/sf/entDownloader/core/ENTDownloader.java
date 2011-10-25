@@ -191,6 +191,7 @@ public class ENTDownloader {
 		postCredentials.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
 
 		HttpResponse loginResponse = httpclient.execute(postCredentials);
+		EntityUtils.consume(loginResponse.getEntity());
 
 		//Si l'authentification réussi, l'ENT renvoi une redirection 
 		//temporaire (302) vers une URL du type 
@@ -435,7 +436,6 @@ public class ENTDownloader {
 		String pageContent = null;
 		HttpResponse response = httpclient.execute(request);
 
-		//TODO Tester
 		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& response.getFirstHeader("Location").getValue()
 						.equals(CoreConfig.loginRequestURL)) {
