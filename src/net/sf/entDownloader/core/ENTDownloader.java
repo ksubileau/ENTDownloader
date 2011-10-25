@@ -22,9 +22,12 @@ package net.sf.entDownloader.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
@@ -41,6 +44,7 @@ import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
 import net.sf.entDownloader.core.events.DownloadAbortEvent;
+import net.sf.entDownloader.core.events.DownloadedBytesEvent;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
 import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
@@ -48,6 +52,23 @@ import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import com.ziesemer.utils.pacProxySelector.PacProxySelector;
 
@@ -58,8 +79,7 @@ import com.ziesemer.utils.pacProxySelector.PacProxySelector;
  * Classe principale de l'application, interface entre les classes externes et
  * l'ENT.<br>
  * <b>Classe singleton</b> : utilisez {@link ENTDownloader#getInstance()
- * getInstance()} pour
- * obtenir l'instance de la classe.
+ * getInstance()} pour obtenir l'instance de la classe.
  */
 public class ENTDownloader {
 
@@ -78,8 +98,6 @@ public class ENTDownloader {
 	private String uP_root;
 	/** Paramètre de l'URL de la page de stockage **/
 	private String tag;
-	/** Identifiant de connexion */
-	private String sessionid;
 	/** Nom de l'utilisateur */
 	private String username = "";
 	/** Login */
@@ -90,7 +108,8 @@ public class ENTDownloader {
 	private int capacity = -1;
 
 	/** Instance d'un navigateur utilisé pour la communication avec le serveur */
-	private Browser browser;
+	private DefaultHttpClient httpclient;
+	private Proxy proxy = Proxy.NO_PROXY;
 
 	/**
 	 * Enregistre le fichier PAC utilisé pour la configuration du proxy le
@@ -111,7 +130,20 @@ public class ENTDownloader {
 	}
 
 	private ENTDownloader() {
-		browser = new Browser();
+		httpclient = new DefaultHttpClient();
+
+		//Définition de l'User-Agent. Ajout de la version Java, habituellement
+		//automatiquement ajouté lorsque l'on utilise URLConnection.
+		HttpProtocolParams.setUserAgent(
+				httpclient.getParams(),
+				System.getProperty("http.agent") + " Java/"
+						+ System.getProperty("java.version"));
+
+		//Utilisation de la configuration proxy système (System.setProperty)
+		/*ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+				httpclient.getConnectionManager().getSchemeRegistry(),
+				ProxySelector.getDefault());
+		httpclient.setRoutePlanner(routePlanner);*/
 	}
 
 	/**
@@ -127,15 +159,12 @@ public class ENTDownloader {
 		if (isLogin == true)
 			return true;
 
-		browser.setUrl(CoreConfig.loginURL);
-		browser.setFollowRedirects(false);
+		//Chargement de la page de connexion.
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String loginPage = httpclient.execute(new HttpGet(CoreConfig.loginURL),
+				responseHandler);
 
-		String loginPage = browser.getPage();
-		if (browser.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-			browser.setUrl(browser.getHeaderField("Location"));
-			loginPage = browser.getPage();
-		}
-
+		//Lecture du ticket d'authentification.
 		List<String> ticket = new ArrayList<String>();
 		Misc.preg_match(
 				"input type=\"hidden\" name=\"lt\" value=\"([0-9a-zA-Z\\-]+)\" />",
@@ -146,41 +175,54 @@ public class ENTDownloader {
 				"input type=\"hidden\" name=\"execution\" value=\"([0-9a-zA-Z]+)\" />",
 				loginPage, execution);
 
-		browser.setMethod(Browser.Method.POST);
-		browser.setParam("_eventId", "submit");
-		browser.setParam("username", login);
-		browser.setParam("password", new String(password));
-		browser.setParam("lt", ticket.get(1).toString());
-		if (execution.size() > 1) {
-			browser.setParam("execution", execution.get(1).toString());
-		}
-		browser.setFollowRedirects(false);
-		loginPage = browser.getPage();
-		browser.setMethod(Browser.Method.GET);
+		//Envoi des informations d'identification
+		HttpPost postCredentials = new HttpPost(CoreConfig.loginURL);
 
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("_eventId", "submit"));
+		nvps.add(new BasicNameValuePair("username", login));
+		nvps.add(new BasicNameValuePair("password", new String(password)));
+		nvps.add(new BasicNameValuePair("lt", ticket.get(1).toString()));
+		if (execution.size() > 1) {
+			nvps.add(new BasicNameValuePair("execution", execution.get(1)
+					.toString()));
+		}
+
+		postCredentials.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+
+		HttpResponse loginResponse = httpclient.execute(postCredentials);
+
+		//Si l'authentification réussi, l'ENT renvoi une redirection 
+		//temporaire (302) vers une URL du type 
+		//http://ent.u-clermont1.fr/Login?ticket=XX-XX...
+		//Sinon la page de connexion est retournée.
+		if (loginResponse.getStatusLine().getStatusCode() != HttpURLConnection.HTTP_MOVED_TEMP)
+			return false;
+
+		//Autre vérification possible
+		/*
 		if (Misc.preg_match("<div id=\"erreur\">", loginPage))
 			return false;
+		*/
+
+		isLogin = true;
+		this.login = login;
 		Broadcaster
 				.fireAuthenticationSucceeded(new AuthenticationSucceededEvent(
 						login));
+		
+		EntityUtils.consume(loginResponse.getEntity());
 
-		browser.setUrl(browser.getHeaderField("Location"));
-		browser.clearParam();
-		browser.getPage();
-		browser.setUrl(browser.getHeaderField("Location"));
-		browser.clearParam();
-		browser.getPage();
-		sessionid = browser.getCookieValueByName("JSESSIONID");
+		//Obtention de la page http://ent.u-clermont1.fr/Login?ticket=XX-XX...
+		//Cette page renvoie un code 302 Moved Temporarily vers 
+		//http://ent.u-clermont1.fr/render.userLayoutRootNode.uP
+		//Dans le cas d'une requête GET, HttpClient suit cette redirection,
+		//on obtient donc le code source de la page principale en mode connectée.
+		loginResponse = httpclient.execute(new HttpGet(loginResponse
+				.getFirstHeader("Location").getValue()));
+		String rootPage = responseHandler.handleResponse(loginResponse);
 
-		isLogin = true;
-
-		browser.setFollowRedirects(true);
-		browser.setUrl(CoreConfig.rootURL);
-		browser.clearParam();
-		String rootPage = null;
-		rootPage = browser.getPage();
 		setStockageUrlParams(rootPage);
-		this.login = login;
 		setUserName(rootPage);
 		directoryContent = null;
 		path = null;
@@ -358,25 +400,24 @@ public class ENTDownloader {
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
 
-		browser.clearParam();
+		HttpUriRequest request;
+
 		if (name.equals("/") || name.equals("~") || name.isEmpty()) {
 			if (path == null) {
 				path = new ENTPath();
-				browser.setUrl(urlBuilder(CoreConfig.stockageURL));
+				request = new HttpGet(urlBuilder(CoreConfig.stockageURL));
 			} else {
 				path.clear();
-				browser.setUrl(urlBuilder("http://ent.u-clermont1.fr/render.userLayoutRootNode.target.{uP_root}.uP?link=0"));
+				request = new HttpGet(
+						urlBuilder("http://ent.u-clermont1.fr/render.userLayoutRootNode.target.{uP_root}.uP?link=0"));
 			}
 			name = "/";
-			browser.setMethod(Browser.Method.GET);
 		} else if (name.equals(".")) {
-			browser.setMethod(Browser.Method.GET);
-			browser.setUrl(urlBuilder(CoreConfig.refreshDirURL));
+			request = new HttpGet(urlBuilder(CoreConfig.refreshDirURL));
 		} else if (name.equals("..")) {
 			if (path.isRoot())
 				return; //Déjà à la racine
-			browser.setMethod(Browser.Method.GET);
-			browser.setUrl(urlBuilder(CoreConfig.directoryBackURL));
+			request = new HttpGet(urlBuilder(CoreConfig.directoryBackURL));
 		} else {
 			int pos = indexOf(name);
 			if (pos == -1)
@@ -384,23 +425,28 @@ public class ENTDownloader {
 			else if (!directoryContent.get(pos).isDirectory())
 				throw new ENTInvalidFS_ElementTypeException(name);
 
-			browser.setUrl(urlBuilder(CoreConfig.goIntoDirectoryURL));
-			browser.setMethod(Browser.Method.POST);
-			browser.setParam("targetDirectory", name);
-		}
-		browser.setFollowRedirects(false);
-		browser.setCookieField("JSESSIONID", sessionid);
-		String pageContent = null;
-		pageContent = browser.getPage();
+			request = new HttpPost(urlBuilder(CoreConfig.goIntoDirectoryURL));
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("targetDirectory", name));
 
-		if (browser.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP
-				&& browser.getHeaderField("Location").equals(
-						CoreConfig.loginRequestURL)) {
+			((HttpPost) request).setEntity(new UrlEncodedFormEntity(params,
+					HTTP.UTF_8));
+		}
+		String pageContent = null;
+		HttpResponse response = httpclient.execute(request);
+
+		//TODO Tester
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
 			isLogin = false;
 			throw new ENTUnauthenticatedUserException(
 					"Session expired, please login again.",
 					ENTUnauthenticatedUserException.SESSION_EXPIRED);
 		}
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		pageContent = responseHandler.handleResponse(response);
 
 		setStockageUrlParams(pageContent);
 		if (capacity < 0) {
@@ -444,7 +490,6 @@ public class ENTDownloader {
 	 *            Chemin de destination du fichier
 	 * @throws IOException
 	 * @see Misc#tildeToHome(String)
-	 * @see Browser#downloadFile(String)
 	 * @return <code>True</code> si le téléchargement du fichier s'est terminé
 	 *         normalement, <code>false</code> sinon.
 	 */
@@ -485,13 +530,32 @@ public class ENTDownloader {
 			}
 		}
 
-		browser.clearParam();
-		browser.setUrl(urlBuilder(CoreConfig.downloadFileURL));
-		browser.setMethod(Browser.Method.POST);
-		browser.setParam("downloadFile", name);
-		browser.setFollowRedirects(false);
-		browser.setCookieField("JSESSIONID", sessionid);
-		browser.downloadFile(destination);
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.downloadFileURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("downloadFile", name));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+		HttpEntity entity = response.getEntity();
+
+		String destinationPath = fpath.getPath();
+		File dpath = new File(fpath.getParent());
+		dpath.mkdirs();
+
+		InputStream responseContentStream = entity.getContent();
+		FileOutputStream writeFile = new FileOutputStream(destinationPath);
+		byte[] buffer = new byte[1024];
+		int read;
+
+		while ((read = responseContentStream.read(buffer)) > 0) {
+			writeFile.write(buffer, 0, read);
+			Broadcaster.fireDownloadedBytes(new DownloadedBytesEvent(read));
+		}
+		writeFile.flush();
+		writeFile.close();
+		EntityUtils.consume(entity);
+
 		Broadcaster.fireEndDownload(new EndDownloadEvent(file));
 		return true;
 	}
@@ -803,7 +867,7 @@ public class ENTDownloader {
 	 * @param port Le port du proxy.
 	 */
 	public void setProxy(String host, int port) {
-		browser.setHttpProxy(host, port);
+		setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port)));
 		proxyFile = null;
 	}
 
@@ -814,7 +878,24 @@ public class ENTDownloader {
 	 * @see java.net.Proxy
 	 */
 	public void setProxy(Proxy proxy) {
-		browser.setHttpProxy(proxy);
+		if (proxy == null) {
+			removeProxy();
+			return;
+		}
+
+		InetSocketAddress proxySocket = ((InetSocketAddress) proxy.address());
+		/*
+		System.setProperty("http.proxyHost", proxySocket.getHostName());
+		System.setProperty("http.proxyPort", proxySocket.getPort());
+		System.setProperty("https.proxyHost", proxySocket.getHostName());
+		System.setProperty("https.proxyPort", proxySocket.getPort());
+		*/
+		HttpHost proxyHost = new HttpHost(proxySocket.getHostName(),
+				proxySocket.getPort());
+		httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,
+				proxyHost);
+
+		this.proxy = proxy;
 		proxyFile = null;
 	}
 
@@ -824,7 +905,7 @@ public class ENTDownloader {
 	 * @return Le proxy HTTP utilisé pour la connexion à l'ENT.
 	 */
 	public Proxy getProxy() {
-		return browser.getProxy();
+		return proxy;
 	}
 
 	/**
@@ -844,7 +925,15 @@ public class ENTDownloader {
 	 * Supprime la configuration de proxy précédemment installé.
 	 */
 	public void removeProxy() {
-		browser.removeHttpProxy();
+		/*
+		System.setProperty("http.proxyHost", null);
+		System.setProperty("http.proxyPort", null);
+		System.setProperty("https.proxyHost", null);
+		System.setProperty("https.proxyPort", null);
+		*/
+		httpclient.getParams()
+				.setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
+		proxy = Proxy.NO_PROXY;
 		proxyFile = null;
 	}
 
