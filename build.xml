@@ -144,6 +144,10 @@
 	  		<attribute name="Main-Class" value="net.sf.entDownloader.Main"/>
 	  	</manifest>
 	  	<fileset dir="${basedir}/lib/pac/"/>
+	  	<fileset dir="${basedir}/lib/commons-logging-1.1.1/"/>
+	  	<fileset dir="${basedir}/lib/httpclient-4.1.2/"/>
+	  	<fileset dir="${basedir}/lib/httpcore-4.1.2/"/>
+	  	<fileset dir="${basedir}/lib/httpmime-4.1.2/"/>
 	  </jar>
 
 		<launch4j configFile=".settings/launch4j_builtin.xml" outfile="${output.publish.dir}/${targetdir}/${ant.project.name}_Win.exe"
