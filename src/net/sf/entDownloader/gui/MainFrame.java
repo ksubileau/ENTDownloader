@@ -34,7 +34,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.LinkedList;
 
-import javax.naming.LimitExceededException;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -146,7 +145,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem nextDirMenuIt;
 	private JMenuItem prevDirMenuIt;
 	private Action refreshAction;
-	
+
 	/**
 	 * Actualise l'affichage du dossier courant.
 	 * 
@@ -167,17 +166,17 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					KeyEvent.VK_F5, 0));
+			putValue(Action.ACCELERATOR_KEY,
+					KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			changeDirectory(".");
 		}
-		
+
 	}
-	
+
 	/**
 	 * Navigue vers le dossier racine.
 	 * 
@@ -185,9 +184,9 @@ public class MainFrame extends javax.swing.JFrame implements
 	 * @since 1.0.2
 	 */
 	private class HomeDirAction extends AbstractAction {
-		
+
 		private static final long serialVersionUID = -2395918860597268331L;
-		
+
 		/**
 		 * Construit une nouvelle action HomeDirAction
 		 */
@@ -199,18 +198,16 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					java.awt.event.KeyEvent.VK_HOME,
-					ActionEvent.ALT_MASK
-			));
+					java.awt.event.KeyEvent.VK_HOME, ActionEvent.ALT_MASK));
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			changeDirectory("/");
 		}
-		
+
 	}
-	
+
 	/**
 	 * Navigue vers le dossier parent.
 	 * 
@@ -218,7 +215,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	 * @since 1.0.2
 	 */
 	private class ParentDirAction extends AbstractAction {
-		
+
 		private static final long serialVersionUID = 113366319192328568L;
 
 		/**
@@ -232,18 +229,16 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					java.awt.event.KeyEvent.VK_UP,
-					ActionEvent.ALT_MASK
-			));
+					java.awt.event.KeyEvent.VK_UP, ActionEvent.ALT_MASK));
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			changeDirectory("..");
 		}
-		
+
 	}
-	
+
 	/**
 	 * Retourne au dossier précédent dans l'historique de navigation.
 	 * Si l'on est déjà au plus ancien dossier visité, aucune action n'est
@@ -253,7 +248,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	 * @since 1.0.2
 	 */
 	private class PreviousDirAction extends AbstractAction {
-		
+
 		private static final long serialVersionUID = 193366319192328568L;
 		private AbstractAction nextDirAction;
 
@@ -268,54 +263,50 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					java.awt.event.KeyEvent.VK_LEFT,
-					ActionEvent.ALT_MASK
-			));
+					java.awt.event.KeyEvent.VK_LEFT, ActionEvent.ALT_MASK));
 		}
-		
+
 		public void setNextDirAction(AbstractAction nextDirAction) {
 			this.nextDirAction = nextDirAction;
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			if(historyPos <= 0)
+			if (historyPos <= 0)
 				return;
 
-			changeDirectory(historyList.get(historyPos - 1),
-					false);
+			changeDirectory(historyList.get(historyPos - 1), false);
 			--historyPos;
-			if(nextDirAction != null)
-			{
+			if (nextDirAction != null) {
 				nextDirAction.setEnabled(true);
 				nextDirAction.putValue(Action.SHORT_DESCRIPTION, "Avancer à "
 						+ historyList.get(historyPos + 1));
 			}
 			if (historyPos < 1) {
 				setEnabled(false);
-				
+
 				putValue(Action.SHORT_DESCRIPTION, "Précédent");
 			} else {
-				putValue(Action.SHORT_DESCRIPTION, "Retour à "
-						+ historyList.get(historyPos - 1));
+				putValue(Action.SHORT_DESCRIPTION,
+						"Retour à " + historyList.get(historyPos - 1));
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Navigue vers le dossier suivant dans l'historique de navigation.
-	 * Si l'on est déjà au dossier le plus récemment visité, aucune action 
+	 * Si l'on est déjà au dossier le plus récemment visité, aucune action
 	 * n'est effectuée.
 	 * 
 	 * @author Kévin Subileau
 	 * @since 1.0.2
 	 */
 	private class NextDirAction extends AbstractAction {
-		
+
 		private static final long serialVersionUID = 193366319192328568L;
 		private AbstractAction prevDirAction;
-		
+
 		/**
 		 * Construit une nouvelle action NextDirAction
 		 */
@@ -327,40 +318,36 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					java.awt.event.KeyEvent.VK_RIGHT,
-					ActionEvent.ALT_MASK
-			));
+					java.awt.event.KeyEvent.VK_RIGHT, ActionEvent.ALT_MASK));
 		}
-		
+
 		public void setPreviousDirAction(AbstractAction prevDirAction) {
 			this.prevDirAction = prevDirAction;
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			int historySize = historyList.size();
-			if(historyPos >= historySize -1)
+			if (historyPos >= historySize - 1)
 				return;
 
-			changeDirectory(historyList.get(historyPos + 1),
-					false);
+			changeDirectory(historyList.get(historyPos + 1), false);
 			++historyPos;
 			if (historyPos >= historySize - 1) {
 				setEnabled(false);
 			} else {
-				putValue(Action.SHORT_DESCRIPTION, "Avancer à "
-						+ historyList.get(historyPos + 1));
+				putValue(Action.SHORT_DESCRIPTION,
+						"Avancer à " + historyList.get(historyPos + 1));
 			}
-			if(prevDirAction != null)
-			{
+			if (prevDirAction != null) {
 				prevDirAction.setEnabled(true);
 				prevDirAction.putValue(Action.SHORT_DESCRIPTION, "Retour à "
 						+ historyList.get(historyPos - 1));
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Demande de téléchargement de un ou plusieurs fichiers
 	 * 
@@ -413,29 +400,27 @@ public class MainFrame extends javax.swing.JFrame implements
 		public void setMode(short mode) {
 			switch (mode) {
 			case ALL:
-				putValue(Action.SHORT_DESCRIPTION, 
-						"Télécharger tous les dossiers et fichiers" +
-						" du dossier courant");
+				putValue(Action.SHORT_DESCRIPTION,
+						"Télécharger tous les dossiers et fichiers"
+								+ " du dossier courant");
 				putValue(Action.NAME, "Télécharger le dossier courant");
 				putValue(Action.LARGE_ICON_KEY, loadIcon("downall.png"));
 				putValue(Action.SMALL_ICON, loadIcon("downall16.png"));
 				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
 				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-						KeyEvent.VK_T,
-						ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK)
-				);
+						KeyEvent.VK_T, ActionEvent.CTRL_MASK
+								| ActionEvent.SHIFT_MASK));
 				break;
 			case SELECTED:
-				putValue(Action.SHORT_DESCRIPTION, 
-						"Télécharger le(s) dossier(s) et fichier(s) " +
-						"sélectionné(s)");
+				putValue(Action.SHORT_DESCRIPTION,
+						"Télécharger le(s) dossier(s) et fichier(s) "
+								+ "sélectionné(s)");
 				putValue(Action.NAME, "Télécharger la sélection");
 				putValue(Action.LARGE_ICON_KEY, loadIcon("down.png"));
 				putValue(Action.SMALL_ICON, loadIcon("down16.png"));
 				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-						KeyEvent.VK_T, ActionEvent.CTRL_MASK)
-				);
+						KeyEvent.VK_T, ActionEvent.CTRL_MASK));
 				break;
 			default:
 				return;
@@ -453,16 +438,17 @@ public class MainFrame extends javax.swing.JFrame implements
 	 */
 	public static class ExitAction extends AbstractAction {
 		private static final long serialVersionUID = 4633538322805800580L;
+
 		//Attention : cette classe est également utilisée par le bouton quitter
 		//de la fenêtre de connexion.
 		public ExitAction() {
 			super();
-			putValue(Action.NAME, 
-					CoreConfig.getString("LoginFrame.exitLabel"));//$NON-NLS-1$
+			putValue(Action.NAME, CoreConfig.getString("LoginFrame.exitLabel"));//$NON-NLS-1$
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Q);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			System.exit(0);
@@ -678,8 +664,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					listViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					listViewBtn.setToolTipText("Vue liste");
 					listViewBtn.setMinimumSize(new Dimension(24, 24));
-					listViewBtn
-							.setPreferredSize(new Dimension(24, 24));
+					listViewBtn.setPreferredSize(new Dimension(24, 24));
 					listViewBtn.setMaximumSize(new Dimension(24, 24));
 					listViewBtn.setFocusable(false);
 					listViewBtn.addActionListener(new ActionListener() {
@@ -699,12 +684,9 @@ public class MainFrame extends javax.swing.JFrame implements
 					setIcon(detailsViewBtn, "detailsview.png");
 					detailsViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					detailsViewBtn.setToolTipText("Vue détails");
-					detailsViewBtn
-							.setMinimumSize(new Dimension(24, 24));
-					detailsViewBtn.setPreferredSize(new Dimension(24,
-							24));
-					detailsViewBtn
-							.setMaximumSize(new Dimension(24, 24));
+					detailsViewBtn.setMinimumSize(new Dimension(24, 24));
+					detailsViewBtn.setPreferredSize(new Dimension(24, 24));
+					detailsViewBtn.setMaximumSize(new Dimension(24, 24));
 					detailsViewBtn.setFocusable(false);
 					detailsViewBtn.addActionListener(new ActionListener() {
 						@Override
@@ -819,16 +801,17 @@ public class MainFrame extends javax.swing.JFrame implements
 						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(
 								KeyEvent.VK_F1, 0));
 						onlineHelp.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								try {
 									Misc.browse(CoreConfig
 											.getString("ProductInfo.manpage")
-											.replaceAll("\\{version\\}",
-												java.net.URLEncoder.encode(
-													CoreConfig.getString("ProductInfo.version"),
-													"UTF-8")
-												)
-											);
+											.replaceAll(
+													"\\{version\\}",
+													java.net.URLEncoder.encode(
+															CoreConfig
+																	.getString("ProductInfo.version"),
+															"UTF-8")));
 								} catch (UnsupportedEncodingException e1) {
 									// TODO Auto-generated catch block
 								}
@@ -864,19 +847,19 @@ public class MainFrame extends javax.swing.JFrame implements
 											new UpdaterGui(MainFrame.this, true);
 										} catch (final Exception e) {
 											SwingUtilities
-											.invokeLater(new Runnable() {
-												@Override
-												public void run() {
-													JOptionPane
-													.showMessageDialog(
-															MainFrame.this,
-															"<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>"
-															+ e.toString()
-															+ "</b></html>",
-															"ENTDownloader - Erreur",
-															JOptionPane.ERROR_MESSAGE);
-												}
-											});
+													.invokeLater(new Runnable() {
+														@Override
+														public void run() {
+															JOptionPane
+																	.showMessageDialog(
+																			MainFrame.this,
+																			"<html>Les informations de mise à jour n'ont pas pu être obtenues à cause de l'erreur suivante : <br><b>"
+																					+ e.toString()
+																					+ "</b></html>",
+																			"ENTDownloader - Erreur",
+																			JOptionPane.ERROR_MESSAGE);
+														}
+													});
 										}
 									}
 								}, "Updater").start();
@@ -996,18 +979,18 @@ public class MainFrame extends javax.swing.JFrame implements
 					// TODO Gestion Utilisateur non connecté
 					e1.printStackTrace();
 				} catch (ENTDirectoryNotFoundException e1) {
-					
+
 					//Rétablissement de la synchronisation vue <=> modèle.
 					//En effet, le dossier courant peut avoir changer si, par
 					//exemple, l'utilisateur demande le chemin /d1/d2 à partir
 					//de la racine et que le dossier d2 n'existe pas.
 					//  => Affichage du dossier d1
 					updateFrameData();
-					
+
 					if (addHistory) {
 						historyPush(entd.getDirectoryPath());
 					}
-					
+
 					JOptionPane
 							.showMessageDialog(
 									MainFrame.this,
@@ -1172,34 +1155,37 @@ public class MainFrame extends javax.swing.JFrame implements
 			fileView.browseDirectory(entd.getDirectoryContent());
 		} catch (IllegalStateException e) {
 		}
-		
-		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
-				put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),"enterPressedAction");
-		
-		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).
-				put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,0),"prevDirAction");
+
+		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+						"enterPressedAction");
+
+		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0),
+						"prevDirAction");
 
 		fileView.getViewActionMap().put("prevDirAction", prevDirAction);
-		fileView.getViewActionMap().put("enterPressedAction", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+		fileView.getViewActionMap().put("enterPressedAction",
+				new AbstractAction() {
+					private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				switch(fileView.getSelectedFilesCount()) {
-				case 0:
-					break;
-				case 1:
-					GuiBroadcaster
-					.fireDoubleClickOnRow(new DoubleClickOnRowEvent(
-							(FS_Element) fileView.getSelectedFile()));
-					break;
-				default:
-					dldAction.actionPerformed(null);
-					break;
-				}
-			}
-		});
-		
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						switch (fileView.getSelectedFilesCount()) {
+						case 0:
+							break;
+						case 1:
+							GuiBroadcaster
+									.fireDoubleClickOnRow(new DoubleClickOnRowEvent(
+											fileView.getSelectedFile()));
+							break;
+						default:
+							dldAction.actionPerformed(null);
+							break;
+						}
+					}
+				});
+
 		if (BriefView.class == view) {
 			listViewBtn.setSelected(true);
 			detailsViewBtn.setSelected(false);
@@ -1241,13 +1227,13 @@ public class MainFrame extends javax.swing.JFrame implements
 
 	/**
 	 * Recharge l'ensemble des informations affichées dans la fenêtre
-	 * principale à partir du modèle (instance unique de 
+	 * principale à partir du modèle (instance unique de
 	 * {@link net.sf.entDownloader.core.ENTDownloader ENTDownloader}),
 	 * notamment la liste des fichiers du dossier courant, le chemin courant,
 	 * et le nom de l'utilisateur.
 	 * 
-	 * Veuillez noter que cette méthode <u>n'actualise pas ces informations depuis
-	 * l'ENT</u>, mais uniquement <u>localement depuis le modèle</u>.
+	 * Veuillez noter que cette méthode <u>n'actualise pas ces informations
+	 * depuis l'ENT</u>, mais uniquement <u>localement depuis le modèle</u>.
 	 */
 	private void updateFrameData() {
 		String dirPath = entd.getDirectoryPath();
@@ -1255,7 +1241,8 @@ public class MainFrame extends javax.swing.JFrame implements
 		parentDirAction.setEnabled(!dirPath.equals("/"));
 		statusInfo.setText(dirInfos());
 		setUsedSpace();
-		userNameLabel.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
+		userNameLabel
+				.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
 		fileView.browseDirectory(entd.getDirectoryContent());
 	}
 
