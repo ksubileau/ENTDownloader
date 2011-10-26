@@ -1104,7 +1104,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					public void onDoubleClickOnRow(DoubleClickOnRowEvent event) {
 						FS_Element target = event.getTarget();
 						if (target.isDirectory()) {
-							changeDirectory(adressField.getText() + "/"
+							changeDirectory(entd.getDirectoryPath() + "/"
 									+ target.getName());
 						} else {
 							Downloader dld = new Downloader(MainFrame.this,
