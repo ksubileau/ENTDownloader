@@ -34,6 +34,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.LinkedList;
 
+import javax.naming.LimitExceededException;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -995,7 +996,18 @@ public class MainFrame extends javax.swing.JFrame implements
 					// TODO Gestion Utilisateur non connecté
 					e1.printStackTrace();
 				} catch (ENTDirectoryNotFoundException e1) {
-					statusInfo.setText(dirInfos());
+					
+					//Rétablissement de la synchronisation vue <=> modèle.
+					//En effet, le dossier courant peut avoir changer si, par
+					//exemple, l'utilisateur demande le chemin /d1/d2 à partir
+					//de la racine et que le dossier d2 n'existe pas.
+					//  => Affichage du dossier d1
+					updateFrameData();
+					
+					if (addHistory) {
+						historyPush(entd.getDirectoryPath());
+					}
+					
 					JOptionPane
 							.showMessageDialog(
 									MainFrame.this,
@@ -1003,7 +1015,6 @@ public class MainFrame extends javax.swing.JFrame implements
 											+ path
 											+ "\". Vérifiez l'orthographe et réessayez.",
 									"ENTDownloader", JOptionPane.ERROR_MESSAGE);
-					adressField.setText(prevDir);
 					return null;
 				} catch (ENTInvalidFS_ElementTypeException e1) {
 					statusInfo.setText(dirInfos());
@@ -1225,8 +1236,23 @@ public class MainFrame extends javax.swing.JFrame implements
 
 	@Override
 	public void onDirectoryChanged(DirectoryChangedEvent event) {
-		adressField.setText(entd.getDirectoryPath());
-		parentDirAction.setEnabled(!adressField.getText().equals("/"));
+		updateFrameData();
+	}
+
+	/**
+	 * Recharge l'ensemble des informations affichées dans la fenêtre
+	 * principale à partir du modèle (instance unique de 
+	 * {@link net.sf.entDownloader.core.ENTDownloader ENTDownloader}),
+	 * notamment la liste des fichiers du dossier courant, le chemin courant,
+	 * et le nom de l'utilisateur.
+	 * 
+	 * Veuillez noter que cette méthode <u>n'actualise pas ces informations depuis
+	 * l'ENT</u>, mais uniquement <u>localement depuis le modèle</u>.
+	 */
+	private void updateFrameData() {
+		String dirPath = entd.getDirectoryPath();
+		adressField.setText(dirPath);
+		parentDirAction.setEnabled(!dirPath.equals("/"));
 		statusInfo.setText(dirInfos());
 		setUsedSpace();
 		userNameLabel.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
