@@ -20,12 +20,15 @@
  */
 package net.sf.entDownloader.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -43,6 +46,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -111,6 +115,8 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JLabel storageInfosLabel;
 	private JSeparator jSeparator3;
 	private JLabel statusInfo;
+	private JLayeredPane browserLayeredPane;
+	private JLabel emptyDirLabel;
 	private JButton Download_tool;
 	private JToolBar toolBar;
 	private JMenuItem jMenuItem2;
@@ -911,17 +917,39 @@ public class MainFrame extends javax.swing.JFrame implements
 				statusBar.setPreferredSize(new Dimension(810, 25));
 				statusBar.setMinimumSize(new Dimension(0, 25));
 				{
-					setFileView(BriefView.class);
+					emptyDirLabel = new JLabel("Le dossier est vide.");
+					emptyDirLabel.setHorizontalAlignment(SwingConstants.CENTER);
+					emptyDirLabel.setForeground(new Color(109, 109, 109));
+					emptyDirLabel.setVisible(false);
+				}
+				{
+					browserLayeredPane = new JLayeredPane();
+					browserLayeredPane.add(emptyDirLabel,
+							JLayeredPane.DRAG_LAYER);
+					browserLayeredPane
+							.addComponentListener(new ComponentAdapter() {
+								@Override
+								public void componentResized(ComponentEvent e) {
+									//Bind content size to parent.
+									if (fileView != null) {
+										fileView.setSize(e.getComponent()
+												.getSize());
+										fileView.revalidate();
+									}
+									emptyDirLabel.setSize(e.getComponent()
+											.getSize());
+								}
+							});
 					getContentPane().add(
-							fileView,
+							browserLayeredPane,
 							new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
 									GridBagConstraints.CENTER,
 									GridBagConstraints.BOTH, new Insets(0, 0,
 											0, 0), 0, 0));
 				}
 				toolBar.setFloatable(false);
-				toolBar.setBackground(new java.awt.Color(240, 240, 240));
-				toolBar.setForeground(new java.awt.Color(0, 0, 0));
+				toolBar.setBackground(new Color(240, 240, 240));
+				toolBar.setForeground(new Color(0, 0, 0));
 				toolBar.setSize(810, 54);
 				toolBar.setPreferredSize(new Dimension(810, 50));
 				toolBar.setMinimumSize(new Dimension(15, 50));
@@ -952,6 +980,8 @@ public class MainFrame extends javax.swing.JFrame implements
 			{
 				fileChooser = new JFileChooser();
 			}
+
+			setFileView(BriefView.class);
 
 			pack();
 			this.setSize(826, 449);
@@ -1144,7 +1174,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		if (fileView != null && fileView.getClass() == view)
 			return;
 		if (fileView != null) {
-			getContentPane().remove(fileView);
+			browserLayeredPane.remove(fileView);
 		}
 		try {
 			fileView = view.newInstance();
@@ -1198,12 +1228,9 @@ public class MainFrame extends javax.swing.JFrame implements
 			DetailItem.setSelected(true);
 		}
 
-		getContentPane().add(
-				fileView,
-				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(0, 0, 0, 0), 0, 0));
-		getContentPane().validate();
+		browserLayeredPane.add(fileView, JLayeredPane.DEFAULT_LAYER);
+		fileView.setSize(browserLayeredPane.getSize());
+		browserLayeredPane.revalidate();
 		fileView.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -1244,6 +1271,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		userNameLabel
 				.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
 		fileView.browseDirectory(entd.getDirectoryContent());
+		emptyDirLabel.setVisible(entd.getDirectoryContent().size() == 0);
 	}
 
 	/**
