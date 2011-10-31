@@ -63,6 +63,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -133,6 +135,8 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JButton DownloadAll_tool;
 	private JStatusBar statusBar;
 	private JButton refreshBtn;
+	private JButton goDirBtn;
+	private JButton resetPathBtn;
 	private JMenuItem refreshItem;
 	private DownloadAction dldAction;
 	private DownloadAction dldAllAction;
@@ -569,9 +573,9 @@ public class MainFrame extends javax.swing.JFrame implements
 				adressBarLayout.rowWeights = new double[] { 1.0 };
 				adressBarLayout.rowHeights = new int[] { 20 };
 				adressBarLayout.columnWeights = new double[] { 0.0, 0.0, 0.0,
-						0.0, 1.0, 0.0, 0.0, 0.0 };
+						0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 				adressBarLayout.columnWidths = new int[] { 30, 30, 30, 30, 30,
-						30, 30, 30 };
+						0, 0, 30, 30, 30 };
 				adressBar.setLayout(adressBarLayout);
 				{
 					prevBtn = new JButton();
@@ -641,12 +645,86 @@ public class MainFrame extends javax.swing.JFrame implements
 							if (e.getKeyCode() == KeyEvent.VK_ENTER
 									&& !adressField.getText().isEmpty()) {
 								changeDirectory(adressField.getText());
-							}
-							else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+							} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 								adressField.setText(entd.getDirectoryPath());
 							}
 						}
 					});
+					adressField.getDocument().addDocumentListener(
+							new DocumentListener() {
+								private void update() {
+									//Utilisation de invokeLater pour résoudre
+									//un freeze de l'interface graphique après
+									//plusieurs changement de dossier par 
+									//double-clic.
+									SwingUtilities.invokeLater(new Runnable() {
+										@Override
+										public void run() {
+											String d = entd.getDirectoryPath();
+											String i = adressField.getText();
+											boolean b = !i.equals(d);
+											goDirBtn.setVisible(b);
+											resetPathBtn.setVisible(b);
+										}
+									});
+								}
+
+								@Override
+								public void removeUpdate(DocumentEvent e) {
+									update();
+								}
+
+								@Override
+								public void insertUpdate(DocumentEvent e) {
+									update();
+								}
+
+								@Override
+								public void changedUpdate(DocumentEvent e) {
+								}
+							});
+				}
+				{
+					goDirBtn = new JButton();
+					setIcon(goDirBtn, "go.png");
+					goDirBtn.setMargin(new Insets(0, 0, 0, 0));
+					goDirBtn.setToolTipText("Aller");
+					goDirBtn.setMinimumSize(new Dimension(24, 24));
+					goDirBtn.setPreferredSize(new Dimension(24, 24));
+					goDirBtn.setMaximumSize(new Dimension(24, 24));
+					goDirBtn.setFocusable(false);
+					goDirBtn.setVisible(false);
+					goDirBtn.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							changeDirectory(adressField.getText());
+						}
+					});
+					adressBar.add(goDirBtn, new GridBagConstraints(5, 0, 1, 1,
+							0.0, 0.0, GridBagConstraints.CENTER,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
+				}
+				{
+					resetPathBtn = new JButton();
+					setIcon(resetPathBtn, "x.png");
+					resetPathBtn.setMargin(new Insets(0, 0, 0, 0));
+					resetPathBtn.setToolTipText("Annuler");
+					resetPathBtn.setMinimumSize(new Dimension(24, 24));
+					resetPathBtn.setPreferredSize(new Dimension(24, 24));
+					resetPathBtn.setMaximumSize(new Dimension(24, 24));
+					resetPathBtn.setFocusable(false);
+					resetPathBtn.setVisible(false);
+					resetPathBtn.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							adressField.setText(entd.getDirectoryPath());
+						}
+					});
+					adressBar.add(resetPathBtn, new GridBagConstraints(6, 0, 1,
+							1, 0.0, 0.0, GridBagConstraints.CENTER,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
 				}
 				{
 					refreshBtn = new JButton();
@@ -657,7 +735,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					refreshBtn.setFocusable(false);
 					refreshBtn.setAction(refreshAction);
 					refreshBtn.setHideActionText(true);
-					adressBar.add(refreshBtn, new GridBagConstraints(5, 0, 1,
+					adressBar.add(refreshBtn, new GridBagConstraints(7, 0, 1,
 							1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
@@ -665,7 +743,7 @@ public class MainFrame extends javax.swing.JFrame implements
 
 				{
 					listViewBtn = new JToggleButton();
-					adressBar.add(listViewBtn, new GridBagConstraints(6, 0, 1,
+					adressBar.add(listViewBtn, new GridBagConstraints(8, 0, 1,
 							1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
@@ -690,7 +768,7 @@ public class MainFrame extends javax.swing.JFrame implements
 
 				{
 					detailsViewBtn = new JToggleButton();
-					adressBar.add(detailsViewBtn, new GridBagConstraints(7, 0,
+					adressBar.add(detailsViewBtn, new GridBagConstraints(9, 0,
 							1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
