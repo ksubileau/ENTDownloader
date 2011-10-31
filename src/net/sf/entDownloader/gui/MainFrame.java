@@ -676,7 +676,11 @@ public class MainFrame extends javax.swing.JFrame implements
 					listViewBtn.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							setFileView(BriefView.class);
+							if (listViewBtn.isSelected()) {
+								setFileView(BriefView.class);
+							} else if (!detailsViewBtn.isSelected()) {
+								listViewBtn.setSelected(true);
+							}
 						}
 					});
 				}
@@ -697,7 +701,11 @@ public class MainFrame extends javax.swing.JFrame implements
 					detailsViewBtn.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							setFileView(DetailView.class);
+							if (detailsViewBtn.isSelected()) {
+								setFileView(DetailView.class);
+							} else if (!listViewBtn.isSelected()) {
+								detailsViewBtn.setSelected(true);
+							}
 						}
 					});
 				}
