@@ -642,6 +642,9 @@ public class MainFrame extends javax.swing.JFrame implements
 									&& !adressField.getText().isEmpty()) {
 								changeDirectory(adressField.getText());
 							}
+							else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+								adressField.setText(entd.getDirectoryPath());
+							}
 						}
 					});
 				}
