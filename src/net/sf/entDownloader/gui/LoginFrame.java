@@ -28,6 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -62,7 +64,6 @@ public class LoginFrame extends javax.swing.JFrame {
 	 * Bouton d'annulation
 	 */
 	private JButton cancel;
-	private JPanel loginPane;
 	private JTextField id;
 	private JLabel wait2;
 	private JLabel wait;
@@ -75,7 +76,7 @@ public class LoginFrame extends javax.swing.JFrame {
 	private JPasswordField mdp;
 	private JLabel passLabel;
 	private JLabel idLabel;
-	private Thread loginThread = null;
+	private Thread loginThread;
 
 	/**
 	 * Auto-generated main method to display this JDialog
@@ -88,21 +89,26 @@ public class LoginFrame extends javax.swing.JFrame {
 
 	private void initGUI() {
 		try {
-			getContentPane().setLayout(null);
+			GridBagLayout defaultLayout = new GridBagLayout();
+			getContentPane().setLayout(defaultLayout);
 			this.setTitle(CoreConfig.getString("LoginFrame.title")); //$NON-NLS-1$
 			this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 			this.setResizable(false);
 			this.setName("login"); //$NON-NLS-1$
 			{
+				
 				overlay = new JFadePanel();
-				getContentPane().add(overlay);
-				overlay.setBackground(new Color(255, 255, 255, 200));
+				setGlassPane(overlay);
+				overlay.setBackground(new Color(255, 255, 255, 0));
 				overlay.setFadeOutEnabled(false);
 				overlay.setVisible(false);
 				overlay.setMaxOpacity(100);
-				overlay.setBounds(0, 0, 435, 173);
-				overlay.setLayout(null);
-				overlay.setSize(434, 173);
+				overlay.setLayout(null); 
+				// blocks all user input
+				overlay.addMouseListener(new MouseAdapter() { });
+				overlay.addMouseMotionListener(new MouseMotionAdapter() { });
+				overlay.addKeyListener(new KeyAdapter() { });
+
 				{
 					wait = new JLabel();
 					overlay.add(wait);
@@ -136,11 +142,6 @@ public class LoginFrame extends javax.swing.JFrame {
 				}
 			}
 			{
-				loginPane = new JPanel();
-				getContentPane().add(loginPane);
-				GridBagLayout loginPaneLayout = new GridBagLayout();
-				loginPane.setLayout(loginPaneLayout);
-				loginPane.setBounds(0, 0, 434, 173);
 				{
 					passLabel = new JLabel();
 					passLabel.setText(CoreConfig
@@ -201,7 +202,7 @@ public class LoginFrame extends javax.swing.JFrame {
 				}
 				{
 					confirm = new JButton();
-					loginPane.add(confirm, new GridBagConstraints(3, 5, 1, 1,
+					getContentPane().add(confirm, new GridBagConstraints(3, 5, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 10, 5),
 							0, 0));
@@ -230,41 +231,41 @@ public class LoginFrame extends javax.swing.JFrame {
 				}
 				{
 					quit = new JButton();
-					loginPane.add(quit, new GridBagConstraints(4, 5, 2, 1, 0.0,
+					getContentPane().add(quit, new GridBagConstraints(4, 5, 2, 1, 0.0,
 							0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 5, 10, 3),
 							0, 0));
-					loginPane.add(id, new GridBagConstraints(2, 2, 3, 1, 0.0,
+					getContentPane().add(id, new GridBagConstraints(2, 2, 3, 1, 0.0,
 							0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
 									0), 0, 0));
-					loginPane.add(mdp, new GridBagConstraints(2, 3, 3, 1, 0.0,
+					getContentPane().add(mdp, new GridBagConstraints(2, 3, 3, 1, 0.0,
 							0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
 									0), 0, 0));
-					loginPane.add(idLabel, new GridBagConstraints(1, 2, 1, 1,
+					getContentPane().add(idLabel, new GridBagConstraints(1, 2, 1, 1,
 							0.0, 0.0, GridBagConstraints.EAST,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0,
 							0));
-					loginPane.add(passLabel, new GridBagConstraints(1, 3, 1, 1,
+					getContentPane().add(passLabel, new GridBagConstraints(1, 3, 1, 1,
 							0.0, 0.0, GridBagConstraints.EAST,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0,
 							0));
-					loginPane.add(jPanel1, new GridBagConstraints(0, 1, 1, 4,
+					getContentPane().add(jPanel1, new GridBagConstraints(0, 1, 1, 4,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0,
 							0));
-					loginPane.add(invalidCredentials, new GridBagConstraints(1,
+					getContentPane().add(invalidCredentials, new GridBagConstraints(1,
 							1, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0,
 							0));
-					loginPane.add(invite, new GridBagConstraints(0, 0, 5, 1,
+					getContentPane().add(invite, new GridBagConstraints(0, 0, 5, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.HORIZONTAL, new Insets(9, 10, 4,
 									10), 0, 0));
 					{
 						proxyBtn = new JButton();
-						loginPane.add(proxyBtn, new GridBagConstraints(0, 5, 1,
+						getContentPane().add(proxyBtn, new GridBagConstraints(0, 5, 1,
 								1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 								GridBagConstraints.NONE,
 								new Insets(0, 5, 5, 0), 0, 0));
@@ -282,12 +283,12 @@ public class LoginFrame extends javax.swing.JFrame {
 					}
 					quit.setAction(new MainFrame.ExitAction());
 				}
-				loginPaneLayout.rowWeights = new double[] { 0.03, 0.0, 0.01,
+				defaultLayout.rowWeights = new double[] { 0.03, 0.0, 0.01,
 						0.01, 0.1, 0.0 };
-				loginPaneLayout.rowHeights = new int[] { 7, 10, 7, 7, 20, 7 };
-				loginPaneLayout.columnWeights = new double[] { 0.0, 0.0, 0.1,
+				defaultLayout.rowHeights = new int[] { 7, 10, 7, 7, 20, 7 };
+				defaultLayout.columnWeights = new double[] { 0.0, 0.0, 0.1,
 						0.0, 0.0, 0.0, 0.0 };
-				loginPaneLayout.columnWidths = new int[] { 77, 130, 20, 7, 38,
+				defaultLayout.columnWidths = new int[] { 77, 130, 20, 7, 38,
 						20, 8 };
 			}
 			this.addWindowListener(new WindowAdapter() {
@@ -326,7 +327,6 @@ public class LoginFrame extends javax.swing.JFrame {
 				@Override
 				public void run() {
 					overlay.setVisible(true);
-					loginPane.setVisible(false);
 					try {
 						if (ENTDownloader.getInstance().login(id.getText(), mdp.getPassword())) {
 							MainFrame mainFrame = (MainFrame) GuiMain.getMainFrame();
@@ -352,7 +352,7 @@ public class LoginFrame extends javax.swing.JFrame {
 							restartAfterFailed(false);
 							JOptionPane
 							.showMessageDialog(
-									loginPane,
+									LoginFrame.this,
 									"<html><b>ENTDownloader est configuré pour utiliser un serveur proxy mais celui-ci est introuvable.</b><br>" +
 									"<ul>" +
 										"<li style=\"list-style-type:none;\">" +
@@ -374,7 +374,7 @@ public class LoginFrame extends javax.swing.JFrame {
 						{
 						JOptionPane
 								.showMessageDialog(
-										loginPane,
+										LoginFrame.this,
 										"Votre connexion Internet semble rencontrer un problème.\nAssurez-vous que votre ordinateur est connecté à Internet, "
 												+ "\net que vous avez correctement configuré les paramètres de proxy.",
 										"ENTDownloader - Service indisponible",
@@ -384,7 +384,7 @@ public class LoginFrame extends javax.swing.JFrame {
 					} catch (ParseException e) {
 						JOptionPane
 						.showMessageDialog(
-								loginPane,
+								LoginFrame.this,
 								"<html>Une erreur est survenue durant la procédure de connexion. Veuillez réessayer ultérieurement.<br><br>"
 										+ "Si le problème persiste, merci de nous le signaler à l'adresse <a href=\"mailto:"
 										+ CoreConfig.getString("ProductInfo.email") + "\">"
@@ -406,7 +406,6 @@ public class LoginFrame extends javax.swing.JFrame {
 		mdp.setText(""); //$NON-NLS-1$
 		confirm.setEnabled(false);
 		invalidCredentials.setVisible(showInvalidCredentialMessage);
-		loginPane.setVisible(true);
 		overlay.setVisible(false);
 		mdp.grabFocus();
 	}
