@@ -365,7 +365,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
 												+ "\net que vous avez correctement configuré les paramètres de proxy.",
 										"ENTDownloader - Service indisponible",
 										JOptionPane.ERROR_MESSAGE);
-						System.exit(1);
+						restartAfterFailed(false);
 						}
 					} catch (ParseException e) {
 						JOptionPane
