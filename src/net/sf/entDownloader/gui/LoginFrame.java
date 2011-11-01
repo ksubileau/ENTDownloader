@@ -45,6 +45,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import net.sf.entDownloader.core.CoreConfig;
 import net.sf.entDownloader.core.ENTDownloader;
@@ -53,7 +55,7 @@ import net.sf.entDownloader.gui.Components.JFadePanel;
 /**
  * Fenêtre de connexion.
  */
-public class LoginFrame extends javax.swing.JFrame {
+public class LoginFrame extends javax.swing.JFrame implements ActionListener {
 	private static final long serialVersionUID = 6012478520927856073L;
 	/**
 	 * Invite de saisie.
@@ -132,13 +134,7 @@ public class LoginFrame extends javax.swing.JFrame {
 							.getString("LoginFrame.btnAnnuler")); //$NON-NLS-1$
 					cancel.setBounds(170, 118, 81, 29);
 					cancel.setMnemonic(java.awt.event.KeyEvent.VK_A);
-					cancel.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							loginThread.stop();
-							restartAfterFailed(false);
-						}
-					});
+					cancel.addActionListener(this);
 				}
 			}
 			{
@@ -186,19 +182,31 @@ public class LoginFrame extends javax.swing.JFrame {
 				{
 					id = new JTextField();
 					idLabel.setLabelFor(id);
-					id.addKeyListener(new KeyAdapter() {
+					id.addActionListener(this);
+					DocumentListener activator = new DocumentListener() {
 						@Override
-						public void keyReleased(KeyEvent e) {
-							if (!id.getText().isEmpty()) {
-								if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-									mdp.requestFocus();
-								}
-								confirm.setEnabled(mdp.getPassword().length != 0);
-							} else {
-								confirm.setEnabled(false);
-							}
+						public void removeUpdate(DocumentEvent e) {
+							confirm.setEnabled(!id.getText().isEmpty()
+									&& mdp.getPassword().length != 0);
 						}
-					});
+						
+						@Override
+						public void insertUpdate(DocumentEvent e) {
+							confirm.setEnabled(!id.getText().isEmpty()
+									&& mdp.getPassword().length != 0);
+						}
+						
+						@Override
+						public void changedUpdate(DocumentEvent e) {
+						}
+					};
+					id.getDocument().addDocumentListener(activator);
+
+					mdp = new JPasswordField();
+					mdp.setEchoChar('\u2022');
+					passLabel.setLabelFor(mdp);
+					mdp.getDocument().addDocumentListener(activator);
+					mdp.addActionListener(this);
 				}
 				{
 					confirm = new JButton();
@@ -210,24 +218,8 @@ public class LoginFrame extends javax.swing.JFrame {
 					confirm.setBounds(0, 0, 100, 100);
 					confirm.setPreferredSize(new java.awt.Dimension(47, 23));
 					confirm.setMnemonic(java.awt.event.KeyEvent.VK_O);
-					confirm.addActionListener(new DoLogin());
+					confirm.addActionListener(this);
 					confirm.setEnabled(false);
-				}
-				{
-					mdp = new JPasswordField();
-					mdp.setEchoChar('\u2022');
-					passLabel.setLabelFor(mdp);
-					mdp.addKeyListener(new KeyAdapter() {
-						@Override
-						public void keyReleased(KeyEvent e) {
-							confirm.setEnabled(!id.getText().isEmpty()
-									&& mdp.getPassword().length != 0);
-							if (e.getKeyCode() == KeyEvent.VK_ENTER
-									&& mdp.getPassword().length != 0) {
-								confirm.doClick();
-							}
-						}
-					});
 				}
 				{
 					quit = new JButton();
@@ -271,15 +263,7 @@ public class LoginFrame extends javax.swing.JFrame {
 								new Insets(0, 5, 5, 0), 0, 0));
 						proxyBtn.setText("Proxy...");
 						proxyBtn.setMnemonic(java.awt.event.KeyEvent.VK_P);
-						proxyBtn.addActionListener(new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								ProxyDialog pxDial = new ProxyDialog(
-										LoginFrame.this);
-								pxDial.setLocationRelativeTo(LoginFrame.this);
-								pxDial.setVisible(true);
-							}
-						});
+						proxyBtn.addActionListener(this);
 					}
 					quit.setAction(new MainFrame.ExitAction());
 				}
@@ -320,9 +304,11 @@ public class LoginFrame extends javax.swing.JFrame {
 	}
 
 	//FIXME Le bouton annuler n'imterompt pas le thread : la connexion continue
-	class DoLogin implements ActionListener {
-		@Override
-		public synchronized void actionPerformed(ActionEvent e) {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == confirm || 
+				(e.getSource() == mdp && mdp.getPassword().length != 0))
+		{
 			loginThread = new Thread() {
 				@Override
 				public void run() {
@@ -395,10 +381,20 @@ public class LoginFrame extends javax.swing.JFrame {
 						System.exit(1);
 					}
 				}
-
+	
 			};
 			loginThread.setDaemon(true);
 			loginThread.start();
+		} else if (e.getSource() == id && !id.getText().isEmpty()) {
+			mdp.requestFocus();
+		} else if (e.getSource() == proxyBtn) {
+			ProxyDialog pxDial = new ProxyDialog(
+					LoginFrame.this);
+			pxDial.setLocationRelativeTo(LoginFrame.this);
+			pxDial.setVisible(true);
+		} else if (e.getSource() == cancel) {
+			loginThread.stop();
+			restartAfterFailed(false);
 		}
 	}
 
