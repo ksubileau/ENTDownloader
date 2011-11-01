@@ -27,7 +27,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
@@ -50,12 +49,15 @@ import javax.swing.event.DocumentListener;
 
 import net.sf.entDownloader.core.CoreConfig;
 import net.sf.entDownloader.core.ENTDownloader;
+import net.sf.entDownloader.core.events.AuthenticationSucceededEvent;
+import net.sf.entDownloader.core.events.AuthenticationSucceededListener;
+import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.gui.Components.JFadePanel;
 
 /**
  * Fenêtre de connexion.
  */
-public class LoginFrame extends javax.swing.JFrame implements ActionListener {
+public class LoginFrame extends javax.swing.JFrame implements ActionListener, AuthenticationSucceededListener {
 	private static final long serialVersionUID = 6012478520927856073L;
 	/**
 	 * Invite de saisie.
@@ -121,8 +123,6 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
 				{
 					wait2 = new JLabel();
 					overlay.add(wait2);
-					wait2.setText(CoreConfig
-							.getString("LoginFrame.waitMessage")); //$NON-NLS-1$
 					wait2.setBounds(6, 92, 423, 14);
 					wait2.setHorizontalAlignment(SwingConstants.CENTER);
 				}
@@ -302,6 +302,11 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void onAuthenticationSucceeded(AuthenticationSucceededEvent event) {
+		wait2.setText("Authentification réussie. Initialisation en cours...");
+	}
 
 	//FIXME Le bouton annuler n'imterompt pas le thread : la connexion continue
 	@Override
@@ -309,6 +314,8 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
 		if(e.getSource() == confirm || 
 				(e.getSource() == mdp && mdp.getPassword().length != 0))
 		{
+			wait2.setText("Connexion en cours, veuillez patientez...");
+			Broadcaster.addAuthenticationSucceededListener(this);
 			loginThread = new Thread() {
 				@Override
 				public void run() {
