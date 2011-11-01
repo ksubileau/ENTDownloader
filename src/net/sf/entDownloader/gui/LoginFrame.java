@@ -95,7 +95,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 		try {
 			GridBagLayout defaultLayout = new GridBagLayout();
 			getContentPane().setLayout(defaultLayout);
-			this.setTitle(CoreConfig.getString("LoginFrame.title")); //$NON-NLS-1$
+			this.setTitle(CoreConfig.getString("ProductInfo.name") + " - Connexion");
 			this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 			this.setResizable(false);
 			this.setName("login"); //$NON-NLS-1$
@@ -130,8 +130,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 					cancel = new JButton();
 					//FIXME Réactivation du bouton d'annulation de la connexion une fois le bug résolu.
 					//overlay.add(cancel);
-					cancel.setText(CoreConfig
-							.getString("LoginFrame.btnAnnuler")); //$NON-NLS-1$
+					cancel.setText("Annuler");
 					cancel.setBounds(170, 118, 81, 29);
 					cancel.setMnemonic(java.awt.event.KeyEvent.VK_A);
 					cancel.addActionListener(this);
@@ -140,8 +139,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 			{
 				{
 					passLabel = new JLabel();
-					passLabel.setText(CoreConfig
-							.getString("LoginFrame.passLabel")); //$NON-NLS-1$
+					passLabel.setText("Mot de passe :");
 				}
 				{
 					jPanel1 = new JPanel();
@@ -163,12 +161,11 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 				}
 				{
 					invite = new JLabel();
-					invite.setText("<html>" + CoreConfig.getString("LoginFrame.winMessage") + "</html>"); //$NON-NLS-1$
+					invite.setText("<html>Veuillez saisir votre identifiant et votre mot de passe afin de vous connecter au service de stockage de documents de l'ENT :</html>");
 				}
 				{
 					invalidCredentials = new JLabel();
-					invalidCredentials.setText(CoreConfig
-							.getString("LoginFrame.erreur")); //$NON-NLS-1$
+					invalidCredentials.setText("L'identifiant ou le mot de passe est incorrect.");
 					invalidCredentials.setFont(new java.awt.Font(
 							"Tahoma", 1, 11)); //$NON-NLS-1$
 					invalidCredentials.setForeground(new java.awt.Color(255, 0,
@@ -177,7 +174,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 				}
 				{
 					idLabel = new JLabel();
-					idLabel.setText(CoreConfig.getString("LoginFrame.idLabel")); //$NON-NLS-1$
+					idLabel.setText("Identifiant :");
 				}
 				{
 					id = new JTextField();
@@ -214,7 +211,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 10, 5),
 							0, 0));
-					confirm.setText(CoreConfig.getString("LoginFrame.okLabel")); //$NON-NLS-1$
+					confirm.setText("OK");
 					confirm.setBounds(0, 0, 100, 100);
 					confirm.setPreferredSize(new java.awt.Dimension(47, 23));
 					confirm.setMnemonic(java.awt.event.KeyEvent.VK_O);

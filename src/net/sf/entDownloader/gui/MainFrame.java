@@ -453,7 +453,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		//de la fenêtre de connexion.
 		public ExitAction() {
 			super();
-			putValue(Action.NAME, CoreConfig.getString("LoginFrame.exitLabel"));//$NON-NLS-1$
+			putValue(Action.NAME, "Quitter");
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Q);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
