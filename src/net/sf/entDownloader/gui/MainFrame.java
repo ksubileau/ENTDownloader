@@ -823,6 +823,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						exit = new JMenuItem();
 						fileMenu.add(exit);
 						exit.setAction(new ExitAction());
+						setIcon(exit, "quit.png");
 					}
 				}
 				{
@@ -895,6 +896,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						onlineHelp.setMnemonic(KeyEvent.VK_I);
 						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(
 								KeyEvent.VK_F1, 0));
+						setIcon(onlineHelp, "help.png");
 						onlineHelp.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -918,6 +920,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						help.add(website);
 						website.setText("Site Web");
 						website.setMnemonic(KeyEvent.VK_W);
+						setIcon(website, "website.png");
 						website.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -931,6 +934,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						help.add(checkUpdate);
 						checkUpdate.setText("Rechercher des mises à jour...");
 						checkUpdate.setMnemonic(KeyEvent.VK_M);
+						setIcon(checkUpdate, "checkUpdate.png");
 						checkUpdate.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -1178,9 +1182,9 @@ public class MainFrame extends javax.swing.JFrame implements
 		return button;
 	}
 
-	protected ImageIcon loadIcon(String imageName, String altText) {
+	protected static ImageIcon loadIcon(String imageName, String altText) {
 		String imgLocation = "net/sf/entDownloader/ressources/" + imageName;
-		URL imageURL = getClass().getClassLoader().getResource(imgLocation);
+		URL imageURL = MainFrame.class.getClassLoader().getResource(imgLocation);
 		if (imageURL != null) //image found
 			return new ImageIcon(imageURL, altText);
 		else { //no image found
@@ -1189,11 +1193,11 @@ public class MainFrame extends javax.swing.JFrame implements
 		}
 	}
 
-	protected ImageIcon loadIcon(String imageName) {
+	protected static ImageIcon loadIcon(String imageName) {
 		return loadIcon(imageName, null);
 	}
 
-	protected void setIcon(AbstractButton btn, String imageName) {
+	protected static void setIcon(AbstractButton btn, String imageName) {
 		ImageIcon icon = loadIcon(imageName);
 		if (icon != null) {
 			btn.setIcon(icon);
