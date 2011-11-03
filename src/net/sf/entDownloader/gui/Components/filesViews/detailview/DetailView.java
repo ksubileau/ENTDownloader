@@ -96,6 +96,7 @@ public class DetailView extends ListView {
 		scroll.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent event) {
+				table.clearSelection();
 				if (SwingUtilities.isRightMouseButton(event)) {
 					((MainFrame) GuiMain.getMainFrame()).getPopupMenu().show(
 							scroll, event.getX(), event.getY());
