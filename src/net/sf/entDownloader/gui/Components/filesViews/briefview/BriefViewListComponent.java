@@ -72,8 +72,9 @@ public class BriefViewListComponent extends JList {
 			public void mouseClicked(MouseEvent e) {
 				int row = BriefViewListComponent.this.locationToIndex(e
 						.getPoint());
-				if (e.getClickCount() == 2
-						&& (row >= 0)
+				if (row < 0) {
+					clearSelection();
+				} else if (e.getClickCount() == 2
 						&& (row < BriefViewListComponent.this.getModel()
 								.getSize())) {//double click on row
 					GuiBroadcaster
