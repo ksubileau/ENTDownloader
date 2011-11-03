@@ -33,6 +33,7 @@ import javax.swing.event.ListSelectionListener;
 
 import net.sf.entDownloader.core.CoreConfig;
 import net.sf.entDownloader.core.FS_Element;
+import net.sf.entDownloader.core.Misc;
 import net.sf.entDownloader.gui.GuiMain;
 import net.sf.entDownloader.gui.MainFrame;
 import net.sf.entDownloader.gui.Components.filesViews.ListView;
@@ -83,7 +84,9 @@ public class BriefView extends ListView {
 						return;
 					if (list.getCellBounds(select, select).contains(
 							event.getPoint())) {
-						list.setSelectedIndex(select);
+						if (!Misc.inArray(select, list.getSelectedIndices())) {
+							list.setSelectedIndex(select);
+						}
 					} else {
 						list.clearSelection();
 					}

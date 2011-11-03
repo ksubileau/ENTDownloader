@@ -214,4 +214,22 @@ public final class Misc {
 		nbs += nb;
 		return nbs;
 	}
+
+	/**
+	 * Checks if an integer value exists in an array.
+	 * 
+	 * @param needle
+	 *            The searched value.
+	 * @param haystack
+	 *            The array.
+	 * @return Returns true if <code>needle</code> is found in the array, false
+	 *         otherwise.
+	 */
+	public static boolean inArray(int needle, int[] haystack) {
+		for (int v : haystack) {
+			if (needle == v)
+				return true;
+		}
+		return false;
+	}
 }
