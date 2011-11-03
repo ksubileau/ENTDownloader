@@ -20,6 +20,7 @@
  */
 package net.sf.entDownloader.gui.Components.filesViews.briefview;
 
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -82,6 +83,18 @@ public class BriefViewListComponent extends JList {
 				}
 			}
 		});
+	}
+
+	@Override
+	public int locationToIndex(Point location) {
+		//Cette surcharge permet de retourner l'index de la cellule
+		//uniquement si le point indiqué se situe bien sur la cellule.
+		//Empêche la sélection de la dernière cellule lorsque l'on clique
+		//en dessous.
+		int row = super.locationToIndex(location);
+		if (row != -1 && !getCellBounds(row, row).contains(location))
+			return -1;
+		return row;
 	}
 
 }
