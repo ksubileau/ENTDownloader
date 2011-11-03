@@ -25,6 +25,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -128,7 +130,6 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem about;
 	private JSeparator jSeparator2;
 	private JMenu help;
-	private JSeparator jSeparator1;
 	private JMenuItem exit;
 	private JMenu fileMenu;
 	private JMenuBar jMenuBar;
@@ -145,6 +146,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem parentMenuIt;
 	private PreviousDirAction prevDirAction;
 	private NextDirAction nextDirAction;
+	private CopyFilenameAction copyFilenameAction;
 
 	private LinkedList<String> historyList;
 	/**
@@ -155,6 +157,8 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem nextDirMenuIt;
 	private JMenuItem prevDirMenuIt;
 	private Action refreshAction;
+	private JMenuItem jMenuItem3;
+	private JMenuItem copyFilename;
 
 	/**
 	 * Actualise l'affichage du dossier courant.
@@ -441,6 +445,54 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	/**
+	 * Copie le nom du fichier sélectionné dans le presse-papier.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.2.0
+	 */
+	private class CopyFilenameAction extends AbstractAction {
+		
+		private static final long serialVersionUID = -5329890313141857468L;
+
+		/**
+		 * Construit une nouvelle action CopyFilenameAction
+		 */
+		public CopyFilenameAction() {
+			putValue(Action.SHORT_DESCRIPTION,
+					"Copier le nom du fichier sélectionné dans le presse-papier.");
+			putValue(Action.NAME, "Copier le nom du fichier");
+			ImageIcon icon = loadIcon("clipboard.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (fileView == null || fileView.getSelectedFilesCount() != 1)
+				return;
+			String filename = fileView.getSelectedFile().getName();
+			try {
+				StringSelection ss = new StringSelection(filename);
+				Toolkit.getDefaultToolkit().getSystemClipboard()
+						.setContents(ss, null);
+			} catch (IllegalStateException e) {
+				//TODO Exception à gérer
+				e.printStackTrace();
+				/** Le presse-papier n'est peut-être pas disponible */
+			}
+		}
+		/*
+		@Override
+		public boolean isEnabled() {
+			return super.isEnabled();
+		}*/
+
+	}
+
+	/**
 	 * Quitte le programme.
 	 * 
 	 * @author Kévin Subileau
@@ -477,6 +529,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		homeDirAction = new HomeDirAction();
 		parentDirAction = new ParentDirAction();
 		prevDirAction = new PreviousDirAction();
+		copyFilenameAction = new CopyFilenameAction();
 		prevDirAction.setEnabled(false);
 		nextDirAction = new NextDirAction();
 		nextDirAction.setEnabled(false);
@@ -806,6 +859,14 @@ public class MainFrame extends javax.swing.JFrame implements
 						refreshItem.setAction(refreshAction);
 					}
 					{
+						copyFilename = new JMenuItem();
+						copyFilename.setAction(copyFilenameAction);
+						fileMenu.add(copyFilename);
+					}
+					{
+						fileMenu.addSeparator();
+					}
+					{
 						dld = new JMenuItem();
 						dld.setAction(dldAction);
 						fileMenu.add(dld);
@@ -816,8 +877,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						fileMenu.add(dldAll);
 					}
 					{
-						jSeparator1 = new JSeparator();
-						fileMenu.add(jSeparator1);
+						fileMenu.addSeparator();
 					}
 					{
 						exit = new JMenuItem();
@@ -1059,6 +1119,14 @@ public class MainFrame extends javax.swing.JFrame implements
 			thisLayout.columnWidths = new int[] { 7 };
 			{
 				PopupMenu = new JPopupMenu();
+				{
+					jMenuItem3 = new JMenuItem();
+					jMenuItem3.setAction(copyFilenameAction);
+					PopupMenu.add(jMenuItem3);
+				}
+				{
+					PopupMenu.addSeparator();
+				}
 				{
 					jMenuItem1 = new JMenuItem();
 					jMenuItem1.setAction(dldAction);
@@ -1329,15 +1397,28 @@ public class MainFrame extends javax.swing.JFrame implements
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting())
 					return;
-				dldAction.setEnabled(!fileView.getSelectionModel()
-						.isSelectionEmpty());
+				updatePopupMenu();
 			}
 		});
-		dldAction.setEnabled(!fileView.getSelectionModel().isSelectionEmpty());
+		updatePopupMenu();
 	}
 
 	public JPopupMenu getPopupMenu() {
 		return PopupMenu;
+	}
+	
+	public void updatePopupMenu() {
+		dldAction.setEnabled(!fileView.getSelectionModel()
+				.isSelectionEmpty());
+		if(fileView.getSelectedFilesCount() == 1)
+		{
+			copyFilenameAction.setEnabled(true);
+			String type = (fileView.getSelectedFile().isDirectory())?"dossier":"fichier";
+			copyFilenameAction.putValue(Action.SHORT_DESCRIPTION, "Copier le nom du " + type + " sélectionné dans le presse-papier.");
+			copyFilenameAction.putValue(Action.NAME, "Copier le nom du " + type);
+		} else {
+			copyFilenameAction.setEnabled(false);
+		}
 	}
 
 	@Override
