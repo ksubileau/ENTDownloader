@@ -80,15 +80,16 @@ public class BriefView extends ListView {
 			public void mouseClicked(MouseEvent event) {
 				if (SwingUtilities.isRightMouseButton(event)) {
 					int select = list.locationToIndex(event.getPoint());
-					if (select < 0)
-						return;
-					if (list.getCellBounds(select, select).contains(
-							event.getPoint())) {
-						if (!Misc.inArray(select, list.getSelectedIndices())) {
-							list.setSelectedIndex(select);
+					if (select > 0)
+					{
+						if (list.getCellBounds(select, select).contains(
+								event.getPoint())) {
+							if (!Misc.inArray(select, list.getSelectedIndices())) {
+								list.setSelectedIndex(select);
+							}
+						} else {
+							list.clearSelection();
 						}
-					} else {
-						list.clearSelection();
 					}
 					((MainFrame) GuiMain.getMainFrame()).getPopupMenu().show(
 							list, event.getX(), event.getY());
