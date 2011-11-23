@@ -22,6 +22,7 @@ package net.sf.entDownloader.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,6 +34,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -139,6 +142,8 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JButton goDirBtn;
 	private JButton resetPathBtn;
 	private JMenuItem refreshItem;
+	private OpenSelectedDirectoryAction openDirAction;
+	private JMenuItem openDir;
 	private DownloadAction dldAction;
 	private DownloadAction dldAllAction;
 	private HomeDirAction homeDirAction;
@@ -159,6 +164,45 @@ public class MainFrame extends javax.swing.JFrame implements
 	private Action refreshAction;
 	private JMenuItem jMenuItem3;
 	private JMenuItem copyFilename;
+	private JMenuItem openDirPopupIt;
+
+	/**
+	 * Navigue vers le dossier sélectionné.
+	 * 
+	 * @author Kévin Subileau
+	 * @since 1.2.0
+	 */
+	private class OpenSelectedDirectoryAction extends AbstractAction {
+
+		private static final long serialVersionUID = -2319890913151457469L;
+
+		/**
+		 * Construit une nouvelle action OpenSelectedDirectoryAction
+		 */
+		public OpenSelectedDirectoryAction() {
+			putValue(Action.SHORT_DESCRIPTION,
+					"Naviguer vers le dossier sélectionné.");
+			putValue(Action.NAME, "Ouvrir");
+			ImageIcon icon = loadIcon("folder-open.png");
+			putValue(Action.LARGE_ICON_KEY, icon);
+			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (fileView == null || fileView.getSelectedFilesCount() != 1)
+				return;
+			FS_Element selectedFile = fileView.getSelectedFile();
+			if (!selectedFile.isDirectory())
+				return;
+			changeDirectory(entd.getDirectoryPath() + "/"
+					+ selectedFile.getName());
+		}
+
+	}
 
 	/**
 	 * Actualise l'affichage du dossier courant.
@@ -451,7 +495,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	 * @since 1.2.0
 	 */
 	private class CopyFilenameAction extends AbstractAction {
-		
+
 		private static final long serialVersionUID = -5329890313141857468L;
 
 		/**
@@ -484,11 +528,6 @@ public class MainFrame extends javax.swing.JFrame implements
 				/** Le presse-papier n'est peut-être pas disponible */
 			}
 		}
-		/*
-		@Override
-		public boolean isEnabled() {
-			return super.isEnabled();
-		}*/
 
 	}
 
@@ -523,6 +562,21 @@ public class MainFrame extends javax.swing.JFrame implements
 
 	public MainFrame() {
 		super();
+		openDirAction = new OpenSelectedDirectoryAction();
+		openDirAction.addPropertyChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals("enabled")) {
+					if (openDirPopupIt != null) {
+						openDirPopupIt.setVisible(openDirAction.isEnabled());
+					}
+					if (openDir != null) {
+						openDir.setVisible(openDirAction.isEnabled());
+					}
+				}
+			}
+		});
 		dldAllAction = new DownloadAction(DownloadAction.ALL);
 		dldAction = new DownloadAction();
 		refreshAction = new RefreshAction();
@@ -892,6 +946,11 @@ public class MainFrame extends javax.swing.JFrame implements
 					navigationMenu.setText("Navigation");
 					navigationMenu.setMnemonic(KeyEvent.VK_N);
 					{
+						openDir = new JMenuItem();
+						navigationMenu.add(openDir);
+						openDir.setAction(openDirAction);
+					}
+					{
 						homeMenuIt = new JMenuItem();
 						homeMenuIt.setAction(homeDirAction);
 						navigationMenu.add(homeMenuIt);
@@ -1120,6 +1179,13 @@ public class MainFrame extends javax.swing.JFrame implements
 			{
 				PopupMenu = new JPopupMenu();
 				{
+					openDirPopupIt = new JMenuItem();
+					openDirPopupIt.setAction(openDirAction);
+					openDirPopupIt.setFont(openDirPopupIt.getFont().deriveFont(
+							Font.BOLD));
+					PopupMenu.add(openDirPopupIt);
+				}
+				{
 					jMenuItem3 = new JMenuItem();
 					jMenuItem3.setAction(copyFilenameAction);
 					PopupMenu.add(jMenuItem3);
@@ -1252,7 +1318,8 @@ public class MainFrame extends javax.swing.JFrame implements
 
 	protected static ImageIcon loadIcon(String imageName, String altText) {
 		String imgLocation = "net/sf/entDownloader/ressources/" + imageName;
-		URL imageURL = MainFrame.class.getClassLoader().getResource(imgLocation);
+		URL imageURL = MainFrame.class.getClassLoader()
+				.getResource(imgLocation);
 		if (imageURL != null) //image found
 			return new ImageIcon(imageURL, altText);
 		else { //no image found
@@ -1295,8 +1362,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					public void onDoubleClickOnRow(DoubleClickOnRowEvent event) {
 						FS_Element target = event.getTarget();
 						if (target.isDirectory()) {
-							changeDirectory(entd.getDirectoryPath() + "/"
-									+ target.getName());
+							openDirAction.actionPerformed(null);
 						} else {
 							Downloader dld = new Downloader(MainFrame.this,
 									target, fileChooser);
@@ -1406,18 +1472,22 @@ public class MainFrame extends javax.swing.JFrame implements
 	public JPopupMenu getPopupMenu() {
 		return PopupMenu;
 	}
-	
+
 	public void updatePopupMenu() {
-		dldAction.setEnabled(!fileView.getSelectionModel()
-				.isSelectionEmpty());
-		if(fileView.getSelectedFilesCount() == 1)
-		{
+		dldAction.setEnabled(!fileView.getSelectionModel().isSelectionEmpty());
+		if (fileView.getSelectedFilesCount() == 1) {
 			copyFilenameAction.setEnabled(true);
-			String type = (fileView.getSelectedFile().isDirectory())?"dossier":"fichier";
-			copyFilenameAction.putValue(Action.SHORT_DESCRIPTION, "Copier le nom du " + type + " sélectionné dans le presse-papier.");
-			copyFilenameAction.putValue(Action.NAME, "Copier le nom du " + type);
+			String type = (fileView.getSelectedFile().isDirectory()) ? "dossier"
+					: "fichier";
+			copyFilenameAction.putValue(Action.SHORT_DESCRIPTION,
+					"Copier le nom du " + type
+							+ " sélectionné dans le presse-papier.");
+			copyFilenameAction
+					.putValue(Action.NAME, "Copier le nom du " + type);
+			openDirAction.setEnabled(fileView.getSelectedFile().isDirectory());
 		} else {
 			copyFilenameAction.setEnabled(false);
+			openDirAction.setEnabled(false);
 		}
 	}
 
