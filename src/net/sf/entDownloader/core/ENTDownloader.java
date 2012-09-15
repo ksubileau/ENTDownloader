@@ -167,6 +167,9 @@ public class ENTDownloader {
 		browser.setUrl(browser.getHeaderField("Location"));
 		browser.clearParam();
 		browser.getPage();
+		browser.setUrl(browser.getHeaderField("Location"));
+		browser.clearParam();
+		browser.getPage();
 		sessionid = browser.getCookieValueByName("JSESSIONID");
 
 		isLogin = true;
@@ -185,16 +188,16 @@ public class ENTDownloader {
 	}
 
 	private void setStockageUrlParams(String pageContent) throws ParseException {
-		List<String> matches = new ArrayList<String>(5);
+		/*List<String> matches = new ArrayList<String>(5);
 		if (!Misc
 				.preg_match(
-						"<a href=\"[\\w\\d:#@%/;$()~_?\\+-=\\\\.&]*?/tag\\.([0-9A-Fa-f]{13,17})\\.[\\w\\d:#@%/;$()~_?\\+-=\\\\.&]*?uP_root=([\\w\\|]+?)&[\\w\\d:#@%/;$()~_?\\+-=\\\\.&]*?\" title=\"Espace de stockage WebDAV\" id=\"chanLink\"><span>Mes Documents</span>",
+						"<a href=\"http://ent.u-clermont1.fr/render.userLayoutRootNode.uP?uP_root=([\\w\\|]+?)&[\\w\\d:#@%/;$()~_?\\+-=\\\\.&]*?\">Mes Documents</a>",
 						pageContent, matches))
 			throw new ParseException(
 					"Unable to find the URL parameters of the storage's service in this page.",
-					-1);
-		tag = matches.get(1);
-		uP_root = matches.get(2);
+					-1);*/
+		tag = "";//matches.get(1);
+		uP_root = "u9l1n33";//matches.get(1);
 	}
 
 	/**
@@ -229,7 +232,7 @@ public class ENTDownloader {
 	 */
 	private boolean setUserName(String pageContent) {
 		List<String> matches = new ArrayList<String>(4);
-		if (!Misc.preg_match("&gt;</span> Bienvenue (.*?)</div><div",
+		if (!Misc.preg_match("<div id=\"welcome\">.*Bienvenue (.*?)</div>",
 				pageContent, matches))
 			return false;
 		username = matches.get(1);
@@ -362,7 +365,7 @@ public class ENTDownloader {
 				browser.setUrl(urlBuilder(CoreConfig.stockageURL));
 			} else {
 				path.clear();
-				browser.setUrl(urlBuilder("http://ent.u-clermont1.fr/tag.{tag}.render.userLayoutRootNode.target.{uP_root}.uP?link=0#{uP_root}"));
+				browser.setUrl(urlBuilder("http://ent.u-clermont1.fr/render.userLayoutRootNode.target.{uP_root}.uP?link=0"));
 			}
 			name = "/";
 			browser.setMethod(Browser.Method.GET);

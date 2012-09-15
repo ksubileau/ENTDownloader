@@ -48,22 +48,22 @@ public final class CoreConfig {
 	public static final String loginRequestURL = rootURL + "Login";
 	/** Adresse du service de stockage de documents */
 	public static final String stockageURL = rootURL
-			+ "tag.{tag}.render.userLayoutRootNode.uP?uP_root={uP_root}&uP_sparam=activeTab&activeTab=8";
+			+ "render.userLayoutRootNode.uP?uP_root={uP_root}&uP_sparam=activeTab&activeTab=2";
 	/**
 	 * Adresse de soumission du formulaire permettant la descente de
 	 * l'arborescence
 	 */
 	public static final String goIntoDirectoryURL = rootURL
-			+ "tag.{tag}.render.userLayoutRootNode.target.{uP_root}.uP#{uP_root}";
+			+ "render.userLayoutRootNode.target.{uP_root}.uP";
 	/** Adresse de téléchargement d'un fichier */
 	public static final String downloadFileURL = rootURL
-			+ "worker/download/tag.idempotent.worker.download.target.{uP_root}.uP";
+			+ "worker/download/worker.download.target.{uP_root}.uP";
 	/** Adresse de retour dans le dossier parent */
 	public static final String directoryBackURL = rootURL
-			+ "tag.{tag}.render.userLayoutRootNode.target.{uP_root}.uP?modeDav=directory_back#{uP_root}";
+			+ "render.userLayoutRootNode.target.{uP_root}.uP?modeDav=directory_back";
 	/** Adresse d'actualisation du dossier courant */
 	public static final String refreshDirURL = rootURL
-			+ "tag.{tag}.render.userLayoutRootNode.target.{uP_root}.uP?modeDav=show_current_dir_mode#{uP_root}";
+			+ "render.userLayoutRootNode.target.{uP_root}.uP?modeDav=show_current_dir_mode";
 
 	/**
 	 * Adresse de téléchargement des informations de mise à jour.
