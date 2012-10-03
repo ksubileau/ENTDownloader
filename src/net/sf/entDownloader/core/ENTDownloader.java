@@ -188,16 +188,16 @@ public class ENTDownloader {
 	}
 
 	private void setStockageUrlParams(String pageContent) throws ParseException {
-		/*List<String> matches = new ArrayList<String>(5);
+		List<String> matches = new ArrayList<String>(5);
 		if (!Misc
 				.preg_match(
-						"<a href=\"http://ent.u-clermont1.fr/render.userLayoutRootNode.uP?uP_root=([\\w\\|]+?)&[\\w\\d:#@%/;$()~_?\\+-=\\\\.&]*?\">Mes Documents</a>",
+						"<a href=\"http://ent.u-clermont1.fr/render.userLayoutRootNode.uP\\?uP_root=([\\w\\|]+?)&[\\w\\d:#@%/;$()~_?\\+-=\\\\.&]*?\">Mes documents</a>",
 						pageContent, matches))
 			throw new ParseException(
 					"Unable to find the URL parameters of the storage's service in this page.",
-					-1);*/
+					-1);
 		tag = "";//matches.get(1);
-		uP_root = "u9l1n33";//matches.get(1);
+		uP_root = matches.get(1);
 	}
 
 	/**
