@@ -103,6 +103,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem onlineHelp;
 	private JMenuItem dldAll;
 	private JMenuItem website;
+	private JMenuItem fbpage;
 	private JMenuItem checkUpdate;
 	private JToggleButton detailsViewBtn;
 	private JToggleButton listViewBtn;
@@ -1045,6 +1046,20 @@ public class MainFrame extends javax.swing.JFrame implements
 							public void actionPerformed(ActionEvent e) {
 								Misc.browse(CoreConfig
 										.getString("ProductInfo.website"));
+							}
+						});
+					}
+					{
+						fbpage = new JMenuItem();
+						help.add(fbpage);
+						fbpage.setText("Page Facebook");
+						fbpage.setMnemonic(KeyEvent.VK_K);
+						setIcon(fbpage, "fb.png");
+						fbpage.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								Misc.browse(CoreConfig
+										.getString("ProductInfo.fbpage"));
 							}
 						});
 					}
