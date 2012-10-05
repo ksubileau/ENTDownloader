@@ -81,7 +81,7 @@ public class ENTDownloader {
 	/** Identifiant de connexion */
 	private String sessionid;
 	/** Nom de l'utilisateur */
-	private String username = null;
+	private String username = "";
 	/** Login */
 	private String login = null;
 	/** Espace disque utilisé */
