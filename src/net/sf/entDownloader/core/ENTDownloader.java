@@ -191,7 +191,7 @@ public class ENTDownloader {
 		List<String> matches = new ArrayList<String>(5);
 		if (!Misc
 				.preg_match(
-						"<a href=\"http://ent.u-clermont1.fr/render.userLayoutRootNode.uP\\?uP_root=([\\w\\|]+?)&[\\w\\d:#@%/;$()~_?\\+-=\\\\.&]*?\">Mes documents</a>",
+						"(?i)<a href=\"http://ent.u-clermont1.fr/render.userLayoutRootNode.uP\\?uP_root=([\\w\\|]+?)&[\\w\\d:#@%/;$()~_?\\+-=\\\\.&]*?\">Mes documents</a>",
 						pageContent, matches))
 			throw new ParseException(
 					"Unable to find the URL parameters of the storage's service in this page.",
@@ -232,7 +232,7 @@ public class ENTDownloader {
 	 */
 	private boolean setUserName(String pageContent) {
 		List<String> matches = new ArrayList<String>(4);
-		if (!Misc.preg_match("<div id=\"welcome\">.*Bienvenue (.*?)</div>",
+		if (!Misc.preg_match("(?im)<div id=\"welcome\">\\s*Bienvenue (.*?)</div>",
 				pageContent, matches))
 			return false;
 		username = matches.get(1);
