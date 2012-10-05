@@ -688,26 +688,30 @@ public class ENTDownloader {
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
 
-		browser.clearParam();
-		browser.setUrl(urlBuilder(CoreConfig.goIntoDirectoryURL));
-		browser.setMethod(Browser.Method.POST);
-		browser.setParam("Submit", "Créer le dossier");
-		browser.setParam("modeDav", "create_dir_mode");
-		browser.setParam("new_dir", dirname);
-		browser.setFollowRedirects(false);
-		browser.setCookieField("JSESSIONID", sessionid);
-		String pageContent = null;
-		pageContent = browser.getPage();
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.goIntoDirectoryURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("Submit", "Créer le dossier"));
+		params.add(new BasicNameValuePair("modeDav", "create_dir_mode"));
+		params.add(new BasicNameValuePair("new_dir", dirname));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+		//HttpEntity entity = response.getEntity();
 
 		//TODO Utile dans ce contexte ? tester.
-		if (browser.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP
-				&& browser.getHeaderField("Location").equals(
-						CoreConfig.loginRequestURL)) {
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
 			isLogin = false;
 			throw new ENTUnauthenticatedUserException(
 					"Session expired, please login again.",
 					ENTUnauthenticatedUserException.SESSION_EXPIRED);
 		}
+		
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = null;
+		pageContent = responseHandler.handleResponse(response);
 
 		//TODO doit on le faire ici ?
 		setStockageUrlParams(pageContent);
