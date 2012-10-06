@@ -81,7 +81,10 @@ import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangedListener;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingListener;
+import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
+import net.sf.entDownloader.core.events.DirectoryCreatedListener;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.gui.Components.JStatusBar;
@@ -135,9 +138,11 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JSeparator jSeparator2;
 	private JMenu help;
 	private JMenuItem exit;
+	private JMenuItem createDir;
 	private JMenu fileMenu;
 	private JMenuBar jMenuBar;
 	private JButton DownloadAll_tool;
+	private JButton createDir_tool;
 	private JStatusBar statusBar;
 	private JButton refreshBtn;
 	private JButton goDirBtn;
@@ -149,6 +154,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private DownloadAction dldAllAction;
 	private HomeDirAction homeDirAction;
 	private ParentDirAction parentDirAction;
+	private CreateDirAction createDirAction;
 	private JMenuItem parentMenuIt;
 	private PreviousDirAction prevDirAction;
 	private NextDirAction nextDirAction;
@@ -162,6 +168,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem homeMenuIt;
 	private JMenuItem nextDirMenuIt;
 	private JMenuItem prevDirMenuIt;
+	private JMenuItem createDirPopupIt;
 	private Action refreshAction;
 	private JMenuItem jMenuItem3;
 	private JMenuItem copyFilename;
@@ -408,6 +415,74 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	/**
+	 * Créé un nouveau dossier dans le dossier courant
+	 * 
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class CreateDirAction extends AbstractAction {
+
+		private static final long serialVersionUID = 193366319192328568L;
+
+		/**
+		 * Construit une nouvelle action CreateDirAction
+		 */
+		public CreateDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Créer un nouveau dossier");
+			putValue(Action.NAME, "Nouveau dossier");
+			putValue(Action.LARGE_ICON_KEY, loadIcon("folder-new.png"));
+			putValue(Action.SMALL_ICON, loadIcon("folder-new16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_V);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			String dirname = (String)JOptionPane.showInputDialog(
+                    MainFrame.this,
+                    "Nom du nouveau dossier :",
+                    "ENTDownloader",
+                    JOptionPane.QUESTION_MESSAGE);
+
+			if ((dirname == null) || (dirname.length() == 0)) {
+			    return;
+			}
+
+			try {
+				entd.createDirectory(dirname);
+			} catch (ENTInvalidElementNameException e) {
+				String message;
+				switch (e.getType()) {
+				case ENTInvalidElementNameException.ALREADY_USED:
+					message = "Un fichier ou dossier porte le même nom.";
+					break;
+				case ENTInvalidElementNameException.FORBIDDEN_CHAR:
+					message = "Le nom spécifié contient un ou plusieurs caractères non autorisés.";
+					break;
+				default:
+					message = "Erreur inconnue.";
+					break;
+				}
+				JOptionPane
+						.showMessageDialog(
+								MainFrame.this,
+								"Impossible de créer le dossier \""
+										+ dirname
+										+ "\" : " + message,
+								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
 	 * Demande de téléchargement de un ou plusieurs fichiers
 	 * 
 	 * @author Kévin Subileau
@@ -582,6 +657,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		dldAction = new DownloadAction();
 		refreshAction = new RefreshAction();
 		homeDirAction = new HomeDirAction();
+		createDirAction = new CreateDirAction();
 		parentDirAction = new ParentDirAction();
 		prevDirAction = new PreviousDirAction();
 		copyFilenameAction = new CopyFilenameAction();
@@ -922,6 +998,11 @@ public class MainFrame extends javax.swing.JFrame implements
 						fileMenu.addSeparator();
 					}
 					{
+						createDir = new JMenuItem();
+						createDir.setAction(createDirAction);
+						fileMenu.add(createDir);
+					}
+					{
 						dld = new JMenuItem();
 						dld.setAction(dldAction);
 						fileMenu.add(dld);
@@ -1183,6 +1264,8 @@ public class MainFrame extends javax.swing.JFrame implements
 				{
 					Download_tool = makeToolbarButton(dldAction);
 					DownloadAll_tool = makeToolbarButton(dldAllAction);
+					createDir_tool = makeToolbarButton(createDirAction);
+					toolBar.add(createDir_tool);
 					toolBar.add(Download_tool);
 					toolBar.add(DownloadAll_tool);
 				}
@@ -1204,6 +1287,11 @@ public class MainFrame extends javax.swing.JFrame implements
 					jMenuItem3 = new JMenuItem();
 					jMenuItem3.setAction(copyFilenameAction);
 					PopupMenu.add(jMenuItem3);
+				}
+				{
+					createDirPopupIt = new JMenuItem();
+					createDirPopupIt.setAction(createDirAction);
+					PopupMenu.add(createDirPopupIt);
 				}
 				{
 					PopupMenu.addSeparator();
@@ -1368,6 +1456,13 @@ public class MainFrame extends javax.swing.JFrame implements
 						statusInfo.setText("Chargement en cours...");
 					}
 				});
+		Broadcaster.addDirectoryCreatedListener(new DirectoryCreatedListener() {
+			@Override
+			public void onDirectoryCreated(DirectoryCreatedEvent event) {
+				updateFrameData();
+				//TODO Sélectionner le dossier nouvellement créé.
+			}
+		});
 	}
 
 	private void setGuiEventsListener() {
