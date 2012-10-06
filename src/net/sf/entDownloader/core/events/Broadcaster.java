@@ -110,19 +110,19 @@ public class Broadcaster {
 		}
 	}
 
-	/** Ajoute un observateur sur l'événement DirectoryChanging */
+	/** Ajoute un observateur sur l'événement DirectoryChanged */
 	public static void addDirectoryChangedListener(
 			DirectoryChangedListener listener) {
 		addListener(DirectoryChangedListener.class, listener);
 	}
 
-	/** Supprime un observateur sur l'événement DirectoryChanging */
+	/** Supprime un observateur sur l'événement DirectoryChanged */
 	public static void removeDirectoryChangedListener(
 			DirectoryChangedListener listener) {
 		removeListener(DirectoryChangedListener.class, listener);
 	}
 
-	/** Avertit tous les observateurs de l'événement DirectoryChanging */
+	/** Avertit tous les observateurs de l'événement DirectoryChanged */
 	public static void fireDirectoryChanged(DirectoryChangedEvent event) {
 		Iterator<BroadcastListener> it = getListenerIterator(DirectoryChangedListener.class);
 		DirectoryChangedListener listener;
