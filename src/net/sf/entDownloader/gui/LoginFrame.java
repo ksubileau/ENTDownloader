@@ -21,6 +21,7 @@
 package net.sf.entDownloader.gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -28,12 +29,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.text.ParseException;
+import javax.swing.BoxLayout;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -63,6 +66,21 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 	 * Invite de saisie.
 	 */
 	private JLabel invite;
+	private JLabel fbPromoIntro;
+	private JPanel fbPromoPanel;
+	private JLabel fbPromoLink;
+	private String[] fbMessages = {
+			"Toutes vos remarques sur notre page",
+			"Suivez l'actualité du logiciel sur notre page",
+			"Soyez averti des mises à jour sur notre page",
+			"Encouragez le développement sur la page",
+			"Vous aimez ce logiciel? Dites-le sur sa page",
+			"1 J'aime = 1 Merci. Rejoignez notre page",
+			"1 J'aime = 1 Encouragement.<br>Rejoignez notre page",
+			"Une question? Une idée? Visitez notre page",
+			"Un bug ? Prévenez-nous sur notre page",
+			"Partagez et commentez sur notre page"
+		};
 	private JButton proxyBtn;
 	/**
 	 * Bouton d'annulation
@@ -261,6 +279,42 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						proxyBtn.setText("Proxy...");
 						proxyBtn.setMnemonic(java.awt.event.KeyEvent.VK_P);
 						proxyBtn.addActionListener(this);
+					}
+					{
+						fbPromoPanel = new JPanel();
+						BoxLayout jPanel2Layout = new BoxLayout(fbPromoPanel, javax.swing.BoxLayout.Y_AXIS);
+						fbPromoPanel.setLayout(jPanel2Layout);
+						getContentPane().add(fbPromoPanel, new GridBagConstraints(1, 4, 2, 2, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 8, 0), 0, 0));
+						{
+							java.util.Random generator = new java.util.Random();
+							fbPromoIntro = new JLabel();
+							fbPromoPanel.add(fbPromoIntro);
+							fbPromoIntro.setText("<html><p align=\"center\">" + fbMessages[generator.nextInt(fbMessages.length)] + "</p></html>");
+							fbPromoIntro.setHorizontalAlignment(SwingConstants.CENTER);
+							fbPromoIntro.setFont(new java.awt.Font("Segoe UI",0,11));
+							fbPromoIntro.setVerticalAlignment(SwingConstants.TOP);
+							fbPromoIntro.setIconTextGap(1);
+						}
+						{
+							fbPromoLink = new JLabel();
+							fbPromoPanel.add(fbPromoLink);
+							fbPromoLink.setText("<html><p align=\"center\"><a style=\"margin: 40px;\" href=" + CoreConfig.getString("ProductInfo.fbpage") + "\">Facebook.</a></p></html>");
+							fbPromoLink.setHorizontalAlignment(SwingConstants.CENTER);
+							fbPromoLink.setFont(new java.awt.Font("Segoe UI",0,11));
+							fbPromoLink.setVerticalAlignment(SwingConstants.TOP);
+							fbPromoLink.setIconTextGap(1);
+							fbPromoLink.setIcon(new ImageIcon(getClass().getClassLoader().getResource("net/sf/entDownloader/ressources/fb.png")));
+							fbPromoLink.setHorizontalTextPosition(SwingConstants.RIGHT);
+							fbPromoLink.setVerticalTextPosition(SwingConstants.TOP);
+						}
+						fbPromoPanel.setToolTipText(CoreConfig.getString("ProductInfo.fbpage"));
+						fbPromoPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+						fbPromoPanel.addMouseListener(new MouseAdapter() {
+							@Override
+							public void mouseClicked(MouseEvent e) {
+								Misc.browse(CoreConfig.getString("ProductInfo.fbpage"));
+							}
+						});
 					}
 					quit.setAction(new MainFrame.ExitAction());
 				}
