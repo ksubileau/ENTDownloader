@@ -63,6 +63,10 @@ public abstract class Event {
 	 * Indique que le téléchargement d'un fichier a été annulé.
 	 */
 	public static final int DOWNLOAD_ABORT_TYPE = 8;
+	/**
+	 * Indique la création d'un répertoire.
+	 */
+	public static final int CREATED_DIR_TYPE = 9;
 
 	protected Event() {
 	}

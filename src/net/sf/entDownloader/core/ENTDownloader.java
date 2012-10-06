@@ -43,6 +43,7 @@ import net.sf.entDownloader.core.events.AuthenticationSucceededEvent;
 import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
+import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
 import net.sf.entDownloader.core.events.DownloadAbortEvent;
 import net.sf.entDownloader.core.events.DownloadedBytesEvent;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
@@ -681,7 +682,6 @@ public class ENTDownloader {
 			IOException {
 		//TODO Relecture du code, test, simplification si possible
 		//Gestion des erreurs (dossier ou fichier existant, caractères interdits)
-		//Evénements de création d'un dossier
 		//Dossier parent (option -p de mkdir) ?
 		if (isLogin == false)
 			throw new ENTUnauthenticatedUserException(
@@ -727,6 +727,8 @@ public class ENTDownloader {
 				throw new ENTDirectoryNotFoundException(name);*/
 		//TODO doit on le faire ici ?
 		parsePage(pageContent);
+
+		Broadcaster.fireDirectoryCreated(new DirectoryCreatedEvent(dirname));
 	}
 
 	/**

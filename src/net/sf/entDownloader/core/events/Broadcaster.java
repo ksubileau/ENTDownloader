@@ -132,6 +132,28 @@ public class Broadcaster {
 		}
 	}
 
+	/** Ajoute un observateur sur l'événement DirectoryCreated */
+	public static void addDirectoryCreatedListener(
+			DirectoryCreatedListener listener) {
+		addListener(DirectoryCreatedListener.class, listener);
+	}
+
+	/** Supprime un observateur sur l'événement DirectoryCreated */
+	public static void removeDirectoryCreatedListener(
+			DirectoryCreatedListener listener) {
+		removeListener(DirectoryCreatedListener.class, listener);
+	}
+
+	/** Avertit tous les observateurs de l'événement DirectoryCreated */
+	public static void fireDirectoryCreated(DirectoryCreatedEvent event) {
+		Iterator<BroadcastListener> it = getListenerIterator(DirectoryCreatedListener.class);
+		DirectoryCreatedListener listener;
+		while (it.hasNext()) {
+			listener = (DirectoryCreatedListener) it.next();
+			listener.onDirectoryCreated(event);
+		}
+	}
+
 	/** Ajoute un observateur sur l'événement DownloadedBytes */
 	public static void addDownloadedBytesListener(
 			DownloadedBytesListener listener) {
