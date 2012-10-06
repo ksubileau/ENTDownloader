@@ -589,30 +589,6 @@ public class ENTDownloader {
 	 *            Dossier de destination des fichiers et dossiers téléchargés.
 	 *            Si null ou vide, ils seront enregistrés dans le répertoire
 	 *            courant.
-	 * @throws ENTInvalidFS_ElementTypeException
-	 *             Lancée lorsque le paramètre <i>destination</i> désigne un
-	 *             fichier existant.
-	 * @throws IOException
-	 * @see ENTDownloader#getFile(String, String)
-	 * @return Le nombre de fichiers téléchargés
-	 * @deprecated Remplacé par getAllFiles(String destination, int maxdepth)
-	 */
-	@Deprecated
-	public int getAllFiles(String destination) throws IOException {
-		return getAllFiles(destination, -1);
-	}
-
-	/**
-	 * Télécharge tous les fichiers contenus dans le dossier courant et ses sous
-	 * dossiers.
-	 * Les fichiers et dossiers seront enregistrés sous le dossier
-	 * <i>destination</i>, sous le même nom que celui sous lequel ils sont
-	 * stockés sur l'ENT.
-	 * 
-	 * @param destination
-	 *            Dossier de destination des fichiers et dossiers téléchargés.
-	 *            Si null ou vide, ils seront enregistrés dans le répertoire
-	 *            courant.
 	 * @param maxdepth
 	 *            Profondeur maximale de téléchargement. 0 (zéro) signifie que
 	 *            la méthode ne va télécharger que les fichiers du dossier
@@ -678,6 +654,8 @@ public class ENTDownloader {
 	 * Créé un nouveau dossier dans le répertoire courant.
 	 * 
 	 * @param dirname Nom du nouveau dossier
+	 * 
+	 * @since 2.0.0
 	 */
 	public void createDirectory(String dirname) throws ParseException,
 			IOException {
