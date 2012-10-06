@@ -57,6 +57,7 @@ import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartDownloadListener;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.shell.progressBar.ProgressBar;
@@ -465,11 +466,19 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addDirectoryCreatedListener(this);
 		try {
 			entd.createDirectory(dirname);
-			//TODO ENTFileExistsException
-		} catch (ENTFileNotFoundException e) {
-			System.err
-					.println("ENTDownloader: Impossible de créer le répertoire \""
-							+ dirname + "\" : Le fichier existe.");
+		} catch (ENTInvalidElementNameException e) {
+			if (e.getType() == ENTInvalidElementNameException.ALREADY_USED)
+				System.err
+						.println("ENTDownloader: Impossible de créer le répertoire \""
+								+ dirname + "\" : Le fichier existe.");
+			else if (e.getType() == ENTInvalidElementNameException.FORBIDDEN_CHAR)
+				System.err
+				.println("ENTDownloader: Impossible de créer le répertoire \""
+						+ dirname + "\" : Nom de dossier invalide.");
+			else
+				System.err
+				.println("ENTDownloader: Impossible de créer le répertoire \""
+						+ dirname + "\" : Erreur inconnue.");
 		} catch (IOException e3) {
 			e3.getLocalizedMessage();
 		} catch (ParseException e) {

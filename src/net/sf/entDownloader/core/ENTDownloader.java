@@ -51,6 +51,7 @@ import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 
@@ -680,13 +681,13 @@ public class ENTDownloader {
 	 */
 	public void createDirectory(String dirname) throws ParseException,
 			IOException {
-		//TODO Relecture du code, test, simplification si possible
-		//Gestion des erreurs (dossier ou fichier existant, caractères interdits)
-		//Dossier parent (option -p de mkdir) ?
 		if (isLogin == false)
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		if (indexOf(dirname) != -1)
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, dirname);
 
 		HttpPost request = new HttpPost(urlBuilder(CoreConfig.goIntoDirectoryURL));
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -697,7 +698,6 @@ public class ENTDownloader {
 		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
 
 		HttpResponse response = httpclient.execute(request);
-		//HttpEntity entity = response.getEntity();
 
 		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& response.getFirstHeader("Location").getValue()
@@ -712,12 +712,15 @@ public class ENTDownloader {
 		String pageContent = null;
 		pageContent = responseHandler.handleResponse(response);
 
-		/*
-			if (pageContent.isEmpty()
-					|| Misc.preg_match(
-							"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br /></font>",
-							pageContent))
-				throw new ENTDirectoryNotFoundException(name);*/
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Impossible de traiter la requ&ecirc;te :<br\\s?/?> un fichier/dossier du m&ecirc;me nom existe d&eacute;j&agrave;.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, dirname);
+
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Il existe des caract&egrave;res non pris en charge dans le nom de votre ressource.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, dirname);
 
 		parsePage(pageContent);
 
