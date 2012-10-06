@@ -676,6 +676,8 @@ public class ENTDownloader {
 		// Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi
 		// Evénements
 		// Test
+		// Paramètre charset (mettre utf-8)
+		// Session expired
 		if (isLogin == false)
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
@@ -767,6 +769,69 @@ public class ENTDownloader {
 		parsePage(pageContent);
 
 		Broadcaster.fireDirectoryCreated(new DirectoryCreatedEvent(dirname));
+	}
+
+	/**
+	 * Renomme un fichier ou dossier du le répertoire courant.
+	 *
+	 * @param oldname Nom actuel du dossier ou fichier à renommer.
+	 * @param newname Nouveau nom du dossier ou fichier à renommer.
+	 *
+	 * @since 2.0.0
+	 */
+	public void rename(String oldname, String newname) throws ParseException,
+			IOException {
+		//TODO Gestion des erreurs (nom déjà utilisé, caractères interdits) post et pré envoi.
+		// Evénements
+		// Test
+		if (isLogin == false)
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+		if(oldname.equals(newname))
+			return;
+
+		if (indexOf(oldname) == -1)
+			throw new ENTFileNotFoundException(oldname);
+
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.renameURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("listeFic", oldname));
+		params.add(new BasicNameValuePair("modeDav", "set_name_for_rename_mode"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
+			isLogin = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = responseHandler.handleResponse(response);
+
+		//TODO vérification intermédiaire (en cas de suppression notamment)
+
+		request = new HttpPost(urlBuilder(CoreConfig.renameURL));
+		params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("new_name", newname));
+		params.add(new BasicNameValuePair("modeDav", "rename_mode"));
+		params.add(new BasicNameValuePair("Submit", "Renommer"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		response = httpclient.execute(request);
+
+		pageContent = responseHandler.handleResponse(response);
+
+		parsePage(pageContent);
+
+		//Broadcaster.fireElementRenamed(new ElementRenamedEvent(oldname, newname));
 	}
 
 	/**

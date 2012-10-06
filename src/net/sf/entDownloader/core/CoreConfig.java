@@ -61,6 +61,9 @@ public final class CoreConfig {
 	/** Adresse d'envoi d'un fichier */
 	public static final String sendFileURL = rootURL
 			+ "render.userLayoutRootNode.target.{uP_root}.uP";
+	/** Adresse de renommage d'un élément */
+	public static final String renameURL = rootURL
+			+ "render.userLayoutRootNode.target.{uP_root}.uP";
 	/** Adresse de retour dans le dossier parent */
 	public static final String directoryBackURL = rootURL
 			+ "render.userLayoutRootNode.target.{uP_root}.uP?modeDav=directory_back";

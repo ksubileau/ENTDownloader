@@ -302,6 +302,9 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					} else if (command[0].equals("send")) {
 						send((command.length > 1) ? command[1] : "",
 								(command.length > 2) ? command[2] : null);
+					} else if (command[0].equals("rename")) {
+						rename((command.length > 1) ? command[1] : null,
+								(command.length > 2) ? command[2] : null);
 					} else if (command[0].equals("refresh")) {
 						cd(".");
 					} else if (command[0].equals("lpwd")) {
@@ -508,6 +511,30 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		} catch (IOException e) {
 			System.err.println("ENTDownloader: send: " + e.getLocalizedMessage());
 			return;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void rename(String oldname, String newname) {
+		if (oldname == null || oldname.isEmpty()) {
+			System.err.println("ENTDownloader: rename: Nom du fichier ou dossier manquant");
+			return;
+		}
+		if (newname == null || newname.isEmpty()) {
+			System.err.println("ENTDownloader: rename: Nouveau nom manquant");
+			return;
+		}
+
+		try {
+			entd.rename(oldname, newname);
+		} catch (ENTFileNotFoundException e) {
+			System.err.println("ENTDownloader: " + e.getMessage()
+					+ ": Aucun fichier ou dossier de ce type");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
