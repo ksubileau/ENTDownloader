@@ -699,7 +699,6 @@ public class ENTDownloader {
 		HttpResponse response = httpclient.execute(request);
 		//HttpEntity entity = response.getEntity();
 
-		//TODO Utile dans ce contexte ? tester.
 		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& response.getFirstHeader("Location").getValue()
 						.equals(CoreConfig.loginRequestURL)) {
@@ -713,19 +712,13 @@ public class ENTDownloader {
 		String pageContent = null;
 		pageContent = responseHandler.handleResponse(response);
 
-		//TODO doit on le faire ici ?
-		setStockageUrlParams(pageContent);
-		if (capacity < 0) {
-			//TODO doit on le faire ici ?
-			setStorageProperties(pageContent);
-		}
 		/*
 			if (pageContent.isEmpty()
 					|| Misc.preg_match(
 							"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br /></font>",
 							pageContent))
 				throw new ENTDirectoryNotFoundException(name);*/
-		//TODO doit on le faire ici ?
+
 		parsePage(pageContent);
 
 		Broadcaster.fireDirectoryCreated(new DirectoryCreatedEvent(dirname));
