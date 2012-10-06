@@ -43,6 +43,8 @@ import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangedListener;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingListener;
+import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
+import net.sf.entDownloader.core.events.DirectoryCreatedListener;
 import net.sf.entDownloader.core.events.DownloadAbortEvent;
 import net.sf.entDownloader.core.events.DownloadAbortListener;
 import net.sf.entDownloader.core.events.DownloadedBytesEvent;
@@ -62,7 +64,8 @@ import net.sf.entDownloader.shell.progressBar.ProgressBar;
 public final class ShellMain implements AuthenticationSucceededListener,
 		DirectoryChangedListener, DirectoryChangingListener,
 		FileAlreadyExistsListener, StartDownloadListener,
-		DownloadedBytesListener, EndDownloadListener, DownloadAbortListener {
+		DownloadedBytesListener, EndDownloadListener, 
+		DownloadAbortListener, DirectoryCreatedListener {
 	private static String login;
 	private static final String productName = CoreConfig
 			.getString("ProductInfo.name");
@@ -459,7 +462,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					.println("ENTDownloader: mkdir: Nom du dossier à créer manquant");
 			return;
 		}
-		//TODO Broadcaster.addDirectoryCreatedListener(this);
+		Broadcaster.addDirectoryCreatedListener(this);
 		try {
 			entd.createDirectory(dirname);
 			//TODO ENTFileExistsException
@@ -476,7 +479,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			System.err
 					.println("ENTDownloader: Une erreur est survenue lors de la création du répertoire");
 		} finally {
-			//Broadcaster.removeDirectoryCreatedListener(this);
+			Broadcaster.removeDirectoryCreatedListener(this);
 		}
 	}
 
@@ -549,6 +552,11 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		} else {
 			writeStatusMessage("Chargement du dossier " + path + " en cours...");
 		}
+	}
+
+	@Override
+	public void onDirectoryCreated(DirectoryCreatedEvent event) {
+		writeStatusMessage("Création du dossier " + event.getName() + " réussie.");
 	}
 
 	@Override
