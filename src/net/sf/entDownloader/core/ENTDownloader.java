@@ -22,6 +22,7 @@ package net.sf.entDownloader.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,6 +66,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -648,6 +653,65 @@ public class ENTDownloader {
 				}
 			}
 		return i;
+	}
+
+	/**
+	 * Envoi le fichier local <i>filepath</i> dans le dossier courant.
+	 * Le fichier sera enregistré dans le dossier courant et sous le nom
+	 * spécifié dans le paramètre <i>name</i>, ou sous le même nom que
+	 * le fichier local d'origine si le nouveau nom n'est pas indiqué dans
+	 * <i>name</i>.<br>
+	 *
+	 * @param filepath
+	 *            Chemin du fichier local à envoyer.
+	 * @param name
+	 *            Nom sous lequel le fichier doit être enregistré sur l'ENT
+	 * @throws FileNotFoundException Le fichier source n'existe pas ou n'est
+	 * 			pas accessible.
+	 * @since 2.0.0
+	 */
+	public void sendFile(String filepath, String name) throws IOException, ParseException {
+		//TODO Gestion des erreurs (nom déjà utilisé, caractères interdits) post et pré envoi.
+		// Progression
+		// Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi
+		// Evénements
+		// Test
+		if (isLogin == false)
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		//Vérification de l'existence d'un fichier portant le nom indiqué
+		File file = new File(filepath).getCanonicalFile();
+		if (!file.canRead()) {
+			throw new FileNotFoundException(filepath);
+		}
+
+		if (name == null || name.isEmpty())
+			name = filepath;
+
+		//Broadcaster.fireStartUpload(new StartUploadEvent(file));
+
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.sendFileURL));
+
+	    MultipartEntity mpEntity = new MultipartEntity();
+	    mpEntity.addPart("modeDav", new StringBody("upload_mode"));
+	    mpEntity.addPart("Submit", new StringBody("Envoyer le fichier"));
+
+	    ContentBody cbFile = new FileBody(file, name, "application/octet-stream", null);
+	    mpEntity.addPart("input_file", cbFile);
+
+		request.setEntity(mpEntity);
+
+		HttpResponse response = httpclient.execute(request);
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = null;
+		pageContent = responseHandler.handleResponse(response);
+
+		parsePage(pageContent);
+
+		//Broadcaster.fireEndUpload(new EndUploadEvent(file));
 	}
 
 	/**

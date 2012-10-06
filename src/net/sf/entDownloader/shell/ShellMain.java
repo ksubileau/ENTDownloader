@@ -299,6 +299,9 @@ public final class ShellMain implements AuthenticationSucceededListener,
 						}
 					} else if (command[0].equals("mkdir")) {
 						mkdir((command.length > 1) ? command[1] : null);
+					} else if (command[0].equals("send")) {
+						send((command.length > 1) ? command[1] : "",
+								(command.length > 2) ? command[2] : null);
 					} else if (command[0].equals("refresh")) {
 						cd(".");
 					} else if (command[0].equals("lpwd")) {
@@ -489,6 +492,25 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					.println("ENTDownloader: Une erreur est survenue lors de la création du répertoire");
 		} finally {
 			Broadcaster.removeDirectoryCreatedListener(this);
+		}
+	}
+
+	private void send(String filepath, String name) {
+		if (filepath == null || filepath.isEmpty()) {
+			System.err.println("ENTDownloader: send: Chemin du fichier manquant");
+			return;
+		}
+		try {
+			entd.sendFile(filepath, name);
+		} catch (FileNotFoundException e) {
+			System.err.println("ENTDownloader: send: Fichier introuvable ou inaccessible");
+			return;
+		} catch (IOException e) {
+			System.err.println("ENTDownloader: send: " + e.getLocalizedMessage());
+			return;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

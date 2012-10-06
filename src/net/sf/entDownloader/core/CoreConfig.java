@@ -58,6 +58,9 @@ public final class CoreConfig {
 	/** Adresse de téléchargement d'un fichier */
 	public static final String downloadFileURL = rootURL
 			+ "worker/download/worker.download.target.{uP_root}.uP";
+	/** Adresse d'envoi d'un fichier */
+	public static final String sendFileURL = rootURL
+			+ "render.userLayoutRootNode.target.{uP_root}.uP";
 	/** Adresse de retour dans le dossier parent */
 	public static final String directoryBackURL = rootURL
 			+ "render.userLayoutRootNode.target.{uP_root}.uP?modeDav=directory_back";
