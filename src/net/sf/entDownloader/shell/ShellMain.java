@@ -25,6 +25,8 @@ import static net.sf.entDownloader.core.Misc.addZeroBefore;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -305,6 +307,15 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					} else if (command[0].equals("rename")) {
 						rename((command.length > 1) ? command[1] : null,
 								(command.length > 2) ? command[2] : null);
+					} else if (command[0].equals("rm") || command[0].equals("delete") || command[0].equals("del")) {
+						String[] elems = null;
+						if (command.length > 1)
+						{
+							List<String> lst = new ArrayList<String>(Arrays.asList(command));
+							lst.remove(0);
+							elems = lst.toArray(new String[0]);
+						}
+						delete(elems);
 					} else if (command[0].equals("refresh")) {
 						cd(".");
 					} else if (command[0].equals("lpwd")) {
@@ -536,6 +547,23 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void delete(String[] elems) {
+		if (elems == null || elems.length == 0) {
+			System.err.println("ENTDownloader: delete: Nom du fichier ou dossier manquant");
+			return;
+		}
+
+		try {
+			entd.delete(elems);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

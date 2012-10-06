@@ -64,6 +64,9 @@ public final class CoreConfig {
 	/** Adresse de renommage d'un élément */
 	public static final String renameURL = rootURL
 			+ "render.userLayoutRootNode.target.{uP_root}.uP";
+	/** Adresse de suppression d'un élément */
+	public static final String deleteURL = rootURL
+			+ "render.userLayoutRootNode.target.{uP_root}.uP";
 	/** Adresse de retour dans le dossier parent */
 	public static final String directoryBackURL = rootURL
 			+ "render.userLayoutRootNode.target.{uP_root}.uP?modeDav=directory_back";

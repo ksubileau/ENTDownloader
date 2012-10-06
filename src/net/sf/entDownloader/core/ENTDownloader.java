@@ -772,7 +772,7 @@ public class ENTDownloader {
 	}
 
 	/**
-	 * Renomme un fichier ou dossier du le répertoire courant.
+	 * Renomme un fichier ou dossier du répertoire courant.
 	 *
 	 * @param oldname Nom actuel du dossier ou fichier à renommer.
 	 * @param newname Nouveau nom du dossier ou fichier à renommer.
@@ -832,6 +832,65 @@ public class ENTDownloader {
 		parsePage(pageContent);
 
 		//Broadcaster.fireElementRenamed(new ElementRenamedEvent(oldname, newname));
+	}
+
+	/**
+	 * Supprime un ou plusieurs fichiers ou dossiers du répertoire courant.
+	 *
+	 * @param elems Liste des noms des dossiers ou fichiers à supprimer.
+	 *
+	 * @since 2.0.0
+	 */
+	public void delete(String[] elems) throws ParseException,
+			IOException {
+		//TODO Gestion des erreurs post et pré envoi (un des éléments n'existe pas entre autres).
+		// Événements
+		// Test
+		// Vérifier présence chaine "La sélection a été supprimée" dans pageContent pour valider la suppression
+		if (isLogin == false)
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.deleteURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		for (String name : elems) {
+			params.add(new BasicNameValuePair("listeFic", name));
+		}
+		params.add(new BasicNameValuePair("modeDav", "confirm_delete_mode"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
+			isLogin = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = responseHandler.handleResponse(response);
+
+		//TODO vérification intermédiaire ?
+
+		request = new HttpPost(urlBuilder(CoreConfig.deleteURL));
+		params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("modeDav", "delete_mode"));
+		params.add(new BasicNameValuePair("Submit", "Valider la suppression"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		response = httpclient.execute(request);
+
+		pageContent = responseHandler.handleResponse(response);
+
+		parsePage(pageContent);
+
+		//Broadcaster.fireElementsDeleted(new ElementsDeletedEvent(elems));
 	}
 
 	/**
