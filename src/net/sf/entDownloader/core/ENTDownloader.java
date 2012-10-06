@@ -409,7 +409,7 @@ public class ENTDownloader {
 
 		if (pageContent.isEmpty()
 				|| Misc.preg_match(
-						"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br /></font>",
+						"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br\\s?/?></font>",
 						pageContent))
 			throw new ENTDirectoryNotFoundException(name);
 		parsePage(pageContent);
