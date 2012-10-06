@@ -322,7 +322,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 						System.out.println(System.getProperty("user.dir"));
 					} else if (command[0].equals("info")) {
 						infos(entd);
-					} else if (command[0].equals("exit")) {
+					} else if (command[0].equals("exit") || command[0].equals("quit")) {
 						System.exit(0);
 					} else if (!command[0].isEmpty() || command.length != 1) {
 						System.err.println("ENTDownloader: " + command[0]
