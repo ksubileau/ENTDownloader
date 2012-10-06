@@ -1,7 +1,7 @@
 /*
  *  Broadcaster.java
  *      
- *  Copyright 2010-2011 Kévin Subileau. 
+ *  Copyright 2010-2012 Kévin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
