@@ -1,7 +1,7 @@
 /*
  *  DirectoryCreatedListener.java
  *      
- *  Copyright 2010-2011 Kévin Subileau. 
+ *  Copyright 2010-2012 Kévin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -22,6 +22,8 @@ package net.sf.entDownloader.core.events;
 
 /**
  * Informe les observateurs qu'un répertoire a été créé.
+ * 
+ * @since 2.0.0
  */
 public interface DirectoryCreatedListener extends BroadcastListener {
 
