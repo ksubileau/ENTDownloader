@@ -22,6 +22,7 @@ package net.sf.entDownloader.shell;
 
 import static net.sf.entDownloader.core.Misc.addZeroBefore;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
@@ -53,10 +54,14 @@ import net.sf.entDownloader.core.events.DownloadedBytesEvent;
 import net.sf.entDownloader.core.events.DownloadedBytesListener;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
 import net.sf.entDownloader.core.events.EndDownloadListener;
+import net.sf.entDownloader.core.events.EndUploadEvent;
+import net.sf.entDownloader.core.events.EndUploadListener;
 import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.FileAlreadyExistsListener;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartDownloadListener;
+import net.sf.entDownloader.core.events.StartUploadEvent;
+import net.sf.entDownloader.core.events.StartUploadListener;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
@@ -68,7 +73,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		DirectoryChangedListener, DirectoryChangingListener,
 		FileAlreadyExistsListener, StartDownloadListener,
 		DownloadedBytesListener, EndDownloadListener, 
-		DownloadAbortListener, DirectoryCreatedListener {
+		DownloadAbortListener, DirectoryCreatedListener,
+		EndUploadListener, StartUploadListener {
 	private static String login;
 	private static final String productName = CoreConfig
 			.getString("ProductInfo.name");
@@ -83,6 +89,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	private ProgressBar pg;
 	private ENTDownloader entd;
 	private FS_File downloadingFile;
+	private File uploadingFile;
 	private long sizeDownloaded;
 
 	public ShellMain(String[] args) {
@@ -96,6 +103,9 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addStartDownloadListener(this);
 		Broadcaster.addDownloadedBytesListener(this);
 		Broadcaster.addEndDownloadListener(this);
+		Broadcaster.addStartUploadListener(this);
+		//Broadcaster.addUploadedBytesListener(this);
+		Broadcaster.addEndUploadListener(this);
 		Broadcaster.addDownloadAbortListener(this);
 
 		//Analyse des arguments
@@ -514,6 +524,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			System.err.println("ENTDownloader: send: Chemin du fichier manquant");
 			return;
 		}
+		//TODO Envoi multiple ?
 		try {
 			entd.sendFile(filepath, name);
 		} catch (FileNotFoundException e) {
@@ -557,7 +568,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			System.err.println("ENTDownloader: delete: Nom du fichier ou dossier manquant");
 			return;
 		}
-
+		//TODO Confirmation ? => option silencieuse ?
 		try {
 			entd.delete(elems);
 		} catch (ParseException e) {
@@ -675,6 +686,24 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		sizeDownloaded += e.getBytesDownloaded();
 		pg.setValue((int) (((Long) sizeDownloaded) * 100 / downloadingFile
 				.getSize()));
+	}
+
+	@Override
+	public void onStartUpload(StartUploadEvent e) {
+		uploadingFile = e.getFile();
+		//sizeDownloaded = 0;
+		pg.setDeterminate(false);
+		pg.setVisible(true);
+		writeStatusMessage("Envoi du fichier "
+				+ uploadingFile.getName() + " en cours...");
+	}
+
+	@Override
+	public void onEndUpload(EndUploadEvent e) {
+		uploadingFile = null;
+		pg.setVisible(false);
+		pg.setDeterminate(false);
+		writeStatusMessage("Envoi terminé.");
 	}
 
 	@Override
