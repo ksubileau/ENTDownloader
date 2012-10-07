@@ -238,6 +238,69 @@ public class Broadcaster {
 		}
 	}
 
+	/** Ajoute un observateur sur l'événement UploadedBytes */
+	/*public static void addUploadedBytesListener(
+			UploadedBytesListener listener) {
+		addListener(UploadedBytesListener.class, listener);
+	}*/
+
+	/** Supprime un observateur sur l'événement UploadedBytes */
+	/*public static void removeUploadedBytesListener(
+			UploadedBytesListener listener) {
+		removeListener(UploadedBytesListener.class, listener);
+	}*/
+
+	/** Avertit tous les observateurs de l'événement UploadedBytes */
+	/*public static void fireUploadedBytes(UploadedBytesEvent event) {
+		Iterator<BroadcastListener> it = getListenerIterator(UploadedBytesListener.class);
+		UploadedBytesListener listener;
+		while (it.hasNext()) {
+			listener = (UploadedBytesListener) it.next();
+			listener.onUploadedBytes(event);
+		}
+	}*/
+
+	/** Ajoute un observateur sur l'événement StartUpload */
+	public static void addStartUploadListener(StartUploadListener listener) {
+		addListener(StartUploadListener.class, listener);
+	}
+
+	/** Supprime un observateur sur l'événement StartUpload */
+	public static void removeStartUploadListener(
+			StartUploadListener listener) {
+		removeListener(StartUploadListener.class, listener);
+	}
+
+	/** Avertit tous les observateurs de l'événement StartUpload */
+	public static void fireStartUpload(StartUploadEvent event) {
+		Iterator<BroadcastListener> it = getListenerIterator(StartUploadListener.class);
+		StartUploadListener listener;
+		while (it.hasNext()) {
+			listener = (StartUploadListener) it.next();
+			listener.onStartUpload(event);
+		}
+	}
+
+	/** Ajoute un observateur sur l'événement EndUpload */
+	public static void addEndUploadListener(EndUploadListener listener) {
+		addListener(EndUploadListener.class, listener);
+	}
+
+	/** Supprime un observateur sur l'événement EndUpload */
+	public static void removeEndUploadListener(EndUploadListener listener) {
+		removeListener(EndUploadListener.class, listener);
+	}
+
+	/** Avertit tous les observateurs de l'événement EndUpload */
+	public static void fireEndUpload(EndUploadEvent event) {
+		Iterator<BroadcastListener> it = getListenerIterator(EndUploadListener.class);
+		EndUploadListener listener;
+		while (it.hasNext()) {
+			listener = (EndUploadListener) it.next();
+			listener.onEndUpload(event);
+		}
+	}
+
 	/** Ajoute un observateur sur l'événement FileAlreadyExists */
 	public static void addFileAlreadyExistsListener(
 			FileAlreadyExistsListener listener) {

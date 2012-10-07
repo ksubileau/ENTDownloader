@@ -48,8 +48,10 @@ import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
 import net.sf.entDownloader.core.events.DownloadAbortEvent;
 import net.sf.entDownloader.core.events.DownloadedBytesEvent;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
+import net.sf.entDownloader.core.events.EndUploadEvent;
 import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
+import net.sf.entDownloader.core.events.StartUploadEvent;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
@@ -672,10 +674,9 @@ public class ENTDownloader {
 	 */
 	public void sendFile(String filepath, String name) throws IOException, ParseException {
 		//TODO Gestion des erreurs (nom déjà utilisé, caractères interdits) post et pré envoi.
-		// Progression
+		// Progression, événement de progression
 		// Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi
-		// Evénements
-		// Test
+		// Test (envoi/réception, vérifier intégrité des données)
 		// Paramètre charset (mettre utf-8)
 		// Session expired
 		if (isLogin == false)
@@ -692,7 +693,7 @@ public class ENTDownloader {
 		if (name == null || name.isEmpty())
 			name = filepath;
 
-		//Broadcaster.fireStartUpload(new StartUploadEvent(file));
+		Broadcaster.fireStartUpload(new StartUploadEvent(file));
 
 		HttpPost request = new HttpPost(urlBuilder(CoreConfig.sendFileURL));
 
@@ -713,7 +714,7 @@ public class ENTDownloader {
 
 		parsePage(pageContent);
 
-		//Broadcaster.fireEndUpload(new EndUploadEvent(file));
+		Broadcaster.fireEndUpload(new EndUploadEvent(file));
 	}
 
 	/**
