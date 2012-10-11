@@ -47,6 +47,7 @@ import net.sf.entDownloader.core.events.DirectoryChangingEvent;
 import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
 import net.sf.entDownloader.core.events.DownloadAbortEvent;
 import net.sf.entDownloader.core.events.DownloadedBytesEvent;
+import net.sf.entDownloader.core.events.ElementRenamedEvent;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
 import net.sf.entDownloader.core.events.EndUploadEvent;
 import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
@@ -783,7 +784,6 @@ public class ENTDownloader {
 	public void rename(String oldname, String newname) throws ParseException,
 			IOException {
 		//TODO Gestion des erreurs (nom déjà utilisé, caractères interdits) post et pré envoi.
-		// Evénements
 		// Test
 		if (isLogin == false)
 			throw new ENTUnauthenticatedUserException(
@@ -832,7 +832,7 @@ public class ENTDownloader {
 
 		parsePage(pageContent);
 
-		//Broadcaster.fireElementRenamed(new ElementRenamedEvent(oldname, newname));
+		Broadcaster.fireElementRenamed(new ElementRenamedEvent(oldname, newname));
 	}
 
 	/**

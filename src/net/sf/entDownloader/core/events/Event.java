@@ -79,6 +79,11 @@ public abstract class Event {
 	 * risque d'écraser un fichier existant.
 	 */
 	public static final int FILE_ALREADY_EXISTS_TYPE = 12;
+	/**
+	 * Indique qu'un élément du dossier courant a été renommé.
+	 */
+	public static final int ELEMENT_RENAMED_TYPE = 13;
+
 
 	protected Event() {
 	}

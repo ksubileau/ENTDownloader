@@ -322,4 +322,26 @@ public class Broadcaster {
 			listener.onFileAlreadyExists(event);
 		}
 	}
+
+	/** Ajoute un observateur sur l'événement ElementRenamed */
+	public static void addElementRenamedListener(
+			ElementRenamedListener listener) {
+		addListener(ElementRenamedListener.class, listener);
+	}
+
+	/** Supprime un observateur sur l'événement ElementRenamed */
+	public static void removeElementRenamedListener(
+			ElementRenamedListener listener) {
+		removeListener(ElementRenamedListener.class, listener);
+	}
+
+	/** Avertit tous les observateurs de l'événement ElementRenamed */
+	public static void fireElementRenamed(ElementRenamedEvent event) {
+		Iterator<BroadcastListener> it = getListenerIterator(ElementRenamedListener.class);
+		ElementRenamedListener listener;
+		while (it.hasNext()) {
+			listener = (ElementRenamedListener) it.next();
+			listener.onElementRenamed(event);
+		}
+	}
 }
