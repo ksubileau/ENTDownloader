@@ -558,6 +558,17 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		} catch (ENTFileNotFoundException e) {
 			System.err.println("ENTDownloader: " + e.getMessage()
 					+ ": Aucun fichier ou dossier de ce type");
+		} catch (ENTInvalidElementNameException e) {
+			if (e.getType() == ENTInvalidElementNameException.ALREADY_USED)
+				System.err
+						.println("ENTDownloader: Impossible de renommer \""
+								+ oldname + "\" en \""
+								+ newname + "\" : Le fichier existe.");
+			else if (e.getType() == ENTInvalidElementNameException.FORBIDDEN_CHAR)
+				System.err
+				.println("ENTDownloader: Impossible de renommer \""
+						+ oldname + "\" en \""
+						+ newname + "\" : Nouveau nom invalide.");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

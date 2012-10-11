@@ -783,17 +783,17 @@ public class ENTDownloader {
 	 */
 	public void rename(String oldname, String newname) throws ParseException,
 			IOException {
-		//TODO Gestion des erreurs (nom déjà utilisé, caractères interdits) post et pré envoi.
-		// Test
+		//TODO Test
 		if (isLogin == false)
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
 		if(oldname.equals(newname))
 			return;
-
 		if (indexOf(oldname) == -1)
 			throw new ENTFileNotFoundException(oldname);
+		if (indexOf(newname) != -1)
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, newname);
 
 		HttpPost request = new HttpPost(urlBuilder(CoreConfig.renameURL));
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -816,8 +816,6 @@ public class ENTDownloader {
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		String pageContent = responseHandler.handleResponse(response);
 
-		//TODO vérification intermédiaire (en cas de suppression notamment)
-
 		request = new HttpPost(urlBuilder(CoreConfig.renameURL));
 		params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("new_name", newname));
@@ -829,6 +827,19 @@ public class ENTDownloader {
 		response = httpclient.execute(request);
 
 		pageContent = responseHandler.handleResponse(response);
+
+		if (Misc.preg_match(
+						"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTFileNotFoundException(oldname); //TODO Fusion ENTFileNotFoundException/ENTDirectoryNotFoundException ?
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Impossible de traiter la requ&ecirc;te :<br\\s?/?> un fichier/dossier du m&ecirc;me nom existe d&eacute;j&agrave;.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, newname);
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Il existe des caract&egrave;res non pris en charge dans le nom de votre ressource.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, newname);
 
 		parsePage(pageContent);
 
