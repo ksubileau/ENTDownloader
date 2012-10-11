@@ -449,8 +449,11 @@ public class MainFrame extends javax.swing.JFrame implements
 			String dirname = (String)JOptionPane.showInputDialog(
                     MainFrame.this,
                     "Nom du nouveau dossier :",
-                    "ENTDownloader",
-                    JOptionPane.QUESTION_MESSAGE);
+                    "ENTDownloader - Nouveau dossier",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    null,
+                    "Nouveau dossier");
 
 			if ((dirname == null) || (dirname.length() == 0)) {
 			    return;
