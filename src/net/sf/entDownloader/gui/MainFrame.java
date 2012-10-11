@@ -83,7 +83,10 @@ import net.sf.entDownloader.core.events.DirectoryChangingEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingListener;
 import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
 import net.sf.entDownloader.core.events.DirectoryCreatedListener;
+import net.sf.entDownloader.core.events.ElementRenamedEvent;
+import net.sf.entDownloader.core.events.ElementRenamedListener;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
@@ -139,10 +142,12 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenu help;
 	private JMenuItem exit;
 	private JMenuItem createDir;
+	private JMenuItem rename;
 	private JMenu fileMenu;
 	private JMenuBar jMenuBar;
 	private JButton DownloadAll_tool;
 	private JButton createDir_tool;
+	private JButton rename_tool;
 	private JStatusBar statusBar;
 	private JButton refreshBtn;
 	private JButton goDirBtn;
@@ -155,6 +160,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private HomeDirAction homeDirAction;
 	private ParentDirAction parentDirAction;
 	private CreateDirAction createDirAction;
+	private RenameAction renameAction;
 	private JMenuItem parentMenuIt;
 	private PreviousDirAction prevDirAction;
 	private NextDirAction nextDirAction;
@@ -169,6 +175,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem nextDirMenuIt;
 	private JMenuItem prevDirMenuIt;
 	private JMenuItem createDirPopupIt;
+	private JMenuItem renamePopupIt;
 	private Action refreshAction;
 	private JMenuItem jMenuItem3;
 	private JMenuItem copyFilename;
@@ -483,6 +490,91 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	/**
+	 * Renomme un élément du dossier courant
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class RenameAction extends AbstractAction {
+
+		private static final long serialVersionUID = 193947319198628518L;
+
+		/**
+		 * Construit une nouvelle action RenameAction
+		 */
+		public RenameAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Renommer l'élément sélectionné");
+			putValue(Action.NAME, "Renommer");
+			putValue(Action.LARGE_ICON_KEY, loadIcon("rename.png"));
+			putValue(Action.SMALL_ICON, loadIcon("rename16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_M);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (fileView == null || fileView.getSelectedFilesCount() != 1)
+				return;
+			FS_Element selectedFile = fileView.getSelectedFile();
+
+			String newname = (String)JOptionPane.showInputDialog(
+                    MainFrame.this,
+                    "Nouveau nom :",
+                    "ENTDownloader - Renommer",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    null,
+                    selectedFile.getName());
+
+			if ((newname == null) || (newname.length() == 0)) {
+			    return;
+			}
+
+			try {
+				entd.rename(selectedFile.getName(), newname);
+			} catch (ENTInvalidElementNameException e) {
+				String message;
+				switch (e.getType()) {
+				case ENTInvalidElementNameException.ALREADY_USED:
+					message = "Un fichier ou dossier porte le même nom.";
+					break;
+				case ENTInvalidElementNameException.FORBIDDEN_CHAR:
+					message = "Le nouveau nom spécifié contient un ou plusieurs caractères non autorisés.";
+					break;
+				default:
+					message = "Erreur inconnue.";
+					break;
+				}
+				//TODO Clarté des messages d'erreur.
+				JOptionPane
+						.showMessageDialog(
+								MainFrame.this,
+								"Impossible de renommer \""
+										+ selectedFile.getName()
+										+ "\" : " + message,
+								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+			} catch (ENTFileNotFoundException e) {
+				JOptionPane
+						.showMessageDialog(
+								MainFrame.this,
+								"Impossible de renommer \""
+										+ selectedFile.getName()
+										+ "\" : l'élément n'existe plus.",
+								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+				//TODO Actualiser ou proposer d'actualiser ?
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
 	 * Demande de téléchargement de un ou plusieurs fichiers
 	 * 
 	 * @author Kévin Subileau
@@ -658,6 +750,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		refreshAction = new RefreshAction();
 		homeDirAction = new HomeDirAction();
 		createDirAction = new CreateDirAction();
+		renameAction = new RenameAction();
 		parentDirAction = new ParentDirAction();
 		prevDirAction = new PreviousDirAction();
 		copyFilenameAction = new CopyFilenameAction();
@@ -1003,6 +1096,11 @@ public class MainFrame extends javax.swing.JFrame implements
 						fileMenu.add(createDir);
 					}
 					{
+						rename = new JMenuItem();
+						rename.setAction(renameAction);
+						fileMenu.add(rename);
+					}
+					{
 						dld = new JMenuItem();
 						dld.setAction(dldAction);
 						fileMenu.add(dld);
@@ -1148,7 +1246,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						checkUpdate = new JMenuItem();
 						help.add(checkUpdate);
 						checkUpdate.setText("Rechercher des mises à jour...");
-						checkUpdate.setMnemonic(KeyEvent.VK_M);
+						checkUpdate.setMnemonic(KeyEvent.VK_J);
 						setIcon(checkUpdate, "checkUpdate.png");
 						checkUpdate.addActionListener(new ActionListener() {
 							@Override
@@ -1265,7 +1363,9 @@ public class MainFrame extends javax.swing.JFrame implements
 					Download_tool = makeToolbarButton(dldAction);
 					DownloadAll_tool = makeToolbarButton(dldAllAction);
 					createDir_tool = makeToolbarButton(createDirAction);
+					rename_tool = makeToolbarButton(renameAction);
 					toolBar.add(createDir_tool);
+					toolBar.add(rename_tool);
 					toolBar.add(Download_tool);
 					toolBar.add(DownloadAll_tool);
 				}
@@ -1292,6 +1392,11 @@ public class MainFrame extends javax.swing.JFrame implements
 					createDirPopupIt = new JMenuItem();
 					createDirPopupIt.setAction(createDirAction);
 					PopupMenu.add(createDirPopupIt);
+				}
+				{
+					renamePopupIt = new JMenuItem();
+					renamePopupIt.setAction(renameAction);
+					PopupMenu.add(renamePopupIt);
 				}
 				{
 					PopupMenu.addSeparator();
@@ -1463,6 +1568,13 @@ public class MainFrame extends javax.swing.JFrame implements
 				//TODO Sélectionner le dossier nouvellement créé.
 			}
 		});
+		Broadcaster.addElementRenamedListener(new ElementRenamedListener() {
+			@Override
+			public void onElementRenamed(ElementRenamedEvent event) {
+				updateFrameData();
+				//TODO Sélectionner le dossier nouvellement renommé ?
+			}
+		});
 	}
 
 	private void setGuiEventsListener() {
@@ -1587,6 +1699,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		dldAction.setEnabled(!fileView.getSelectionModel().isSelectionEmpty());
 		if (fileView.getSelectedFilesCount() == 1) {
 			copyFilenameAction.setEnabled(true);
+			renameAction.setEnabled(true);
 			String type = (fileView.getSelectedFile().isDirectory()) ? "dossier"
 					: "fichier";
 			copyFilenameAction.putValue(Action.SHORT_DESCRIPTION,
@@ -1594,10 +1707,14 @@ public class MainFrame extends javax.swing.JFrame implements
 							+ " sélectionné dans le presse-papier.");
 			copyFilenameAction
 					.putValue(Action.NAME, "Copier le nom du " + type);
+			renameAction.putValue(Action.SHORT_DESCRIPTION,
+					"Renommer le " + type
+							+ " sélectionné.");
 			openDirAction.setEnabled(fileView.getSelectedFile().isDirectory());
 		} else {
 			copyFilenameAction.setEnabled(false);
 			openDirAction.setEnabled(false);
+			renameAction.setEnabled(false);
 		}
 	}
 
