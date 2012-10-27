@@ -66,6 +66,8 @@ import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartDownloadListener;
 import net.sf.entDownloader.core.events.StartUploadEvent;
 import net.sf.entDownloader.core.events.StartUploadListener;
+import net.sf.entDownloader.core.events.UploadedBytesEvent;
+import net.sf.entDownloader.core.events.UploadedBytesListener;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
@@ -79,6 +81,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		DownloadedBytesListener, EndDownloadListener, 
 		DownloadAbortListener, DirectoryCreatedListener,
 		EndUploadListener, StartUploadListener,
+		UploadedBytesListener,
 		ElementRenamedListener, ElementsDeletedListener {
 	private static String login;
 	private static final String productName = CoreConfig
@@ -109,7 +112,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addDownloadedBytesListener(this);
 		Broadcaster.addEndDownloadListener(this);
 		Broadcaster.addStartUploadListener(this);
-		//Broadcaster.addUploadedBytesListener(this);
+		Broadcaster.addUploadedBytesListener(this);
 		Broadcaster.addEndUploadListener(this);
 		Broadcaster.addDownloadAbortListener(this);
 		Broadcaster.addElementRenamedListener(this);
@@ -702,15 +705,14 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	@Override
 	public void onDownloadedBytes(DownloadedBytesEvent e) {
 		sizeDownloaded += e.getBytesDownloaded();
-		pg.setValue((int) (((Long) sizeDownloaded) * 100 / downloadingFile
+		pg.setValue(Math.round(sizeDownloaded * 100f / downloadingFile
 				.getSize()));
 	}
 
 	@Override
 	public void onStartUpload(StartUploadEvent e) {
 		uploadingFile = e.getFile();
-		//sizeDownloaded = 0;
-		pg.setDeterminate(false);
+		pg.setDeterminate(true);
 		pg.setVisible(true);
 		writeStatusMessage("Envoi du fichier "
 				+ uploadingFile.getName() + " en cours...");
@@ -722,6 +724,11 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		pg.setVisible(false);
 		pg.setDeterminate(false);
 		writeStatusMessage("Envoi terminé.");
+	}
+
+	@Override
+	public void onUploadedBytes(UploadedBytesEvent e) {
+		pg.setValue(Math.round(e.getTotalUploaded() * 100f / uploadingFile.length()));
 	}
 
 	@Override

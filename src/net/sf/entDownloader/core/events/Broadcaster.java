@@ -239,26 +239,26 @@ public class Broadcaster {
 	}
 
 	/** Ajoute un observateur sur l'événement UploadedBytes */
-	/*public static void addUploadedBytesListener(
+	public static void addUploadedBytesListener(
 			UploadedBytesListener listener) {
 		addListener(UploadedBytesListener.class, listener);
-	}*/
+	}
 
 	/** Supprime un observateur sur l'événement UploadedBytes */
-	/*public static void removeUploadedBytesListener(
+	public static void removeUploadedBytesListener(
 			UploadedBytesListener listener) {
 		removeListener(UploadedBytesListener.class, listener);
-	}*/
+	}
 
 	/** Avertit tous les observateurs de l'événement UploadedBytes */
-	/*public static void fireUploadedBytes(UploadedBytesEvent event) {
+	public static void fireUploadedBytes(UploadedBytesEvent event) {
 		Iterator<BroadcastListener> it = getListenerIterator(UploadedBytesListener.class);
 		UploadedBytesListener listener;
 		while (it.hasNext()) {
 			listener = (UploadedBytesListener) it.next();
 			listener.onUploadedBytes(event);
 		}
-	}*/
+	}
 
 	/** Ajoute un observateur sur l'événement StartUpload */
 	public static void addStartUploadListener(StartUploadListener listener) {

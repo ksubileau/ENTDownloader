@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import net.sf.entDownloader.core.CountingMultipartEntity.ProgressListener;
 import net.sf.entDownloader.core.events.AuthenticationSucceededEvent;
 import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DirectoryChangedEvent;
@@ -54,6 +55,7 @@ import net.sf.entDownloader.core.events.EndUploadEvent;
 import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartUploadEvent;
+import net.sf.entDownloader.core.events.UploadedBytesEvent;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
@@ -676,7 +678,6 @@ public class ENTDownloader {
 	 */
 	public void sendFile(String filepath, String name) throws IOException, ParseException {
 		//TODO Gestion des erreurs (nom déjà utilisé, caractères interdits) post et pré envoi.
-		// Progression, événement de progression
 		// Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi
 		// Test (envoi/réception, vérifier intégrité des données)
 		// Paramètre charset (mettre utf-8)
@@ -699,7 +700,12 @@ public class ENTDownloader {
 
 		HttpPost request = new HttpPost(urlBuilder(CoreConfig.sendFileURL));
 
-	    MultipartEntity mpEntity = new MultipartEntity();
+		CountingMultipartEntity mpEntity = new CountingMultipartEntity(new ProgressListener() {
+			@Override
+			public void transferred(long last, long total) {
+				Broadcaster.fireUploadedBytes(new UploadedBytesEvent(last, total));
+			}
+		});
 	    mpEntity.addPart("modeDav", new StringBody("upload_mode"));
 	    mpEntity.addPart("Submit", new StringBody("Envoyer le fichier"));
 
