@@ -48,6 +48,7 @@ import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
 import net.sf.entDownloader.core.events.DownloadAbortEvent;
 import net.sf.entDownloader.core.events.DownloadedBytesEvent;
 import net.sf.entDownloader.core.events.ElementRenamedEvent;
+import net.sf.entDownloader.core.events.ElementsDeletedEvent;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
 import net.sf.entDownloader.core.events.EndUploadEvent;
 import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
@@ -856,7 +857,6 @@ public class ENTDownloader {
 	public void delete(String[] elems) throws ParseException,
 			IOException {
 		//TODO Gestion des erreurs post et pré envoi (un des éléments n'existe pas entre autres).
-		// Événements
 		// Test
 		// Vérifier présence chaine "La sélection a été supprimée" dans pageContent pour valider la suppression
 		if (isLogin == false)
@@ -902,7 +902,7 @@ public class ENTDownloader {
 
 		parsePage(pageContent);
 
-		//Broadcaster.fireElementsDeleted(new ElementsDeletedEvent(elems));
+		Broadcaster.fireElementsDeleted(new ElementsDeletedEvent(elems));
 	}
 
 	/**

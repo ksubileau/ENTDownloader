@@ -54,6 +54,8 @@ import net.sf.entDownloader.core.events.DownloadedBytesEvent;
 import net.sf.entDownloader.core.events.DownloadedBytesListener;
 import net.sf.entDownloader.core.events.ElementRenamedEvent;
 import net.sf.entDownloader.core.events.ElementRenamedListener;
+import net.sf.entDownloader.core.events.ElementsDeletedEvent;
+import net.sf.entDownloader.core.events.ElementsDeletedListener;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
 import net.sf.entDownloader.core.events.EndDownloadListener;
 import net.sf.entDownloader.core.events.EndUploadEvent;
@@ -77,7 +79,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		DownloadedBytesListener, EndDownloadListener, 
 		DownloadAbortListener, DirectoryCreatedListener,
 		EndUploadListener, StartUploadListener,
-		ElementRenamedListener {
+		ElementRenamedListener, ElementsDeletedListener {
 	private static String login;
 	private static final String productName = CoreConfig
 			.getString("ProductInfo.name");
@@ -111,6 +113,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addEndUploadListener(this);
 		Broadcaster.addDownloadAbortListener(this);
 		Broadcaster.addElementRenamedListener(this);
+		Broadcaster.addElementsDeletedListener(this);
 
 		//Analyse des arguments
 		for (int i = 0; i < args.length; i++) {
@@ -762,5 +765,13 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	@Override
 	public void onElementRenamed(ElementRenamedEvent e) {
 		writeStatusMessage("Le fichier " + e.getOldName() + " a été renommé.");
+	}
+
+	@Override
+	public void onElementsDeleted(ElementsDeletedEvent e) {
+		if(e.getTargets().length == 1)
+			writeStatusMessage("L'élément " + e.getTargets()[0] + " a été supprimé.");
+		else
+			writeStatusMessage("Eléments supprimés.");
 	}
 }

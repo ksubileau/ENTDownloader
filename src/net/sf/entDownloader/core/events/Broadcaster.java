@@ -344,4 +344,26 @@ public class Broadcaster {
 			listener.onElementRenamed(event);
 		}
 	}
+
+	/** Ajoute un observateur sur l'événement ElementsDeleted */
+	public static void addElementsDeletedListener(
+			ElementsDeletedListener listener) {
+		addListener(ElementsDeletedListener.class, listener);
+	}
+
+	/** Supprime un observateur sur l'événement ElementsDeleted */
+	public static void removeElementsDeletedListener(
+			ElementsDeletedListener listener) {
+		removeListener(ElementsDeletedListener.class, listener);
+	}
+
+	/** Avertit tous les observateurs de l'événement ElementsDeleted */
+	public static void fireElementsDeleted(ElementsDeletedEvent event) {
+		Iterator<BroadcastListener> it = getListenerIterator(ElementsDeletedListener.class);
+		ElementsDeletedListener listener;
+		while (it.hasNext()) {
+			listener = (ElementsDeletedListener) it.next();
+			listener.onElementsDeleted(event);
+		}
+	}
 }

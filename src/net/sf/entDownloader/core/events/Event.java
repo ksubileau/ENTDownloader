@@ -83,6 +83,11 @@ public abstract class Event {
 	 * Indique qu'un élément du dossier courant a été renommé.
 	 */
 	public static final int ELEMENT_RENAMED_TYPE = 13;
+	/**
+	 * Indique qu'un ou plusieurs éléments du dossier courant
+	 * ont été supprimé.
+	 */
+	public static final int ELEMENTS_DELETED_TYPE = 14;
 
 
 	protected Event() {
