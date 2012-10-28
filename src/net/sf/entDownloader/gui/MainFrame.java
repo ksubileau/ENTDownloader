@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.AbstractAction;
@@ -85,6 +86,8 @@ import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
 import net.sf.entDownloader.core.events.DirectoryCreatedListener;
 import net.sf.entDownloader.core.events.ElementRenamedEvent;
 import net.sf.entDownloader.core.events.ElementRenamedListener;
+import net.sf.entDownloader.core.events.ElementsDeletedEvent;
+import net.sf.entDownloader.core.events.ElementsDeletedListener;
 import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
@@ -143,11 +146,13 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem exit;
 	private JMenuItem createDir;
 	private JMenuItem rename;
+	private JMenuItem delete;
 	private JMenu fileMenu;
 	private JMenuBar jMenuBar;
 	private JButton DownloadAll_tool;
 	private JButton createDir_tool;
 	private JButton rename_tool;
+	private JButton delete_tool;
 	private JStatusBar statusBar;
 	private JButton refreshBtn;
 	private JButton goDirBtn;
@@ -165,6 +170,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private PreviousDirAction prevDirAction;
 	private NextDirAction nextDirAction;
 	private CopyFilenameAction copyFilenameAction;
+	private DeleteAction deleteAction;
 
 	private LinkedList<String> historyList;
 	/**
@@ -176,6 +182,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem prevDirMenuIt;
 	private JMenuItem createDirPopupIt;
 	private JMenuItem renamePopupIt;
+	private JMenuItem deletePopupIt;
 	private Action refreshAction;
 	private JMenuItem jMenuItem3;
 	private JMenuItem copyFilename;
@@ -578,6 +585,102 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	/**
+	 * Supprime les éléments sélectionnés du dossier courant
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class DeleteAction extends AbstractAction {
+
+		private static final long serialVersionUID = 123949354198628688L;
+
+		/**
+		 * Construit une nouvelle action DeleteAction
+		 */
+		public DeleteAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Supprimer l'élément sélectionné");
+			putValue(Action.NAME, "Supprimer");
+			putValue(Action.LARGE_ICON_KEY, loadIcon("delete.png"));
+			putValue(Action.SMALL_ICON, loadIcon("delete16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_BACK_SPACE, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			int nbtargets;
+			if (fileView == null || (nbtargets = fileView.getSelectedFilesCount()) == 0)
+				return;
+			FS_Element[] selectedElems = fileView.getSelectedFiles();
+			ArrayList<String> elementsNames = new ArrayList<String>(nbtargets);
+			
+			String confirmMessage;
+			if(nbtargets == 1)
+			{
+				if(selectedElems[0].isFile())
+					confirmMessage = "Voulez-vous vraiment supprimer ce fichier de façon permanente ?";
+				else
+					confirmMessage = "Voulez-vous vraiment supprimer ce dossier de façon permanente ?";
+			}
+			else
+				confirmMessage = "Voulez-vous vraiment supprimer ces " + nbtargets + " éléments de façon permanente ?";
+
+			if(JOptionPane
+					.showConfirmDialog(
+							MainFrame.this,
+							confirmMessage,
+							"ENTDownloader", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+				return;
+
+			for (FS_Element el : selectedElems) {
+				elementsNames.add(el.getName());
+			}
+			
+			try {
+				entd.delete(elementsNames.toArray(new String[nbtargets]));
+			/*} catch (ENTInvalidElementNameException e) {
+				String message;
+		 		switch (e.getType()) {
+				case ENTInvalidElementNameException.ALREADY_USED:
+					message = "Un fichier ou dossier porte le même nom.";
+					break;
+				case ENTInvalidElementNameException.FORBIDDEN_CHAR:
+					message = "Le nouveau nom spécifié contient un ou plusieurs caractères non autorisés.";
+					break;
+				default:
+					message = "Erreur inconnue.";
+					break;
+				}
+				//TODO Clarté des messages d'erreur.
+				JOptionPane
+						.showMessageDialog(
+								MainFrame.this,
+								"Impossible de renommer \""
+										+ selectedFile.getName()
+										+ "\" : " + message,
+								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+			} catch (ENTFileNotFoundException e) {
+				JOptionPane
+						.showMessageDialog(
+								MainFrame.this,
+								"Impossible de renommer \""
+										+ selectedFile.getName()
+										+ "\" : l'élément n'existe plus.",
+								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+				//TODO Actualiser ou proposer d'actualiser ?*/
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
 	 * Demande de téléchargement de un ou plusieurs fichiers
 	 * 
 	 * @author Kévin Subileau
@@ -754,6 +857,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		homeDirAction = new HomeDirAction();
 		createDirAction = new CreateDirAction();
 		renameAction = new RenameAction();
+		deleteAction = new DeleteAction();
 		parentDirAction = new ParentDirAction();
 		prevDirAction = new PreviousDirAction();
 		copyFilenameAction = new CopyFilenameAction();
@@ -1114,6 +1218,11 @@ public class MainFrame extends javax.swing.JFrame implements
 						fileMenu.add(dldAll);
 					}
 					{
+						delete = new JMenuItem();
+						delete.setAction(deleteAction);
+						fileMenu.add(delete);
+					}
+					{
 						fileMenu.addSeparator();
 					}
 					{
@@ -1367,10 +1476,12 @@ public class MainFrame extends javax.swing.JFrame implements
 					DownloadAll_tool = makeToolbarButton(dldAllAction);
 					createDir_tool = makeToolbarButton(createDirAction);
 					rename_tool = makeToolbarButton(renameAction);
+					delete_tool = makeToolbarButton(deleteAction);
 					toolBar.add(createDir_tool);
 					toolBar.add(rename_tool);
 					toolBar.add(Download_tool);
 					toolBar.add(DownloadAll_tool);
+					toolBar.add(delete_tool);
 				}
 			}
 			thisLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0 };
@@ -1413,6 +1524,11 @@ public class MainFrame extends javax.swing.JFrame implements
 					jMenuItem2 = new JMenuItem();
 					jMenuItem2.setAction(dldAllAction);
 					PopupMenu.add(jMenuItem2);
+				}
+				{
+					deletePopupIt = new JMenuItem();
+					deletePopupIt.setAction(deleteAction);
+					PopupMenu.add(deletePopupIt);
 				}
 			}
 			{
@@ -1578,6 +1694,12 @@ public class MainFrame extends javax.swing.JFrame implements
 				//TODO Sélectionner le dossier nouvellement renommé ?
 			}
 		});
+		Broadcaster.addElementsDeletedListener(new ElementsDeletedListener() {
+			@Override
+			public void onElementsDeleted(ElementsDeletedEvent event) {
+				updateFrameData();
+			}
+		});
 	}
 
 	private void setGuiEventsListener() {
@@ -1700,6 +1822,7 @@ public class MainFrame extends javax.swing.JFrame implements
 
 	public void updatePopupMenu() {
 		dldAction.setEnabled(!fileView.getSelectionModel().isSelectionEmpty());
+		deleteAction.setEnabled(dldAction.isEnabled());
 		if (fileView.getSelectedFilesCount() == 1) {
 			copyFilenameAction.setEnabled(true);
 			renameAction.setEnabled(true);
@@ -1707,17 +1830,22 @@ public class MainFrame extends javax.swing.JFrame implements
 					: "fichier";
 			copyFilenameAction.putValue(Action.SHORT_DESCRIPTION,
 					"Copier le nom du " + type
-							+ " sélectionné dans le presse-papier.");
+							+ " sélectionné dans le presse-papier");
 			copyFilenameAction
 					.putValue(Action.NAME, "Copier le nom du " + type);
 			renameAction.putValue(Action.SHORT_DESCRIPTION,
 					"Renommer le " + type
-							+ " sélectionné.");
+							+ " sélectionné");
+			deleteAction.putValue(Action.SHORT_DESCRIPTION,
+					"Supprimer le " + type
+							+ " sélectionné");
 			openDirAction.setEnabled(fileView.getSelectedFile().isDirectory());
 		} else {
 			copyFilenameAction.setEnabled(false);
 			openDirAction.setEnabled(false);
 			renameAction.setEnabled(false);
+			deleteAction.putValue(Action.SHORT_DESCRIPTION,
+					"Supprimer les éléments sélectionnés");
 		}
 	}
 
