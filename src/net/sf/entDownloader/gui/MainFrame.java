@@ -604,7 +604,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SMALL_ICON, loadIcon("delete16.png"));
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					java.awt.event.KeyEvent.VK_BACK_SPACE, ActionEvent.CTRL_MASK));
+					java.awt.event.KeyEvent.VK_D, ActionEvent.CTRL_MASK));
 		}
 
 		@Override
