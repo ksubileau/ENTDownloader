@@ -558,12 +558,15 @@ public class ENTDownloader {
 
 		InputStream responseContentStream = entity.getContent();
 		FileOutputStream writeFile = new FileOutputStream(destinationPath);
+
 		byte[] buffer = new byte[1024];
+		long totalDownloaded = 0;
 		int read;
 
 		while ((read = responseContentStream.read(buffer)) > 0) {
 			writeFile.write(buffer, 0, read);
-			Broadcaster.fireDownloadedBytes(new DownloadedBytesEvent(read));
+			totalDownloaded += read;
+			Broadcaster.fireDownloadedBytes(new DownloadedBytesEvent(read, totalDownloaded));
 		}
 		writeFile.flush();
 		writeFile.close();

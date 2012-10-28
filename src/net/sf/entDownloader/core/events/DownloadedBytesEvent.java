@@ -26,6 +26,7 @@ package net.sf.entDownloader.core.events;
  */
 public class DownloadedBytesEvent extends Event {
 	private long bytesDownloaded = 0;
+	private long totalDownloaded = 0;
 
 	/**
 	 * Retourne le type d'événement porté par cette instance. Ici, retourne
@@ -40,17 +41,29 @@ public class DownloadedBytesEvent extends Event {
 	 * Construit un nouvel évènement DownloadedBytesEvent
 	 */
 	public DownloadedBytesEvent() {
-		this(-1);
+		this(-1, -1);
 	}
 
 	/**
 	 * Construit un nouvel évènement DownloadedBytesEvent
-	 * 
+	 *
 	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le
 	 *            dernier DownloadedBytesEvent.
 	 */
 	public DownloadedBytesEvent(long bytesDownloaded) {
+		this(bytesDownloaded, -1);
+	}
+
+	/**
+	 * Construit un nouvel évènement DownloadedBytesEvent
+	 *
+	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le
+	 *            dernier DownloadedBytesEvent.
+	 * @param totalDownloaded Nombre d'octets du fichier téléchargés au total.
+	 */
+	public DownloadedBytesEvent(long bytesDownloaded, long totalDownloaded) {
 		setBytesDownloaded(bytesDownloaded);
+		setTotalDownloaded(totalDownloaded);
 	}
 
 	/**
@@ -64,12 +77,28 @@ public class DownloadedBytesEvent extends Event {
 	/**
 	 * Définit le nombre d'octets du fichier téléchargés depuis le dernier
 	 * DownloadedBytesEvent.
-	 * 
+	 *
 	 * @param bytesDownloaded Nombre d'octets du fichier téléchargés depuis le
 	 *            dernier DownloadedBytesEvent.
 	 */
 	public void setBytesDownloaded(long bytesDownloaded) {
 		this.bytesDownloaded = bytesDownloaded;
+	}
+
+	/**
+	 * Retourne le nombre d'octets du fichier téléchargés au total.
+	 */
+	public long getTotalDownloaded() {
+		return totalDownloaded;
+	}
+
+	/**
+	 * Définit le nombre d'octets du fichier téléchargés au total.
+	 *
+	 * @param totalDownloaded Nombre d'octets du fichier téléchargés au total.
+	 */
+	public void setTotalDownloaded(long totalDownloaded) {
+		this.totalDownloaded = totalDownloaded;
 	}
 
 }

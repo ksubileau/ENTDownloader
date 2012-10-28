@@ -98,8 +98,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	private ENTDownloader entd;
 	private FS_File downloadingFile;
 	private File uploadingFile;
-	private long sizeDownloaded;
-
+	
 	public ShellMain(String[] args) {
 		System.out.println(productName + " v" + productVersion);
 		entd = ENTDownloader.getInstance();
@@ -692,7 +691,6 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	@Override
 	public void onStartDownload(StartDownloadEvent e) {
 		downloadingFile = e.getFile();
-		sizeDownloaded = 0;
 		pg.setDeterminate(true);
 		writeStatusMessage("Téléchargement du fichier "
 				+ downloadingFile.getName() + " en cours...");
@@ -716,8 +714,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 
 	@Override
 	public void onDownloadedBytes(DownloadedBytesEvent e) {
-		sizeDownloaded += e.getBytesDownloaded();
-		pg.setValue(Math.round(sizeDownloaded * 100f / downloadingFile
+		pg.setValue(Math.round(e.getTotalDownloaded() * 100f / downloadingFile
 				.getSize()));
 	}
 

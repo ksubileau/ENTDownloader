@@ -37,6 +37,7 @@ import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
 
 public class DownloadFrame extends javax.swing.JDialog {
 	//TODO checkbox fermer après téléchargement
+	//TODO L'utilisateur peut interagir avec la fenêtre principale durant le téléchargement.
 	private static final long serialVersionUID = -2404112024501545610L;
 	private JProgressBar downProgress;
 	private JLabel jLabel3;

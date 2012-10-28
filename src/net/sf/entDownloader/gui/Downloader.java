@@ -61,7 +61,6 @@ public class Downloader extends SwingWorker<Void, Void> implements
 	private List<FS_Element> downList;
 	private JFileChooser fileChooser;
 	private JFrame parent;
-	private long currentFileDownloaded;
 	private int nbFilesDownloaded;
 	private long totalSizeDownloaded;
 
@@ -225,6 +224,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						dispose();
 					}
 				}
 			}
@@ -278,18 +278,16 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 	@Override
 	public void onDownloadedBytes(final DownloadedBytesEvent e) {
-		currentFileDownloaded += e.getBytesDownloaded();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				downloadFrame.setCurrentFileDownloaded(currentFileDownloaded);
+				downloadFrame.setCurrentFileDownloaded(e.getTotalDownloaded());
 			}
 		});
 	}
 
 	@Override
 	public void onStartDownload(final StartDownloadEvent e) {
-		currentFileDownloaded = 0;
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
