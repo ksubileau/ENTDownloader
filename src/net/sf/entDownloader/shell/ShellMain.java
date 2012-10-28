@@ -540,6 +540,18 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		} catch (FileNotFoundException e) {
 			System.err.println("ENTDownloader: send: Fichier introuvable ou inaccessible");
 			return;
+		} catch (ENTInvalidElementNameException e) {
+			uploadingFile = null;
+			pg.setVisible(false);
+			pg.setDeterminate(false);
+			if (e.getType() == ENTInvalidElementNameException.ALREADY_USED)
+				System.err
+						.println("ENTDownloader: Impossible d'envoyer le fichier \""
+								+ e.getMessage() + "\" : Le fichier existe.");
+			else if (e.getType() == ENTInvalidElementNameException.FORBIDDEN_CHAR)
+				System.err
+				.println("ENTDownloader: Impossible d'envoyer le fichier \""
+						+ e.getMessage() + "\" : Nom de fichier invalide.");
 		} catch (IOException e) {
 			System.err.println("ENTDownloader: send: " + e.getLocalizedMessage());
 			return;

@@ -663,6 +663,21 @@ public class ENTDownloader {
 
 	/**
 	 * Envoi le fichier local <i>filepath</i> dans le dossier courant.
+	 * Le fichier sera enregistré dans le dossier courant et sous le
+	 * même nom que le fichier local.
+	 *
+	 * @param filepath
+	 *            Chemin du fichier local à envoyer.
+	 * @throws FileNotFoundException Le fichier source n'existe pas ou n'est
+	 * 			pas accessible.
+	 * @since 2.0.0
+	 */
+	public void sendFile(String filepath) throws IOException, ParseException {
+		sendFile(filepath, null);
+	}
+
+	/**
+	 * Envoi le fichier local <i>filepath</i> dans le dossier courant.
 	 * Le fichier sera enregistré dans le dossier courant et sous le nom
 	 * spécifié dans le paramètre <i>name</i>, ou sous le même nom que
 	 * le fichier local d'origine si le nouveau nom n'est pas indiqué dans
@@ -677,24 +692,26 @@ public class ENTDownloader {
 	 * @since 2.0.0
 	 */
 	public void sendFile(String filepath, String name) throws IOException, ParseException {
-		//TODO Gestion des erreurs (nom déjà utilisé, caractères interdits) post et pré envoi.
-		// Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi
+		//TODO Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi ?
 		// Test (envoi/réception, vérifier intégrité des données)
-		// Paramètre charset (mettre utf-8)
-		// Session expired
 		if (isLogin == false)
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
 
 		//Vérification de l'existence d'un fichier portant le nom indiqué
-		File file = new File(filepath).getCanonicalFile();
+		File file = new File(filepath);
 		if (!file.canRead()) {
 			throw new FileNotFoundException(filepath);
 		}
 
 		if (name == null || name.isEmpty())
-			name = filepath;
+			name = file.getName();
+
+		if (indexOf(name) != -1)
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, name);
+		else if (!Misc.preg_match("[A-Za-z0-9 ()\\-'!°&#_àäâãéêèëîïìôöòõûüùçñÀÄÂÃÉÈËÊÌÏÎÒÖÔÕÙÜÛÇÑ.]+", name))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, name);
 
 		Broadcaster.fireStartUpload(new StartUploadEvent(file));
 
@@ -709,12 +726,21 @@ public class ENTDownloader {
 	    mpEntity.addPart("modeDav", new StringBody("upload_mode"));
 	    mpEntity.addPart("Submit", new StringBody("Envoyer le fichier"));
 
-	    ContentBody cbFile = new FileBody(file, name, "application/octet-stream", null);
+	    ContentBody cbFile = new FileBody(file, name, "application/octet-stream", "UTF-8");
 	    mpEntity.addPart("input_file", cbFile);
 
 		request.setEntity(mpEntity);
 
 		HttpResponse response = httpclient.execute(request);
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+				.equals(CoreConfig.loginRequestURL)) {
+			isLogin = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
 
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		String pageContent = null;
@@ -722,6 +748,16 @@ public class ENTDownloader {
 
 		parsePage(pageContent);
 
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Impossible de traiter la requ&ecirc;te :<br\\s?/?> un fichier/dossier du m&ecirc;me nom existe d&eacute;j&agrave;.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, name);
+
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Il existe des caract&egrave;res non pris en charge dans le nom de votre ressource.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, name);
+		//TODO Les exceptions empêche le lancement de l'événement de fin d'upload : génant ?
 		Broadcaster.fireEndUpload(new EndUploadEvent(file));
 	}
 
