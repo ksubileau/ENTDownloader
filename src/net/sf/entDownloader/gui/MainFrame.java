@@ -105,7 +105,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		DirectoryChangedListener {
 
 	private static final long serialVersionUID = 925222114370143696L;
-	private ENTDownloader entd = ENTDownloader.getInstance();
+	private ENTDownloader entd = null;
 
 	private JMenuItem dld;
 	private JMenu navigationMenu;
@@ -1755,9 +1755,12 @@ public class MainFrame extends javax.swing.JFrame implements
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		try {
-			fileView.browseDirectory(entd.getDirectoryContent());
-		} catch (IllegalStateException e) {
+		if(entd != null)
+		{
+			try {
+				fileView.browseDirectory(entd.getDirectoryContent());
+			} catch (IllegalStateException e) {
+			}
 		}
 
 		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
@@ -1874,6 +1877,14 @@ public class MainFrame extends javax.swing.JFrame implements
 				.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
 		fileView.browseDirectory(entd.getDirectoryContent());
 		emptyDirLabel.setVisible(entd.getDirectoryContent().size() == 0);
+	}
+
+	/**
+	 * Recharge la référence à l'instance unique de
+	 * {@link net.sf.entDownloader.core.ENTDownloader ENTDownloader}.
+	 */
+	public void updateENTDInstance() {
+		entd = ENTDownloader.getInstance();
 	}
 
 	/**

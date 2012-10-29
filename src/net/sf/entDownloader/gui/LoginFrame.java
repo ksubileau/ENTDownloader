@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -80,7 +81,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 	private JPasswordField mdp;
 	private JLabel passLabel;
 	private JLabel idLabel;
-	private Thread loginThread;
+	private SwingWorker<Void, Void> loginThread;
 
 	/**
 	 * Auto-generated main method to display this JDialog
@@ -128,8 +129,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 				}
 				{
 					cancel = new JButton();
-					//FIXME Réactivation du bouton d'annulation de la connexion une fois le bug résolu.
-					//overlay.add(cancel);
+					overlay.add(cancel);
 					cancel.setText("Annuler");
 					cancel.setBounds(170, 118, 81, 29);
 					cancel.setMnemonic(java.awt.event.KeyEvent.VK_A);
@@ -305,7 +305,6 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 		wait2.setText("Authentification réussie. Initialisation en cours...");
 	}
 
-	//FIXME Le bouton annuler n'imterompt pas le thread : la connexion continue
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == confirm || 
@@ -313,22 +312,21 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 		{
 			wait2.setText("Connexion en cours, veuillez patientez...");
 			Broadcaster.addAuthenticationSucceededListener(this);
-			loginThread = new Thread() {
+			loginThread = new SwingWorker<Void, Void>() {
+				private boolean exceptionRaised  = false;
 				@Override
-				public void run() {
+				protected Void doInBackground() {
 					overlay.setVisible(true);
 					try {
-						if (ENTDownloader.getInstance().login(id.getText(), mdp.getPassword())) {
-							MainFrame mainFrame = (MainFrame) GuiMain.getMainFrame();
-							mainFrame.changeDirectory("/");
-							mainFrame.setExtendedState(mainFrame.getExtendedState()
-									| javax.swing.JFrame.MAXIMIZED_BOTH);;
-							mainFrame.setVisible(true);
-							dispose();
-						} else {
-							restartAfterFailed(true);
-						}
+						//TODO En cas d'annulation, la méthode login poursuit son execution inutilement.
+						//Des requêtes HTTP sont effectuées après l'annulation. Solution : Rendre la méthode
+						//login interruptible en ajoutant une logique d'arrêt dans la classe ENTDownloader.
+						//(Pb non critique)
+						ENTDownloader.getInstance().login(id.getText(), mdp.getPassword());
 					} catch (IOException e) {
+						if(isCancelled()) //Si la connexion a été annulée
+							return null; //On ignore l'erreur qui s'est produite post-annulation
+						exceptionRaised = true;
 						InetSocketAddress proxyAddress = 
 							(InetSocketAddress) ENTDownloader.getInstance().
 								getProxy().address();
@@ -339,7 +337,6 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						{
 							//L'erreur est due à une mauvaise configuration
 							//de proxy.
-							restartAfterFailed(false);
 							JOptionPane
 							.showMessageDialog(
 									LoginFrame.this,
@@ -362,16 +359,18 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						}
 						else //Une autre erreur, non liée au proxy.
 						{
-						JOptionPane
-								.showMessageDialog(
-										LoginFrame.this,
-										"Votre connexion Internet semble rencontrer un problème.\nAssurez-vous que votre ordinateur est connecté à Internet, "
-												+ "\net que vous avez correctement configuré les paramètres de proxy.",
-										"ENTDownloader - Service indisponible",
-										JOptionPane.ERROR_MESSAGE);
-						restartAfterFailed(false);
+							JOptionPane
+									.showMessageDialog(
+											LoginFrame.this,
+											"Votre connexion Internet semble rencontrer un problème.\nAssurez-vous que votre ordinateur est connecté à Internet, "
+													+ "\net que vous avez correctement configuré les paramètres de proxy.",
+											"ENTDownloader - Service indisponible",
+											JOptionPane.ERROR_MESSAGE);
 						}
 					} catch (ParseException e) {
+						if(isCancelled()) //Si la connexion a été annulée
+							return null; //On ignore l'erreur qui s'est produite post-annulation
+						exceptionRaised = true;
 						JOptionPane
 						.showMessageDialog(
 								LoginFrame.this,
@@ -384,11 +383,51 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						e.printStackTrace();
 						System.exit(1);
 					}
+					return null;
 				}
-	
+
+				@Override
+				protected void done() {
+					if(isCancelled())
+					{
+						//Sauvegarde la configuration de proxy
+						String pacFile = ENTDownloader.getInstance().getProxyFile();
+						java.net.Proxy proxy = null;
+						if(pacFile == null)
+							proxy = ENTDownloader.getInstance().getProxy();
+
+						//Réinitialise l'instance d'ENTDownloader
+						ENTDownloader.reset();
+
+						//Restaure la configuration de proxy
+						if(pacFile != null)
+							try {
+								ENTDownloader.getInstance().setProxy(pacFile);
+							} catch (Exception e) {
+								ENTDownloader.getInstance().setProxy(proxy);
+							}
+						else
+							ENTDownloader.getInstance().setProxy(proxy);
+
+						restartAfterFailed(false);
+					}
+					else
+					{
+						if (ENTDownloader.getInstance().isLogged()) {
+							MainFrame mainFrame = (MainFrame) GuiMain.getMainFrame();
+							mainFrame.updateENTDInstance();
+							mainFrame.changeDirectory("/");
+							mainFrame.setExtendedState(mainFrame.getExtendedState()
+									| javax.swing.JFrame.MAXIMIZED_BOTH);;
+							mainFrame.setVisible(true);
+							dispose();
+						} else {
+							restartAfterFailed(!exceptionRaised);
+						}
+					}
+				};
 			};
-			loginThread.setDaemon(true);
-			loginThread.start();
+			loginThread.execute();
 		} else if (e.getSource() == id && !id.getText().isEmpty()) {
 			mdp.requestFocus();
 		} else if (e.getSource() == proxyBtn) {
@@ -397,8 +436,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 			pxDial.setLocationRelativeTo(LoginFrame.this);
 			pxDial.setVisible(true);
 		} else if (e.getSource() == cancel) {
-			loginThread.stop();
-			restartAfterFailed(false);
+			loginThread.cancel(true);
 		}
 	}
 
