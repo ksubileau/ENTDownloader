@@ -72,7 +72,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
@@ -100,7 +99,7 @@ public class ENTDownloader {
 	private static ENTDownloader instance;
 
 	/** Flag indiquant si l'utilisateur est connecté ou non */
-	private boolean isLogin = false;
+	private boolean isLogged = false;
 
 	/** Liste des dossiers et des fichiers du dossier courant */
 	private List<FS_Element> directoryContent = null;
@@ -142,6 +141,17 @@ public class ENTDownloader {
 		return instance;
 	}
 
+	/**
+	 * Supprime l'instance en cours d'ENTDownloader.
+	 * Le prochain appel à {@link ENTDownloader#getInstance() getInstance()}
+	 * construira une nouvelle instance.
+	 * 
+	 * @since 2.0.0
+	 */
+	public static void reset() {
+		instance = null;
+	}
+
 	private ENTDownloader() {
 		httpclient = new DefaultHttpClient();
 
@@ -169,7 +179,7 @@ public class ENTDownloader {
 	 */
 	public boolean login(String login, char[] password)
 			throws java.io.IOException, ParseException {
-		if (isLogin == true)
+		if (isLogged())
 			return true;
 
 		//Chargement de la page de connexion.
@@ -219,7 +229,7 @@ public class ENTDownloader {
 			return false;
 		*/
 
-		isLogin = true;
+		isLogged = true;
 		this.login = login;
 		Broadcaster
 				.fireAuthenticationSucceeded(new AuthenticationSucceededEvent(
@@ -409,7 +419,7 @@ public class ENTDownloader {
 			throws ENTDirectoryNotFoundException,
 			ENTInvalidFS_ElementTypeException, ParseException,
 			ENTUnauthenticatedUserException, IOException {
-		if (isLogin == false)
+		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
@@ -452,7 +462,7 @@ public class ENTDownloader {
 		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& response.getFirstHeader("Location").getValue()
 						.equals(CoreConfig.loginRequestURL)) {
-			isLogin = false;
+			isLogged = false;
 			throw new ENTUnauthenticatedUserException(
 					"Session expired, please login again.",
 					ENTUnauthenticatedUserException.SESSION_EXPIRED);
@@ -507,7 +517,7 @@ public class ENTDownloader {
 	 *         normalement, <code>false</code> sinon.
 	 */
 	public boolean getFile(String name, String destination) throws IOException {
-		if (isLogin == false)
+		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
@@ -697,7 +707,7 @@ public class ENTDownloader {
 	public void sendFile(String filepath, String name) throws IOException, ParseException {
 		//TODO Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi ?
 		// Test (envoi/réception, vérifier intégrité des données)
-		if (isLogin == false)
+		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
@@ -739,7 +749,7 @@ public class ENTDownloader {
 		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& response.getFirstHeader("Location").getValue()
 				.equals(CoreConfig.loginRequestURL)) {
-			isLogin = false;
+			isLogged = false;
 			throw new ENTUnauthenticatedUserException(
 					"Session expired, please login again.",
 					ENTUnauthenticatedUserException.SESSION_EXPIRED);
@@ -773,7 +783,7 @@ public class ENTDownloader {
 	 */
 	public void createDirectory(String dirname) throws ParseException,
 			IOException {
-		if (isLogin == false)
+		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
@@ -794,7 +804,7 @@ public class ENTDownloader {
 		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& response.getFirstHeader("Location").getValue()
 						.equals(CoreConfig.loginRequestURL)) {
-			isLogin = false;
+			isLogged = false;
 			throw new ENTUnauthenticatedUserException(
 					"Session expired, please login again.",
 					ENTUnauthenticatedUserException.SESSION_EXPIRED);
@@ -830,7 +840,7 @@ public class ENTDownloader {
 	public void rename(String oldname, String newname) throws ParseException,
 			IOException {
 		//TODO Test
-		if (isLogin == false)
+		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
@@ -853,7 +863,7 @@ public class ENTDownloader {
 		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& response.getFirstHeader("Location").getValue()
 						.equals(CoreConfig.loginRequestURL)) {
-			isLogin = false;
+			isLogged = false;
 			throw new ENTUnauthenticatedUserException(
 					"Session expired, please login again.",
 					ENTUnauthenticatedUserException.SESSION_EXPIRED);
@@ -904,7 +914,7 @@ public class ENTDownloader {
 		//TODO Gestion des erreurs post et pré envoi (un des éléments n'existe pas entre autres).
 		// Test
 		// Vérifier présence chaine "La sélection a été supprimée" dans pageContent pour valider la suppression
-		if (isLogin == false)
+		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
@@ -923,7 +933,7 @@ public class ENTDownloader {
 		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& response.getFirstHeader("Location").getValue()
 						.equals(CoreConfig.loginRequestURL)) {
-			isLogin = false;
+			isLogged = false;
 			throw new ENTUnauthenticatedUserException(
 					"Session expired, please login again.",
 					ENTUnauthenticatedUserException.SESSION_EXPIRED);
@@ -1108,6 +1118,15 @@ public class ENTDownloader {
 	 */
 	public String getLogin() {
 		return login;
+	}
+
+	/**
+	 * Retourne vrai si l'utilisateur est connecté à l'ENT.
+	 * 
+	 * @since 2.0.0
+	 */
+	public boolean isLogged() {
+		return isLogged;
 	}
 
 	/**
