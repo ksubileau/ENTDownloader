@@ -1175,7 +1175,7 @@ public class ENTDownloader {
 	 * @see java.net.Proxy
 	 */
 	public void setProxy(Proxy proxy) {
-		if (proxy == null) {
+		if (proxy == null || proxy.equals(Proxy.NO_PROXY)) {
 			removeProxy();
 			return;
 		}
