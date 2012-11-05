@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -254,7 +255,12 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		Broadcaster.removeStartDownloadListener(this);
 		Broadcaster.removeEndDownloadListener(this);
 		Broadcaster.removeFileAlreadyExistsListener(this);
-		GuiBroadcaster.removeRequestDownloadAbortListener(this);
+		try {
+			GuiBroadcaster.removeRequestDownloadAbortListener(this);
+		} catch (ConcurrentModificationException e) {
+			e.printStackTrace();
+			//TODO: ConcurrentModificationException (suppresion d'un el de la liste en cours de parcours (fireRequestDownloadAbort->onRequestDownloadAbort->dispose)
+		}
 	}
 
 	private boolean isThereDirectories() {
