@@ -130,6 +130,8 @@ public class ENTDownloader {
 	 */
 	private String proxyFile = null;
 
+	private boolean downloadAborted = false;
+
 	/**
 	 * Récupère l'instance unique de la classe ENTDownloader.<br>
 	 * Remarque : le constructeur est rendu inaccessible
@@ -517,6 +519,15 @@ public class ENTDownloader {
 	 *         normalement, <code>false</code> sinon.
 	 */
 	public boolean getFile(String name, String destination) throws IOException {
+		downloadAborted = false;
+		return _getFile(name, destination);
+	}
+
+	/**
+	 * @see ENTDownloader#getFile(String, String)
+	 * @since 2.0.0
+	 */
+	private boolean _getFile(String name, String destination) throws IOException {
 		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
@@ -526,6 +537,9 @@ public class ENTDownloader {
 			throw new ENTFileNotFoundException("File not found");
 		else if (!directoryContent.get(pos).isFile())
 			throw new ENTInvalidFS_ElementTypeException(name + " isn't a file");
+
+		if(downloadAborted)
+			return false;
 
 		FS_File file = (FS_File) directoryContent.get(pos);
 
@@ -574,6 +588,13 @@ public class ENTDownloader {
 		int read;
 
 		while ((read = responseContentStream.read(buffer)) > 0) {
+			if(downloadAborted)
+			{
+				writeFile.flush();
+				writeFile.close();
+				request.abort();
+				return false;
+			}
 			writeFile.write(buffer, 0, read);
 			totalDownloaded += read;
 			Broadcaster.fireDownloadedBytes(new DownloadedBytesEvent(read, totalDownloaded));
@@ -626,6 +647,15 @@ public class ENTDownloader {
 	 * @return Le nombre de fichiers téléchargés
 	 */
 	public int getAllFiles(String destination, int maxdepth) throws IOException {
+		downloadAborted = false;
+		return _getAllFiles(destination, maxdepth);
+	}
+
+	/**
+	 * @see ENTDownloader#getAllFiles(String, int)
+	 * @since 2.0.0
+	 */
+	private int _getAllFiles(String destination, int maxdepth) throws IOException {
 		int i = 0;
 		if (directoryContent == null)
 			throw new IllegalStateException(
@@ -646,8 +676,12 @@ public class ENTDownloader {
 		List<FS_Element> directoryContentcp = new ArrayList<FS_Element>(
 				directoryContent);
 		for (FS_Element e : directoryContentcp)
+		{
+			if(downloadAborted)
+				return i;
+
 			if (e.isFile()) {
-				if (getFile(e.getName(), destination)) {
+				if (_getFile(e.getName(), destination)) {
 					++i;
 				}
 			} else if (maxdepth != 0) {
@@ -660,7 +694,7 @@ public class ENTDownloader {
 						e2.printStackTrace();
 					}
 				}
-				i += getAllFiles(destination + e.getName(), maxdepth - 1);
+				i += _getAllFiles(destination + e.getName(), maxdepth - 1);
 				try {
 					submitDirectory("..");
 				} catch (ParseException e1) {
@@ -671,7 +705,18 @@ public class ENTDownloader {
 					}
 				}
 			}
+		}
 		return i;
+	}
+
+	/**
+	 * Indique à l'instance que le ou les téléchargements en cours doivent être
+	 * interrompus dès que possible.
+	 *
+	 * @since 2.0.0
+	 */
+	public void abortDownload() {
+		downloadAborted  = true;
 	}
 
 	/**

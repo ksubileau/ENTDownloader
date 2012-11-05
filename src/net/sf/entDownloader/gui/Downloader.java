@@ -212,6 +212,8 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			entd.getAllFiles(savePath, -1);
 		} else { //Téléchargement unique ou partiel
 			for (Iterator<FS_Element> it = downList.iterator(); it.hasNext();) {
+				if(isCancelled())
+					return;
 				FS_Element el = it.next();
 				if (el.isFile()) {
 					entd.getFile(el.getName(), savePath);
@@ -315,6 +317,8 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 	@Override
 	public void onRequestDownloadAbort(RequestDownloadAbortEvent event) {
+		cancel(true);
+		ENTDownloader.getInstance().abortDownload();
 		downloadFrame.dispose();
 		dispose();
 	}

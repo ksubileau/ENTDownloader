@@ -20,7 +20,9 @@
  */
 package net.sf.entDownloader.gui;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -89,12 +91,11 @@ public class DownloadFrame extends javax.swing.JDialog {
 		getContentPane().setLayout(null);
 		{
 			abort = new JButton();
-			//FIXME Réactivation du bouton d'annulation du téléchargement une fois le bug résolu.
-			/*getContentPane().add(
+			getContentPane().add(
 					abort,
 					new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0,
 							GridBagConstraints.CENTER, GridBagConstraints.NONE,
-							new Insets(0, 0, 0, 0), 0, 0));*/
+							new Insets(0, 0, 0, 0), 0, 0));
 			abort.setText("Annuler");
 			abort.setBounds(308, 95, 79, 26);
 			abort.addActionListener(new ActionListener() {
