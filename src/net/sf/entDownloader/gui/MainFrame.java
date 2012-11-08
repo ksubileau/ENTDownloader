@@ -830,10 +830,6 @@ public class MainFrame extends javax.swing.JFrame implements
 		}
 	}
 
-	/**
-	 * Auto-generated main method to display this JFrame
-	 */
-
 	public MainFrame() {
 		super();
 		openDirAction = new OpenSelectedDirectoryAction();
@@ -873,12 +869,16 @@ public class MainFrame extends javax.swing.JFrame implements
 		setGuiEventsListener();
 	}
 
+	/**
+	 * @see javax.swing.JFrame#setVisible(boolean)
+	 */
 	@Override
-	public void setVisible(boolean arg0) throws ENTUnauthenticatedUserException {
-		if (arg0 && entd.getLogin() == null)
+	public void setVisible(boolean visibility) throws ENTUnauthenticatedUserException {
+		/* Empêche l'affichage de la fenêtre si l'utilisateur n'est pas connecté */
+		if (visibility && entd.getLogin() == null)
 			throw new ENTUnauthenticatedUserException(
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
-		super.setVisible(arg0);
+		super.setVisible(visibility);
 	}
 
 	private void initGUI() {
