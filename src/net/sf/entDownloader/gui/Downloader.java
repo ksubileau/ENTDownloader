@@ -183,11 +183,11 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			}
 			downloadFrame.setTotalInfos(nbFiles, totalsize);
 		} else {
-			downloadFrame.setTotalInfos(DownloadFrame.UNKNOWN,
-					DownloadFrame.UNKNOWN);
+			downloadFrame.setTotalInfos(DownloadFrame.UNDEFINED,
+					DownloadFrame.UNDEFINED);
 		}
 
-		downloadFrame.setTotalDownloaded(0, 0);
+		downloadFrame.setTotalTransferred(0, 0);
 		downloadFrame.setOpenWhenFinishedVisible(Desktop.isDesktopSupported()
 				&& Desktop.getDesktop().isSupported(
 						java.awt.Desktop.Action.BROWSE)
@@ -278,7 +278,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				downloadFrame.setTotalDownloaded(nbFilesDownloaded,
+				downloadFrame.setTotalTransferred(nbFilesDownloaded,
 						totalSizeDownloaded);
 			}
 		});
@@ -289,7 +289,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				downloadFrame.setCurrentFileDownloaded(e.getTotalDownloaded());
+				downloadFrame.setCurrentBytesTransferred(e.getTotalDownloaded());
 			}
 		});
 	}
@@ -301,7 +301,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			public void run() {
 				downloadFrame.setCurrentFileName(e.getFile().getName());
 				downloadFrame.setCurrentFileSize(e.getFile().getSize());
-				downloadFrame.setCurrentFileDownloaded(0);
+				downloadFrame.setCurrentBytesTransferred(0);
 			}
 		});
 	}
