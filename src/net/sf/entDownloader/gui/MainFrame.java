@@ -1867,7 +1867,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	 * Veuillez noter que cette méthode <u>n'actualise pas ces informations
 	 * depuis l'ENT</u>, mais uniquement <u>localement depuis le modèle</u>.
 	 */
-	private void updateFrameData() {
+	public void updateFrameData() {
 		String dirPath = entd.getDirectoryPath();
 		adressField.setText(dirPath);
 		parentDirAction.setEnabled(!dirPath.equals("/"));
