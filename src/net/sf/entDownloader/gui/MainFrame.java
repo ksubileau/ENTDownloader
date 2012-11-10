@@ -147,12 +147,14 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem createDir;
 	private JMenuItem rename;
 	private JMenuItem delete;
+	private JMenuItem send;
 	private JMenu fileMenu;
 	private JMenuBar jMenuBar;
 	private JButton DownloadAll_tool;
 	private JButton createDir_tool;
 	private JButton rename_tool;
 	private JButton delete_tool;
+	private JButton send_tool;
 	private JStatusBar statusBar;
 	private JButton refreshBtn;
 	private JButton goDirBtn;
@@ -162,6 +164,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem openDir;
 	private DownloadAction dldAction;
 	private DownloadAction dldAllAction;
+	private UploadAction sendAction;
 	private HomeDirAction homeDirAction;
 	private ParentDirAction parentDirAction;
 	private CreateDirAction createDirAction;
@@ -183,6 +186,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem createDirPopupIt;
 	private JMenuItem renamePopupIt;
 	private JMenuItem deletePopupIt;
+	private JMenuItem sendPopupIt;
 	private Action refreshAction;
 	private JMenuItem jMenuItem3;
 	private JMenuItem copyFilename;
@@ -681,6 +685,36 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	/**
+	 * Demande l'envoi de un ou plusieurs fichiers
+	 * 
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class UploadAction extends AbstractAction {
+
+		private static final long serialVersionUID = 2064025451072197209L;
+
+		/**
+		 * Construit une nouvelle action UploadAction
+		 */
+		public UploadAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Envoyer un ou plusieurs fichiers");
+			putValue(Action.NAME, "Envoyer");
+			putValue(Action.LARGE_ICON_KEY, loadIcon("upload.png"));
+			putValue(Action.SMALL_ICON, loadIcon("upload16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			new Uploader(MainFrame.this, fileChooser).startUpload();
+		}
+
+	}
+
+	/**
 	 * Demande de téléchargement de un ou plusieurs fichiers
 	 * 
 	 * @author Kévin Subileau
@@ -849,6 +883,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		});
 		dldAllAction = new DownloadAction(DownloadAction.ALL);
 		dldAction = new DownloadAction();
+		sendAction = new UploadAction();
 		refreshAction = new RefreshAction();
 		homeDirAction = new HomeDirAction();
 		createDirAction = new CreateDirAction();
@@ -1195,9 +1230,6 @@ public class MainFrame extends javax.swing.JFrame implements
 						fileMenu.add(copyFilename);
 					}
 					{
-						fileMenu.addSeparator();
-					}
-					{
 						createDir = new JMenuItem();
 						createDir.setAction(createDirAction);
 						fileMenu.add(createDir);
@@ -1208,6 +1240,9 @@ public class MainFrame extends javax.swing.JFrame implements
 						fileMenu.add(rename);
 					}
 					{
+						fileMenu.addSeparator();
+					}
+					{
 						dld = new JMenuItem();
 						dld.setAction(dldAction);
 						fileMenu.add(dld);
@@ -1216,6 +1251,14 @@ public class MainFrame extends javax.swing.JFrame implements
 						dldAll = new JMenuItem();
 						dldAll.setAction(dldAllAction);
 						fileMenu.add(dldAll);
+					}
+					{
+						send = new JMenuItem();
+						send.setAction(sendAction);
+						fileMenu.add(send);
+					}
+					{
+						fileMenu.addSeparator();
 					}
 					{
 						delete = new JMenuItem();
@@ -1474,13 +1517,17 @@ public class MainFrame extends javax.swing.JFrame implements
 				{
 					Download_tool = makeToolbarButton(dldAction);
 					DownloadAll_tool = makeToolbarButton(dldAllAction);
+					send_tool = makeToolbarButton(sendAction);
 					createDir_tool = makeToolbarButton(createDirAction);
 					rename_tool = makeToolbarButton(renameAction);
 					delete_tool = makeToolbarButton(deleteAction);
 					toolBar.add(createDir_tool);
 					toolBar.add(rename_tool);
+					toolBar.addSeparator();
 					toolBar.add(Download_tool);
 					toolBar.add(DownloadAll_tool);
+					toolBar.add(send_tool);
+					toolBar.addSeparator();
 					toolBar.add(delete_tool);
 				}
 			}
@@ -1524,6 +1571,14 @@ public class MainFrame extends javax.swing.JFrame implements
 					jMenuItem2 = new JMenuItem();
 					jMenuItem2.setAction(dldAllAction);
 					PopupMenu.add(jMenuItem2);
+				}
+				{
+					sendPopupIt = new JMenuItem();
+					sendPopupIt.setAction(sendAction);
+					PopupMenu.add(sendPopupIt);
+				}
+				{
+					PopupMenu.addSeparator();
 				}
 				{
 					deletePopupIt = new JMenuItem();
