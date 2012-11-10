@@ -64,6 +64,15 @@ public class Main {
 		for (String arg : args) {
 			if (arg.equalsIgnoreCase("-nogui")) {
 				gui = false;
+			} else if (arg.equalsIgnoreCase("-debug") || arg.equalsIgnoreCase("-debug2")) {
+				System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+				System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
+				System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.client", "debug");
+				System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl.conn", "debug");
+				System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.impl.client", "debug");
+				System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
+				if(arg.equalsIgnoreCase("-debug2"))
+					System.setProperty("org.apache.commons.logging.simplelog.defaultlog", "debug");
 			}
 		}
 		if (gui) {
