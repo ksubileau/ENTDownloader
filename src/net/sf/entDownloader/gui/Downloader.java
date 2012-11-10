@@ -54,6 +54,12 @@ import net.sf.entDownloader.gui.events.GuiBroadcaster;
 import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
 import net.sf.entDownloader.gui.events.RequestDownloadAbortListener;
 
+/**
+ * Gère le téléchargement simple ou multiple en mode graphique,
+ * et informe l'utilisateur de la progression de l'opération.
+ * 
+ * @author Kévin
+ */
 public class Downloader extends SwingWorker<Void, Void> implements
 		StartDownloadListener, DownloadedBytesListener, EndDownloadListener,
 		FileAlreadyExistsListener, RequestDownloadAbortListener {
@@ -132,10 +138,12 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 		if (isMultiple || isThereDirectories) { //Sélection multiple ou un dossier seulement
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			fileChooser.setApproveButtonToolTipText("Enregistre sous le dossier sélectionné");
 			downloadFrame
 					.setOpenWhenFinishedText("Ouvrir le dossier à la fin du téléchargement");
 		} else { //Selection unique d'un fichier
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fileChooser.setApproveButtonToolTipText("Enregistre le fichier sélectionné");
 			downloadFrame
 					.setOpenWhenFinishedText("Ouvrir le fichier à la fin du téléchargement");
 			if (!isThereDirectories) {
