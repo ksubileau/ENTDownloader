@@ -20,15 +20,10 @@
  */
 package net.sf.entDownloader.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 
 import net.sf.entDownloader.core.FS_File;
-import net.sf.entDownloader.gui.events.GuiBroadcaster;
-import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
 
 public class DownloadFrame extends ProgressFrame {
 	private static final long serialVersionUID = -1434579599151767167L;
@@ -41,13 +36,6 @@ public class DownloadFrame extends ProgressFrame {
 	protected void initGUI() {
 		super.initGUI();
 		this.setTitle("Téléchargement en cours...");
-		abort.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					GuiBroadcaster
-							.fireRequestDownloadAbort(new RequestDownloadAbortEvent());
-				}
-			});
 
 		jLabel3.setText("Téléchargé(s) :");
 		{

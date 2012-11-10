@@ -3,6 +3,9 @@ package net.sf.entDownloader.gui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -11,17 +14,19 @@ import javax.swing.JProgressBar;
 import javax.swing.WindowConstants;
 
 import net.sf.entDownloader.core.FS_File;
+import net.sf.entDownloader.gui.events.AbortTransferRequestEvent;
+import net.sf.entDownloader.gui.events.GuiBroadcaster;
 
 /**
  * Classe de base pour l'affichage de la progression d'un transfert.
- * 
+ *
  * @author Kévin
  * @since 2.0.0
  */
 public abstract class ProgressFrame extends JDialog {
 
 	private static final long serialVersionUID = -2004622024581545650L;
-	
+
 	/**
 	 * Composants de la boîte de dialogue
 	 */
@@ -33,7 +38,7 @@ public abstract class ProgressFrame extends JDialog {
 	protected JLabel globalProgress;
 	protected JLabel filename;
 	protected JButton abort;
-	
+
 	/**
 	 * Informations de progression
 	 */
@@ -44,13 +49,13 @@ public abstract class ProgressFrame extends JDialog {
 	protected long sizeTransferred = 0;
 	protected int nbFiles;
 	protected long size;
-	
+
 	/** 
 	 * Constante utilisée pour indiquer que le nombre de fichiers 
 	 * total ou la taille totale à transférer sont indéterminés. 
 	 */
 	public static final int UNDEFINED = -1;
-	
+
 	public ProgressFrame(JFrame owner) {
 		super(owner);
 		initGUI();
@@ -68,6 +73,13 @@ public abstract class ProgressFrame extends JDialog {
 					new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0,
 							GridBagConstraints.CENTER, GridBagConstraints.NONE,
 							new Insets(0, 0, 0, 0), 0, 0));
+			abort.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						GuiBroadcaster
+								.fireAbortTransferRequest(new AbortTransferRequestEvent());
+					}
+				});
 			abort.setText("Annuler");
 			abort.setBounds(308, 95, 79, 26);
 		}

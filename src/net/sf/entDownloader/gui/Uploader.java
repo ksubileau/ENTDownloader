@@ -43,8 +43,8 @@ import net.sf.entDownloader.core.events.UploadedBytesListener;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.gui.events.GuiBroadcaster;
-import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
-import net.sf.entDownloader.gui.events.RequestDownloadAbortListener;
+import net.sf.entDownloader.gui.events.AbortTransferRequestEvent;
+import net.sf.entDownloader.gui.events.AbortTransferRequestListener;
 
 /**
  * Gère l'envoi d'un fichier en mode graphique,
@@ -55,7 +55,7 @@ import net.sf.entDownloader.gui.events.RequestDownloadAbortListener;
  */
 public class Uploader extends SwingWorker<Void, Void> implements
 		StartUploadListener, UploadedBytesListener, EndUploadListener,
-		RequestDownloadAbortListener {
+		AbortTransferRequestListener {
 
 	private UploadFrame uploadFrame;
 	private JFileChooser fileChooser;
@@ -68,7 +68,7 @@ public class Uploader extends SwingWorker<Void, Void> implements
 	public Uploader(MainFrame owner, JFileChooser saveasChooser) {
 		this.parent = owner;
 		uploadFrame = new UploadFrame(owner);
-		GuiBroadcaster.addRequestDownloadAbortListener(this);
+		GuiBroadcaster.addAbortTransferRequestListener(this);
 
 		if (saveasChooser == null) {
 			saveasChooser = new JFileChooser();
@@ -180,7 +180,7 @@ public class Uploader extends SwingWorker<Void, Void> implements
 		Broadcaster.removeStartUploadListener(this);
 		Broadcaster.removeEndUploadListener(this);
 		try {
-			GuiBroadcaster.removeRequestDownloadAbortListener(this);
+			GuiBroadcaster.removeAbortTransferRequestListener(this);
 		} catch (ConcurrentModificationException e) {
 			e.printStackTrace();
 			//TODO: ConcurrentModificationException (suppression d'un el de la liste en cours de parcours (fireRequestDownloadAbort->onRequestDownloadAbort->dispose)
@@ -222,7 +222,7 @@ public class Uploader extends SwingWorker<Void, Void> implements
 	}
 
 	@Override
-	public void onRequestDownloadAbort(RequestDownloadAbortEvent event) {
+	public void onAbortTransferRequest(AbortTransferRequestEvent event) {
 		cancel(true);
 		//TODO Annulation de l'envoi
 		//ENTDownloader.getInstance().abortDownload();

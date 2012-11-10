@@ -51,8 +51,8 @@ import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartDownloadListener;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.gui.events.GuiBroadcaster;
-import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
-import net.sf.entDownloader.gui.events.RequestDownloadAbortListener;
+import net.sf.entDownloader.gui.events.AbortTransferRequestEvent;
+import net.sf.entDownloader.gui.events.AbortTransferRequestListener;
 
 /**
  * Gère le téléchargement simple ou multiple en mode graphique,
@@ -62,7 +62,7 @@ import net.sf.entDownloader.gui.events.RequestDownloadAbortListener;
  */
 public class Downloader extends SwingWorker<Void, Void> implements
 		StartDownloadListener, DownloadedBytesListener, EndDownloadListener,
-		FileAlreadyExistsListener, RequestDownloadAbortListener {
+		FileAlreadyExistsListener, AbortTransferRequestListener {
 
 	private DownloadFrame downloadFrame;
 	private List<FS_Element> downList;
@@ -97,7 +97,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			JFileChooser saveasChooser) {
 		this.parent = owner;
 		downloadFrame = new DownloadFrame(owner);
-		GuiBroadcaster.addRequestDownloadAbortListener(this);
+		GuiBroadcaster.addAbortTransferRequestListener(this);
 
 		if (downloadList != null) {
 			downList = new ArrayList<FS_Element>(downloadList);
@@ -267,7 +267,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		Broadcaster.removeEndDownloadListener(this);
 		Broadcaster.removeFileAlreadyExistsListener(this);
 		try {
-			GuiBroadcaster.removeRequestDownloadAbortListener(this);
+			GuiBroadcaster.removeAbortTransferRequestListener(this);
 		} catch (ConcurrentModificationException e) {
 			e.printStackTrace();
 			//TODO: ConcurrentModificationException (suppresion d'un el de la liste en cours de parcours (fireRequestDownloadAbort->onRequestDownloadAbort->dispose)
@@ -333,7 +333,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 	}
 
 	@Override
-	public void onRequestDownloadAbort(RequestDownloadAbortEvent event) {
+	public void onAbortTransferRequest(AbortTransferRequestEvent event) {
 		cancel(true);
 		ENTDownloader.getInstance().abortDownload();
 		downloadFrame.dispose();

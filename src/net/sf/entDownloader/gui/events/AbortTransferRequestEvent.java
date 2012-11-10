@@ -1,7 +1,7 @@
 /*
- *  RequestDownloadAbortListener.java
+ *  AbortTransferRequestEvent.java
  *      
- *  Copyright 2010-2011 Kévin Subileau. 
+ *  Copyright 2010-2012 Kévin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -20,19 +20,24 @@
  */
 package net.sf.entDownloader.gui.events;
 
-import net.sf.entDownloader.core.events.BroadcastListener;
-
 /**
- * Informe les observateurs que l'utilisateur a demandé l'annulation du ou des
- * téléchargement(s) en cours.
+ * Un événement qui indique que l'utilisateur a demandé
+ * l'annulation du ou des téléchargement(s) ou envoi en cours.
  */
-public interface RequestDownloadAbortListener extends BroadcastListener {
+public class AbortTransferRequestEvent extends GuiEvent {
 
 	/**
-	 * Appelée lorsque l'utilisateur a demandé l'annulation du ou des
-	 * téléchargement(s) en cours. Voir la documentation de
-	 * {@link net.sf.entDownloader.gui.events.RequestDownloadAbortEvent}
-	 * pour plus d'informations à propos de cet événement.
+	 * Retourne le type d'événement porté par cette instance. Ici, retourne
+	 * {@link GuiEvent#ABORT_TRANSFER_REQUEST_TYPE}
 	 */
-	public void onRequestDownloadAbort(RequestDownloadAbortEvent event);
+	@Override
+	public int getType() {
+		return GuiEvent.ABORT_TRANSFER_REQUEST_TYPE;
+	}
+
+	/**
+	 * Construit un nouvel évènement AbortTransferRequestEvent.
+	 */
+	public AbortTransferRequestEvent() {
+	}
 }

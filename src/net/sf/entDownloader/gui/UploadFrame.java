@@ -21,13 +21,8 @@
 package net.sf.entDownloader.gui;
 
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JFrame;
 import net.sf.entDownloader.core.FS_File;
-import net.sf.entDownloader.gui.events.GuiBroadcaster;
-import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
 
 /**
  * Informe l'utilisateur sur la progression de l'envoi
@@ -46,13 +41,6 @@ public class UploadFrame extends ProgressFrame {
 	protected void initGUI() {
 		super.initGUI();
 		this.setTitle("Envoi en cours...");
-		abort.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					GuiBroadcaster
-							.fireRequestDownloadAbort(new RequestDownloadAbortEvent());
-				}
-			});
 		
 		jLabel3.setText("Envoyé(s) :");
 	}

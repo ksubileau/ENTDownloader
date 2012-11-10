@@ -50,27 +50,27 @@ public class GuiBroadcaster {
 		}
 	}
 
-	/** Ajoute un observateur sur l'événement RequestDownloadAbort */
-	public static void addRequestDownloadAbortListener(
-			RequestDownloadAbortListener listener) {
-		Broadcaster.addListener(RequestDownloadAbortListener.class, listener);
+	/** Ajoute un observateur sur l'événement AbortTransferRequest */
+	public static void addAbortTransferRequestListener(
+			AbortTransferRequestListener listener) {
+		Broadcaster.addListener(AbortTransferRequestListener.class, listener);
 	}
 
-	/** Supprime un observateur sur l'événement RequestDownloadAbort */
-	public static void removeRequestDownloadAbortListener(
-			RequestDownloadAbortListener listener) {
+	/** Supprime un observateur sur l'événement AbortTransferRequest */
+	public static void removeAbortTransferRequestListener(
+			AbortTransferRequestListener listener) {
 		Broadcaster
-				.removeListener(RequestDownloadAbortListener.class, listener);
+				.removeListener(AbortTransferRequestListener.class, listener);
 	}
 
-	/** Avertit tous les observateurs de l'événement RequestDownloadAbort */
-	public static void fireRequestDownloadAbort(RequestDownloadAbortEvent event) {
+	/** Avertit tous les observateurs de l'événement AbortTransferRequest */
+	public static void fireAbortTransferRequest(AbortTransferRequestEvent event) {
 		Iterator<BroadcastListener> it = Broadcaster
-				.getListenerIterator(RequestDownloadAbortListener.class);
-		RequestDownloadAbortListener listener;
+				.getListenerIterator(AbortTransferRequestListener.class);
+		AbortTransferRequestListener listener;
 		while (it.hasNext()) {
-			listener = (RequestDownloadAbortListener) it.next();
-			listener.onRequestDownloadAbort(event);
+			listener = (AbortTransferRequestListener) it.next();
+			listener.onAbortTransferRequest(event);
 		}
 	}
 }
