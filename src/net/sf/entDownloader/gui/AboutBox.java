@@ -92,7 +92,7 @@ public class AboutBox extends javax.swing.JDialog {
 			copyright = new JLabel();
 			getContentPane().add(copyright);
 			copyright
-					.setText("<html>Copyright (c) 2010-2011 "
+					.setText("<html>Copyright (c) 2010-2012 "
 							+ CoreConfig.getString("ProductInfo.author")
 							+ ". "
 							+ CoreConfig.getString("ProductInfo.name")
