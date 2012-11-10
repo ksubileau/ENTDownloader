@@ -720,9 +720,8 @@ public class ENTDownloader {
 	}
 
 	/**
-	 * Envoi le fichier local <i>filepath</i> dans le dossier courant.
-	 * Le fichier sera enregistré dans le dossier courant et sous le
-	 * même nom que le fichier local.
+	 * Envoi le fichier local <i>filepath</i>. Le fichier sera enregistré
+	 * dans le dossier courant et sous le même nom que le fichier local.
 	 *
 	 * @param filepath
 	 *            Chemin du fichier local à envoyer.
@@ -735,21 +734,52 @@ public class ENTDownloader {
 	}
 
 	/**
-	 * Envoi le fichier local <i>filepath</i> dans le dossier courant.
-	 * Le fichier sera enregistré dans le dossier courant et sous le nom
-	 * spécifié dans le paramètre <i>name</i>, ou sous le même nom que
-	 * le fichier local d'origine si le nouveau nom n'est pas indiqué dans
-	 * <i>name</i>.<br>
+	 * Envoi le fichier local <i>filepath</i>. Le fichier sera enregistré
+	 * dans le dossier courant et sous le nom spécifié dans le paramètre
+	 * <i>name</i>, ou sous le même nom que le fichier local d'origine
+	 * si le nouveau nom n'est pas indiqué dans<i>name</i>.
 	 *
 	 * @param filepath
 	 *            Chemin du fichier local à envoyer.
 	 * @param name
-	 *            Nom sous lequel le fichier doit être enregistré sur l'ENT
+	 *            Nom sous lequel le fichier doit être enregistré sur l'ENT.
 	 * @throws FileNotFoundException Le fichier source n'existe pas ou n'est
 	 * 			pas accessible.
 	 * @since 2.0.0
 	 */
 	public void sendFile(String filepath, String name) throws IOException, ParseException {
+		sendFile(new File(filepath), name);
+	}
+
+	/**
+	 * Envoi le fichier local <i>file</i>. Le fichier sera enregistré dans
+	 * le dossier courant et sous le même nom que le fichier local.
+	 *
+	 * @param file
+	 *            Fichier local à envoyer.
+	 * @throws FileNotFoundException Le fichier source n'existe pas ou n'est
+	 * 			pas accessible.
+	 * @since 2.0.0
+	 */
+	public void sendFile(File file) throws IOException, ParseException {
+		sendFile(file, null);
+	}
+
+	/**
+	 * Envoi le fichier local <i>file</i>. Le fichier sera enregistré
+	 * dans le dossier courant et sous le nom spécifié dans le paramètre
+	 * <i>name</i>, ou sous le même nom que le fichier local d'origine
+	 * si le nouveau nom n'est pas indiqué dans<i>name</i>.
+	 *
+	 * @param file
+	 *            Fichier local à envoyer.
+	 * @param name
+	 *            Nom sous lequel le fichier doit être enregistré sur l'ENT.
+	 * @throws FileNotFoundException Le fichier source n'existe pas ou n'est
+	 * 			pas accessible.
+	 * @since 2.0.0
+	 */
+	public void sendFile(File file, String name) throws IOException, ParseException {
 		//TODO Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi ?
 		// Test (envoi/réception, vérifier intégrité des données)
 		if (!isLogged())
@@ -758,9 +788,8 @@ public class ENTDownloader {
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
 
 		//Vérification de l'existence d'un fichier portant le nom indiqué
-		File file = new File(filepath);
 		if (!file.canRead()) {
-			throw new FileNotFoundException(filepath);
+			throw new FileNotFoundException(file.getPath());
 		}
 
 		if (name == null || name.isEmpty())
