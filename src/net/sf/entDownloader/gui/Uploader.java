@@ -224,8 +224,7 @@ public class Uploader extends SwingWorker<Void, Void> implements
 	@Override
 	public void onAbortTransferRequest(AbortTransferRequestEvent event) {
 		cancel(true);
-		//TODO Annulation de l'envoi
-		//ENTDownloader.getInstance().abortDownload();
+		ENTDownloader.getInstance().abortUpload();
 		uploadFrame.dispose();
 		dispose();
 	}

@@ -130,7 +130,12 @@ public class ENTDownloader {
 	 */
 	private String proxyFile = null;
 
-	private boolean downloadAborted = false;
+	/**
+	 * Variables utilisées pour permettre l'interruption
+	 * des envois et téléchargements.
+	 */
+	private boolean transferAborted = false;
+	private HttpPost uploadRequest = null;
 
 	/**
 	 * Récupère l'instance unique de la classe ENTDownloader.<br>
@@ -519,7 +524,7 @@ public class ENTDownloader {
 	 *         normalement, <code>false</code> sinon.
 	 */
 	public boolean getFile(String name, String destination) throws IOException {
-		downloadAborted = false;
+		transferAborted = false;
 		return _getFile(name, destination);
 	}
 
@@ -538,7 +543,7 @@ public class ENTDownloader {
 		else if (!directoryContent.get(pos).isFile())
 			throw new ENTInvalidFS_ElementTypeException(name + " isn't a file");
 
-		if(downloadAborted)
+		if(transferAborted)
 			return false;
 
 		FS_File file = (FS_File) directoryContent.get(pos);
@@ -588,7 +593,7 @@ public class ENTDownloader {
 		int read;
 
 		while ((read = responseContentStream.read(buffer)) > 0) {
-			if(downloadAborted)
+			if(transferAborted)
 			{
 				writeFile.flush();
 				writeFile.close();
@@ -647,7 +652,7 @@ public class ENTDownloader {
 	 * @return Le nombre de fichiers téléchargés
 	 */
 	public int getAllFiles(String destination, int maxdepth) throws IOException {
-		downloadAborted = false;
+		transferAborted = false;
 		return _getAllFiles(destination, maxdepth);
 	}
 
@@ -677,7 +682,7 @@ public class ENTDownloader {
 				directoryContent);
 		for (FS_Element e : directoryContentcp)
 		{
-			if(downloadAborted)
+			if(transferAborted)
 				return i;
 
 			if (e.isFile()) {
@@ -716,7 +721,7 @@ public class ENTDownloader {
 	 * @since 2.0.0
 	 */
 	public void abortDownload() {
-		downloadAborted  = true;
+		transferAborted  = true;
 	}
 
 	/**
@@ -782,6 +787,9 @@ public class ENTDownloader {
 	public void sendFile(File file, String name) throws IOException, ParseException {
 		//TODO Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi ?
 		// Test (envoi/réception, vérifier intégrité des données)
+		transferAborted = false;
+		uploadRequest = null;
+
 		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
@@ -800,9 +808,10 @@ public class ENTDownloader {
 		else if (!Misc.preg_match("[A-Za-z0-9 ()\\-'!°&#_àäâãéêèëîïìôöòõûüùçñÀÄÂÃÉÈËÊÌÏÎÒÖÔÕÙÜÛÇÑ.]+", name))
 			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, name);
 
-		Broadcaster.fireStartUpload(new StartUploadEvent(file));
+		if(transferAborted)
+			return;
 
-		HttpPost request = new HttpPost(urlBuilder(CoreConfig.sendFileURL));
+		Broadcaster.fireStartUpload(new StartUploadEvent(file));
 
 		CountingMultipartEntity mpEntity = new CountingMultipartEntity(new ProgressListener() {
 			@Override
@@ -816,9 +825,19 @@ public class ENTDownloader {
 	    ContentBody cbFile = new FileBody(file, name, "application/octet-stream", "UTF-8");
 	    mpEntity.addPart("input_file", cbFile);
 
-		request.setEntity(mpEntity);
+		if(transferAborted)
+			return;
 
-		HttpResponse response = httpclient.execute(request);
+	    uploadRequest = new HttpPost(urlBuilder(CoreConfig.sendFileURL));
+		uploadRequest.setEntity(mpEntity);
+
+		HttpResponse response = httpclient.execute(uploadRequest);
+
+		if(transferAborted || uploadRequest.isAborted())
+		{
+			uploadRequest = null;
+			return;
+		}
 
 		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
 				&& response.getFirstHeader("Location").getValue()
@@ -833,6 +852,8 @@ public class ENTDownloader {
 		String pageContent = null;
 		pageContent = responseHandler.handleResponse(response);
 
+		uploadRequest = null;
+
 		parsePage(pageContent);
 
 		if (Misc.preg_match(
@@ -846,6 +867,17 @@ public class ENTDownloader {
 			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, name);
 		//TODO Les exceptions empêche le lancement de l'événement de fin d'upload : génant ?
 		Broadcaster.fireEndUpload(new EndUploadEvent(file));
+	}
+
+	/**
+	 * Indique à l'instance que l'envoi en cours doit être interrompu dès que possible.
+	 *
+	 * @since 2.0.0
+	 */
+	public void abortUpload() {
+		transferAborted = true;
+		if(uploadRequest != null)
+			uploadRequest.abort();
 	}
 
 	/**
