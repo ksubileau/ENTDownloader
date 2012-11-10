@@ -221,8 +221,11 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			entd.getAllFiles(savePath, -1);
 		} else { //Téléchargement unique ou partiel
 			for (Iterator<FS_Element> it = downList.iterator(); it.hasNext();) {
-				if(isCancelled())
+				if(isCancelled()) {
+					dispose();
+					downloadFrame.dispose();
 					return;
+				}
 				FS_Element el = it.next();
 				if (el.isFile()) {
 					entd.getFile(el.getName(), savePath);
