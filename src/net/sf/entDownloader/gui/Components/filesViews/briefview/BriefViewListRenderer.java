@@ -58,7 +58,7 @@ public class BriefViewListRenderer extends DefaultListCellRenderer {
 
 		FS_Element f = (FS_Element) value;
 		setForeground(list.getForeground());
-		c.setIcon(Misc.getIcon(f));
+		c.setIcon(Misc.getFileTypeIcon(f));
 		return c;
 	}
 }

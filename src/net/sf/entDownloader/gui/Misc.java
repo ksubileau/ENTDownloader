@@ -52,7 +52,7 @@ public class Misc {
 	 *            The file for which we want get the icon
 	 * @return the icon associated with the file
 	 */
-	public static Icon getIcon(FS_Element file) {
+	public static Icon getFileTypeIcon(FS_Element file) {
 		Icon icon = null;
 		if (file.isDirectory()) {
 			icon = (Icon) UIManager.get("FileView.directoryIcon");
