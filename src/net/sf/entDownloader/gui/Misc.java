@@ -43,6 +43,9 @@ public class Misc {
 	private static Hashtable<String, Icon> fileIcons = new Hashtable<String, Icon>();
 	private static Hashtable<String, String> fileDescription = new Hashtable<String, String>();
 
+	private static Icon dirIcon = null;
+	private static Icon fileIcon = null;
+
 	/**
 	 * Retrieves the icon to associate with this file. If the icon returned by
 	 * the file is <code>null</code> then
@@ -55,7 +58,9 @@ public class Misc {
 	public static Icon getFileTypeIcon(FS_Element file) {
 		Icon icon = null;
 		if (file.isDirectory()) {
-			icon = (Icon) UIManager.get("FileView.directoryIcon");
+			if(dirIcon == null)
+				dirIcon = loadIcon("folder.png");
+			icon = dirIcon;
 		} else if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
 			String extension = getExtension(file.getName());
 			if ((icon = fileIcons.get(extension)) == null) {
@@ -66,12 +71,16 @@ public class Misc {
 					icon = view.getSystemIcon(tempfile);
 					tempfile.delete();
 				} catch (IOException e) {
-					icon = (Icon) UIManager.get("FileView.fileIcon");
+					if(fileIcon == null)
+						fileIcon = loadIcon("file16.png");
+					icon = fileIcon;
 				}
 				fileIcons.put(extension, icon);
 			}
 		} else {
-			icon = (Icon) UIManager.get("FileView.fileIcon");
+			if(fileIcon == null)
+				fileIcon = loadIcon("file16.png");
+			icon = fileIcon;
 		}
 		return icon;
 	}
