@@ -31,7 +31,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.swing.AbstractButton;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileSystemView;
 
@@ -230,5 +232,49 @@ public class Misc {
 			}
 		} else
 			return false;
+	}
+
+	/**
+	 * Charge une icône à partir du fichier image indiqué.
+	 * 
+	 * @param imageName Nom du fichier image.
+	 * @param altText Une courte description de l'image.
+	 * @return L'instance de {@link #javax.swing.ImageIcon ImageIcon}
+	 * 		   représentant l'icône demandée.
+	 */
+	public static ImageIcon loadIcon(String imageName, String altText) {
+		String imgLocation = "net/sf/entDownloader/ressources/" + imageName;
+		URL imageURL = MainFrame.class.getClassLoader()
+				.getResource(imgLocation);
+		if (imageURL != null) //image found
+			return new ImageIcon(imageURL, altText);
+		else { //no image found
+			System.err.println("Resource not found: " + imgLocation);
+			return null;
+		}
+	}
+
+	/**
+	 * Charge une icône à partir du fichier image indiqué.
+	 * 
+	 * @param imageName Nom du fichier image.
+	 * @return L'instance de {@link #javax.swing.ImageIcon ImageIcon}
+	 * 		   représentant l'icône demandée.
+	 */
+	public static ImageIcon loadIcon(String imageName) {
+		return loadIcon(imageName, null);
+	}
+
+	/**
+	 * Définit l'icône du bouton à partir du fichier image indiqué.
+	 * 
+	 * @param btn Le bouton dont l'icône est à définir.
+	 * @param imageName Nom du fichier image.
+	 */
+	public static void setButtonIcon(AbstractButton btn, String imageName) {
+		ImageIcon icon = loadIcon(imageName);
+		if (icon != null) {
+			btn.setIcon(icon);
+		}
 	}
 }

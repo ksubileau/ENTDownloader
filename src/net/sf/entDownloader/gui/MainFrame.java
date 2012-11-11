@@ -38,13 +38,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -209,7 +207,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SHORT_DESCRIPTION,
 					"Naviguer vers le dossier sélectionné.");
 			putValue(Action.NAME, "Ouvrir");
-			ImageIcon icon = loadIcon("folder-open.png");
+			ImageIcon icon = Misc.loadIcon("folder-open.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O);
@@ -246,7 +244,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public RefreshAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Actualiser");
 			putValue(Action.NAME, "Actualiser");
-			ImageIcon icon = loadIcon("refresh.png");
+			ImageIcon icon = Misc.loadIcon("refresh.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
@@ -277,7 +275,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public HomeDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Dossier racine");
 			putValue(Action.NAME, "Dossier racine");
-			ImageIcon icon = loadIcon("home.png");
+			ImageIcon icon = Misc.loadIcon("home.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
@@ -308,7 +306,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public ParentDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Dossier parent");
 			putValue(Action.NAME, "Dossier parent");
-			ImageIcon icon = loadIcon("parent.png");
+			ImageIcon icon = Misc.loadIcon("parent.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
@@ -342,7 +340,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public PreviousDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Précédent");
 			putValue(Action.NAME, "Précédent");
-			ImageIcon icon = loadIcon("previous.png");
+			ImageIcon icon = Misc.loadIcon("previous.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
@@ -397,7 +395,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public NextDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Suivant");
 			putValue(Action.NAME, "Suivant");
-			ImageIcon icon = loadIcon("next.png");
+			ImageIcon icon = Misc.loadIcon("next.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
@@ -448,8 +446,8 @@ public class MainFrame extends javax.swing.JFrame implements
 		public CreateDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Créer un nouveau dossier");
 			putValue(Action.NAME, "Nouveau dossier");
-			putValue(Action.LARGE_ICON_KEY, loadIcon("folder-new.png"));
-			putValue(Action.SMALL_ICON, loadIcon("folder-new16.png"));
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("folder-new.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("folder-new16.png"));
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_V);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_N, ActionEvent.CTRL_MASK));
@@ -519,8 +517,8 @@ public class MainFrame extends javax.swing.JFrame implements
 		public RenameAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Renommer l'élément sélectionné");
 			putValue(Action.NAME, "Renommer");
-			putValue(Action.LARGE_ICON_KEY, loadIcon("rename.png"));
-			putValue(Action.SMALL_ICON, loadIcon("rename16.png"));
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("rename.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("rename16.png"));
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_M);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_R, ActionEvent.CTRL_MASK));
@@ -604,8 +602,8 @@ public class MainFrame extends javax.swing.JFrame implements
 		public DeleteAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Supprimer l'élément sélectionné");
 			putValue(Action.NAME, "Supprimer");
-			putValue(Action.LARGE_ICON_KEY, loadIcon("delete.png"));
-			putValue(Action.SMALL_ICON, loadIcon("delete16.png"));
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("delete.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("delete16.png"));
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_D, ActionEvent.CTRL_MASK));
@@ -700,8 +698,8 @@ public class MainFrame extends javax.swing.JFrame implements
 		public UploadAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Envoyer un ou plusieurs fichiers");
 			putValue(Action.NAME, "Envoyer");
-			putValue(Action.LARGE_ICON_KEY, loadIcon("upload.png"));
-			putValue(Action.SMALL_ICON, loadIcon("upload16.png"));
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("upload.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("upload16.png"));
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_E, ActionEvent.CTRL_MASK));
@@ -770,8 +768,8 @@ public class MainFrame extends javax.swing.JFrame implements
 						"Télécharger tous les dossiers et fichiers"
 								+ " du dossier courant");
 				putValue(Action.NAME, "Télécharger le dossier courant");
-				putValue(Action.LARGE_ICON_KEY, loadIcon("downall.png"));
-				putValue(Action.SMALL_ICON, loadIcon("downall16.png"));
+				putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("downall.png"));
+				putValue(Action.SMALL_ICON, Misc.loadIcon("downall16.png"));
 				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
 				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 						KeyEvent.VK_T, ActionEvent.CTRL_MASK
@@ -782,8 +780,8 @@ public class MainFrame extends javax.swing.JFrame implements
 						"Télécharger le(s) dossier(s) et fichier(s) "
 								+ "sélectionné(s)");
 				putValue(Action.NAME, "Télécharger la sélection");
-				putValue(Action.LARGE_ICON_KEY, loadIcon("down.png"));
-				putValue(Action.SMALL_ICON, loadIcon("down16.png"));
+				putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("down.png"));
+				putValue(Action.SMALL_ICON, Misc.loadIcon("down16.png"));
 				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 						KeyEvent.VK_T, ActionEvent.CTRL_MASK));
@@ -813,7 +811,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SHORT_DESCRIPTION,
 					"Copier le nom du fichier sélectionné dans le presse-papier.");
 			putValue(Action.NAME, "Copier le nom du fichier");
-			ImageIcon icon = loadIcon("clipboard.png");
+			ImageIcon icon = Misc.loadIcon("clipboard.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
@@ -1105,7 +1103,7 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					goDirBtn = new JButton();
-					setIcon(goDirBtn, "go.png");
+					Misc.setButtonIcon(goDirBtn, "go.png");
 					goDirBtn.setMargin(new Insets(0, 0, 0, 0));
 					goDirBtn.setToolTipText("Aller");
 					goDirBtn.setMinimumSize(new Dimension(24, 24));
@@ -1126,7 +1124,7 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					resetPathBtn = new JButton();
-					setIcon(resetPathBtn, "x.png");
+					Misc.setButtonIcon(resetPathBtn, "x.png");
 					resetPathBtn.setMargin(new Insets(0, 0, 0, 0));
 					resetPathBtn.setToolTipText("Annuler");
 					resetPathBtn.setMinimumSize(new Dimension(24, 24));
@@ -1166,7 +1164,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
-					setIcon(listViewBtn, "listview.png");
+					Misc.setButtonIcon(listViewBtn, "listview.png");
 					listViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					listViewBtn.setToolTipText("Vue liste");
 					listViewBtn.setMinimumSize(new Dimension(24, 24));
@@ -1191,7 +1189,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
-					setIcon(detailsViewBtn, "detailsview.png");
+					Misc.setButtonIcon(detailsViewBtn, "detailsview.png");
 					detailsViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					detailsViewBtn.setToolTipText("Vue détails");
 					detailsViewBtn.setMinimumSize(new Dimension(24, 24));
@@ -1272,7 +1270,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						exit = new JMenuItem();
 						fileMenu.add(exit);
 						exit.setAction(new ExitAction());
-						setIcon(exit, "quit.png");
+						Misc.setButtonIcon(exit, "quit.png");
 					}
 				}
 				{
@@ -1314,7 +1312,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						ListItem = new JRadioButtonMenuItem();
 						affichMenu.add(ListItem);
-						setIcon(ListItem, "listview.png");
+						Misc.setButtonIcon(ListItem, "listview.png");
 						ListItem.setText("Liste");
 						ListItem.addActionListener(new ActionListener() {
 							@Override
@@ -1327,7 +1325,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						DetailItem = new JRadioButtonMenuItem();
 						affichMenu.add(DetailItem);
-						setIcon(DetailItem, "detailsview.png");
+						Misc.setButtonIcon(DetailItem, "detailsview.png");
 						DetailItem.setText("Détails");
 						DetailItem.addActionListener(new ActionListener() {
 							@Override
@@ -1350,7 +1348,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						onlineHelp.setMnemonic(KeyEvent.VK_I);
 						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(
 								KeyEvent.VK_F1, 0));
-						setIcon(onlineHelp, "help.png");
+						Misc.setButtonIcon(onlineHelp, "help.png");
 						onlineHelp.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -1374,7 +1372,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						help.add(website);
 						website.setText("Site Web");
 						website.setMnemonic(KeyEvent.VK_W);
-						setIcon(website, "website.png");
+						Misc.setButtonIcon(website, "website.png");
 						website.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -1388,7 +1386,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						help.add(fbpage);
 						fbpage.setText("Page Facebook");
 						fbpage.setMnemonic(KeyEvent.VK_K);
-						setIcon(fbpage, "fb.png");
+						Misc.setButtonIcon(fbpage, "fb.png");
 						fbpage.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -1402,7 +1400,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						help.add(checkUpdate);
 						checkUpdate.setText("Rechercher des mises à jour...");
 						checkUpdate.setMnemonic(KeyEvent.VK_J);
-						setIcon(checkUpdate, "checkUpdate.png");
+						Misc.setButtonIcon(checkUpdate, "checkUpdate.png");
 						checkUpdate.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -1449,7 +1447,7 @@ public class MainFrame extends javax.swing.JFrame implements
 								new AboutBox(MainFrame.this);
 							}
 						});
-						setIcon(about, "info.png");
+						Misc.setButtonIcon(about, "info.png");
 					}
 				}
 			}
@@ -1668,7 +1666,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			ActionListener listener, String actionCommand, String toolTipText,
 			String altText) {
 		//Look for the image.
-		ImageIcon icon = loadIcon(imageName, altText);
+		ImageIcon icon = Misc.loadIcon(imageName, altText);
 
 		//Create and initialize the button.
 		JButton button = new JButton();
@@ -1696,29 +1694,6 @@ public class MainFrame extends javax.swing.JFrame implements
 		button.setFocusable(false);
 		button.setHideActionText(true);
 		return button;
-	}
-
-	protected static ImageIcon loadIcon(String imageName, String altText) {
-		String imgLocation = "net/sf/entDownloader/ressources/" + imageName;
-		URL imageURL = MainFrame.class.getClassLoader()
-				.getResource(imgLocation);
-		if (imageURL != null) //image found
-			return new ImageIcon(imageURL, altText);
-		else { //no image found
-			System.err.println("Resource not found: " + imgLocation);
-			return null;
-		}
-	}
-
-	protected static ImageIcon loadIcon(String imageName) {
-		return loadIcon(imageName, null);
-	}
-
-	protected static void setIcon(AbstractButton btn, String imageName) {
-		ImageIcon icon = loadIcon(imageName);
-		if (icon != null) {
-			btn.setIcon(icon);
-		}
 	}
 
 	private String dirInfos() {
