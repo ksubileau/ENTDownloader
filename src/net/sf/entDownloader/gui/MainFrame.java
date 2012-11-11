@@ -306,7 +306,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public ParentDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Dossier parent");
 			putValue(Action.NAME, "Dossier parent");
-			ImageIcon icon = Misc.loadIcon("parent.png");
+			ImageIcon icon = Misc.loadIcon("folder-parent.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
