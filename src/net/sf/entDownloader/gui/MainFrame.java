@@ -1944,7 +1944,9 @@ public class MainFrame extends javax.swing.JFrame implements
 		userNameLabel
 				.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
 		fileView.browseDirectory(entd.getDirectoryContent());
-		emptyDirLabel.setVisible(entd.getDirectoryContent().size() == 0);
+		boolean isEmpty = entd.getDirectoryContent().size() == 0;
+		emptyDirLabel.setVisible(isEmpty);
+		dldAllAction.setEnabled(!isEmpty);
 	}
 
 	/**
