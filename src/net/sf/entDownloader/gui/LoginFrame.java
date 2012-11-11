@@ -39,7 +39,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -72,7 +71,6 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 	private JTextField id;
 	private JLabel wait2;
 	private JLabel wait;
-	private JPanel jPanel1;
 	private JFadePanel overlay;
 	private JLabel imgPass;
 	private JLabel invalidCredentials;
@@ -142,22 +140,15 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 					passLabel.setText("Mot de passe :");
 				}
 				{
-					jPanel1 = new JPanel();
-					jPanel1.setLayout(null);
-					jPanel1.setSize(70, 70);
-					jPanel1.setOpaque(false);
-					{
-						imgPass = new JLabel();
-						jPanel1.add(imgPass, "Center"); //$NON-NLS-1$
-						imgPass.setIcon(new ImageIcon(
-								getClass()
-										.getClassLoader()
-										.getResource(
-												"net/sf/entDownloader/ressources/padlockandkeys.png"))); //$NON-NLS-1$
-						imgPass.setBounds(0, 0, 78, 74);
-						imgPass.setBackground(new java.awt.Color(255, 255, 255));
-						imgPass.setHorizontalAlignment(SwingConstants.CENTER);
-					}
+					imgPass = new JLabel();
+					imgPass.setIcon(new ImageIcon(
+							getClass()
+									.getClassLoader()
+									.getResource(
+											"net/sf/entDownloader/ressources/padlockandkeys.png"))); //$NON-NLS-1$
+					imgPass.setBounds(0, 0, 78, 74);
+					imgPass.setBackground(new java.awt.Color(255, 255, 255));
+					imgPass.setHorizontalAlignment(SwingConstants.CENTER);
 				}
 				{
 					invite = new JLabel();
@@ -211,19 +202,16 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 10, 5),
 							0, 0));
-					confirm.setText("OK");
+					confirm.setText("Connexion");
 					confirm.setBounds(0, 0, 100, 100);
 					confirm.setPreferredSize(new java.awt.Dimension(47, 23));
-					confirm.setMnemonic(java.awt.event.KeyEvent.VK_O);
+					confirm.setMnemonic(java.awt.event.KeyEvent.VK_C);
 					confirm.addActionListener(this);
 					confirm.setEnabled(false);
 				}
 				{
 					quit = new JButton();
-					getContentPane().add(quit, new GridBagConstraints(4, 5, 2, 1, 0.0,
-							0.0, GridBagConstraints.CENTER,
-							GridBagConstraints.NONE, new Insets(0, 5, 10, 3),
-							0, 0));
+					getContentPane().add(quit, new GridBagConstraints(4, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
 					getContentPane().add(id, new GridBagConstraints(2, 2, 3, 1, 0.0,
 							0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
@@ -240,9 +228,9 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 							0.0, 0.0, GridBagConstraints.EAST,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0,
 							0));
-					getContentPane().add(jPanel1, new GridBagConstraints(0, 1, 1, 4,
+					getContentPane().add(imgPass, new GridBagConstraints(0, 1, 1, 4,
 							0.0, 0.0, GridBagConstraints.CENTER,
-							GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0,
+							GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0,
 							0));
 					getContentPane().add(invalidCredentials, new GridBagConstraints(1,
 							1, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
@@ -257,20 +245,17 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						getContentPane().add(proxyBtn, new GridBagConstraints(0, 5, 1,
 								1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 								GridBagConstraints.NONE,
-								new Insets(0, 5, 5, 0), 0, 0));
+								new Insets(0, 10, 5, 0), 0, 0));
 						proxyBtn.setText("Proxy...");
 						proxyBtn.setMnemonic(java.awt.event.KeyEvent.VK_P);
 						proxyBtn.addActionListener(this);
 					}
 					quit.setAction(new MainFrame.ExitAction());
 				}
-				defaultLayout.rowWeights = new double[] { 0.03, 0.0, 0.01,
-						0.01, 0.1, 0.0 };
-				defaultLayout.rowHeights = new int[] { 7, 10, 7, 7, 20, 7 };
-				defaultLayout.columnWeights = new double[] { 0.0, 0.0, 0.1,
-						0.0, 0.0, 0.0, 0.0 };
-				defaultLayout.columnWidths = new int[] { 77, 130, 20, 7, 38,
-						20, 8 };
+				defaultLayout.rowWeights = new double[] {0.03, 0.0, 0.01, 0.0, 0.1, 0.0};
+				defaultLayout.rowHeights = new int[] {7, 14, 7, 39, 20, 7};
+				defaultLayout.columnWeights = new double[] {0.0, 0.0, 0.1, 0.0, 0.0, 0.0};
+				defaultLayout.columnWidths = new int[] {97, 95, 30, 7, 38, 15};
 			}
 			this.addWindowListener(new WindowAdapter() {
 				@Override
@@ -280,7 +265,6 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 			});
 			this.setIconImage(GuiMain.getAppIcon());
 			{
-				jPanel1.setBounds(18, 55, 78, 74);
 				invalidCredentials.setBounds(147, 55, 0, 0);
 				invalidCredentials
 						.setHorizontalTextPosition(SwingConstants.CENTER);
