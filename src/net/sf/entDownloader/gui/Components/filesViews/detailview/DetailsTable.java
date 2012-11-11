@@ -29,6 +29,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import net.sf.entDownloader.core.FS_Element;
+import net.sf.entDownloader.gui.Misc;
 import net.sf.entDownloader.gui.events.DoubleClickOnRowEvent;
 import net.sf.entDownloader.gui.events.GuiBroadcaster;
 
@@ -37,6 +38,7 @@ public class DetailsTable extends JTable {
 	private static final long serialVersionUID = 2480368648071210873L;
 
 	private DetailsTableCellRenderer renderer = new DetailsTableCellRenderer();
+	private int zoom = Misc.SMALL;
 
 	public DetailsTable() {
 		super();
@@ -88,5 +90,19 @@ public class DetailsTable extends JTable {
 		if (cellBounds != null) {
 			scrollRectToVisible(cellBounds);
 		}
+	}
+
+	public void setZoomLevel(int zoom) {
+		if(zoom==Misc.MEDIUM) {
+			setRowHeight(35);
+			this.zoom = zoom;
+		} else {
+			setRowHeight(19);
+			this.zoom = Misc.SMALL;
+		}
+	}
+
+	public int getZoomLevel() {
+		return zoom;
 	}
 }

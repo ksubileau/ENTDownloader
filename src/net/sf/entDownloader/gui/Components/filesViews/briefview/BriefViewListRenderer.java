@@ -38,8 +38,19 @@ public class BriefViewListRenderer extends DefaultListCellRenderer {
 	private CellBorder border = new CellBorder(
 			net.sf.entDownloader.core.CoreConfig.getForegroundColor(), 1, true);
 
+	private int iconSize = Misc.SMALL;
+
 	public BriefViewListRenderer() {
 		super();
+	}
+	
+	public void setIconSize(int size) {
+		if(size == Misc.MEDIUM || size == Misc.SMALL)
+			this.iconSize = size;
+	}
+	
+	public int getIconSize() {
+		return this.iconSize;
 	}
 
 	@Override
@@ -58,7 +69,7 @@ public class BriefViewListRenderer extends DefaultListCellRenderer {
 
 		FS_Element f = (FS_Element) value;
 		setForeground(list.getForeground());
-		c.setIcon(Misc.getFileTypeIcon(f));
+		c.setIcon(Misc.getFileTypeIcon(f, iconSize));
 		return c;
 	}
 }

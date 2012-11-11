@@ -118,6 +118,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private ButtonGroup affichGroup;
 	private JRadioButtonMenuItem DetailItem;
 	private JRadioButtonMenuItem ListItem;
+	private JMenuItem zoom;
 	private JMenu affichMenu;
 	private ListView fileView;
 	private JButton parentBtn;
@@ -1335,6 +1336,24 @@ public class MainFrame extends javax.swing.JFrame implements
 						});
 						affichGroup.add(DetailItem);
 					}
+					{
+						affichMenu.addSeparator();
+					}
+					{
+						zoom = new JMenuItem();
+						affichMenu.add(zoom);
+						zoom.setText("Zoom -");
+						zoom.setMnemonic(KeyEvent.VK_Z);
+						zoom.setAccelerator(KeyStroke.getKeyStroke(
+								java.awt.event.KeyEvent.VK_Z,ActionEvent.ALT_MASK));
+						Misc.setButtonIcon(zoom, "zoomout.png");
+						zoom.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								setZoomLevel((fileView.getZoomLevel()+1)%2);
+							}
+						});
+					}
 				}
 				{
 					help = new JMenu();
@@ -1775,9 +1794,11 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	protected void setFileView(Class<? extends ListView> view) {
+		int zoom = Misc.MEDIUM; //Valeur de zoom par défaut
 		if (fileView != null && fileView.getClass() == view)
 			return;
 		if (fileView != null) {
+			zoom = fileView.getZoomLevel();
 			browserLayeredPane.remove(fileView);
 		}
 		try {
@@ -1793,6 +1814,8 @@ public class MainFrame extends javax.swing.JFrame implements
 			}
 		}
 
+		setZoomLevel(zoom);
+		
 		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 						"enterPressedAction");
@@ -1847,6 +1870,21 @@ public class MainFrame extends javax.swing.JFrame implements
 			}
 		});
 		updatePopupMenu();
+	}
+
+	protected void setZoomLevel(int zoom) {
+		if(fileView == null)
+			return;
+		if(zoom == Misc.MEDIUM) {
+			fileView.setZoomLevel(Misc.MEDIUM);
+			this.zoom.setText("Zoom -");
+			Misc.setButtonIcon(this.zoom, "zoomout.png");
+		}
+		else {
+			fileView.setZoomLevel(Misc.SMALL);
+			this.zoom.setText("Zoom +");
+			Misc.setButtonIcon(this.zoom, "zoomin.png");
+		}
 	}
 
 	public JPopupMenu getPopupMenu() {

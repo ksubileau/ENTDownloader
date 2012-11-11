@@ -67,7 +67,7 @@ public class DetailsTableCellRenderer extends DefaultTableCellRenderer {
 			setIcon(null);
 		} else {
 			FS_Element f = (FS_Element) value;
-			setIcon(Misc.getFileTypeIcon(f));
+			setIcon(Misc.getFileTypeIcon(f, ((DetailsTable) table).getZoomLevel()));
 		}
 		return this;
 	}

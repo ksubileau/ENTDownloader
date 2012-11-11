@@ -151,4 +151,14 @@ public class DetailView extends ListView {
 	public ListSelectionModel getSelectionModel() {
 		return table.getSelectionModel();
 	}
+
+	@Override
+	public void setZoomLevel(int zoom) {
+		((DetailsTable) table).setZoomLevel(zoom);
+	}
+
+	@Override
+	public int getZoomLevel() {
+		return ((DetailsTable) table).getZoomLevel();
+	}
 }

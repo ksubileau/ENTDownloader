@@ -34,53 +34,66 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.UIManager;
 import javax.swing.filechooser.FileSystemView;
 
 import net.sf.entDownloader.core.FS_Element;
 
 public class Misc {
-	private static Hashtable<String, Icon> fileIcons = new Hashtable<String, Icon>();
+	private static Hashtable<String, Icon[]> fileIcons = new Hashtable<String, Icon[]>();
 	private static Hashtable<String, String> fileDescription = new Hashtable<String, String>();
 
-	private static Icon dirIcon = null;
-	private static Icon fileIcon = null;
+	private static Icon[] dirIcon = new Icon[2];
+	private static Icon[] fileIcon = new Icon[2];
+
+	public static final int SMALL = 0;
+	public static final int MEDIUM = 1;
 
 	/**
-	 * Retrieves the icon to associate with this file. If the icon returned by
-	 * the file is <code>null</code> then
-	 * ask the UIManager to give us an icon (from the LookAndFeel)
+	 * Recherche et retourne l'icône associée à l'élément indiqué.
+	 * Si cette icône n'existe pas ou qu'une erreur survient, une icône
+	 * par défaut est retournée.
 	 * 
 	 * @param file
-	 *            The file for which we want get the icon
-	 * @return the icon associated with the file
+	 *            L'élément dont on recherche l'icône.
+	 * @param size
+	 * 			  La taille de l'icône souhaitée (SMALL ou MEDIUM)
+	 * @return L'icône associée au type de l'élément indiqué.
 	 */
-	public static Icon getFileTypeIcon(FS_Element file) {
+	public static Icon getFileTypeIcon(FS_Element file, int size) {
 		Icon icon = null;
 		if (file.isDirectory()) {
-			if(dirIcon == null)
-				dirIcon = loadIcon("folder.png");
-			icon = dirIcon;
+			if(dirIcon[size] == null)
+				dirIcon[size] = loadIcon("folder"+(size==SMALL?"16":"")+".png");
+			icon = dirIcon[size];
 		} else if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
 			String extension = getExtension(file.getName());
-			if ((icon = fileIcons.get(extension)) == null) {
+			if (fileIcons.get(extension) == null)
+				fileIcons.put(extension, new Icon[2]);
+			if ((icon = fileIcons.get(extension)[size]) == null) {
 				File tempfile;
 				try {
 					tempfile = File.createTempFile("icon", "." + extension);
-					FileSystemView view = FileSystemView.getFileSystemView();
-					icon = view.getSystemIcon(tempfile);
+					if(size == SMALL) {
+						FileSystemView view = FileSystemView.getFileSystemView();
+						icon = view.getSystemIcon(tempfile);
+					} else {
+						// Get metadata and create an icon
+				        sun.awt.shell.ShellFolder sf =
+				                sun.awt.shell.ShellFolder.getShellFolder(tempfile);
+				        icon = new ImageIcon(sf.getIcon(true));
+					}
 					tempfile.delete();
-				} catch (IOException e) {
-					if(fileIcon == null)
-						fileIcon = loadIcon("file16.png");
-					icon = fileIcon;
+				} catch (Exception e) {
+					if(fileIcon[size] == null)
+						fileIcon[size] = loadIcon("file"+(size==SMALL?"16":"")+".png");
+					icon = fileIcon[size];
 				}
-				fileIcons.put(extension, icon);
+				fileIcons.get(extension)[size] = icon;
 			}
 		} else {
-			if(fileIcon == null)
-				fileIcon = loadIcon("file16.png");
-			icon = fileIcon;
+			if(fileIcon[size] == null)
+				fileIcon[size] = loadIcon("file"+(size==SMALL?"16":"")+".png");
+			icon = fileIcon[size];
 		}
 		return icon;
 	}

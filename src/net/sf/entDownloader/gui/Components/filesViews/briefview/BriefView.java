@@ -145,4 +145,15 @@ public class BriefView extends ListView {
 	public ListSelectionModel getSelectionModel() {
 		return list.getSelectionModel();
 	}
+
+	@Override
+	public void setZoomLevel(int zoom) {
+		((BriefViewListRenderer) list.getCellRenderer()).setIconSize(zoom);
+		list.updateUI();
+	}
+
+	@Override
+	public int getZoomLevel() {
+		return ((BriefViewListRenderer) list.getCellRenderer()).getIconSize();
+	}
 }
