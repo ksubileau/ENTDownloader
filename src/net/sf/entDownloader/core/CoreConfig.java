@@ -82,8 +82,6 @@ public final class CoreConfig {
 
 	public static boolean optimizePath = true;
 
-	public static final boolean debug = false;
-
 	public CoreConfig() {
 	}
 

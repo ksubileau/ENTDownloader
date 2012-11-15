@@ -20,8 +20,6 @@
  */
 package net.sf.entDownloader;
 
-import static net.sf.entDownloader.core.CoreConfig.debug;
-
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
@@ -32,8 +30,9 @@ import net.sf.entDownloader.shell.ShellMain;
 public class Main {
 
 	public static void main(String[] args) {
-		if (!debug && System.getProperty("os.name").contains("Windows")) {
+		if (System.getProperty("os.name").contains("Windows")) {
 			// Corrige un bug d'accents sous Windows
+			// En changeant l'encodage de la sortie standard en IBM850
 			PrintStream psout = null;
 			PrintStream pserr = null;
 			try {
@@ -41,8 +40,6 @@ public class Main {
 				pserr = new PrintStream(System.err, true, "IBM850");
 			} catch (UnsupportedEncodingException e1) {
 			}
-			// on commence par changer l'encodage en IBM850 (connu aussi sous
-			// l'alias Cp850)
 			if (psout != null) {
 				System.setOut(psout);
 			}
@@ -60,11 +57,15 @@ public class Main {
 						+ System.getProperty("os.version") + "; "
 						+ System.getProperty("os.arch") + ")");
 
+		//Désactive le mode de débogage par défaut
+		System.setProperty("sf.net.entDownloader.debug", "false");
+
 		boolean gui = true;
 		for (String arg : args) {
 			if (arg.equalsIgnoreCase("-nogui")) {
 				gui = false;
 			} else if (arg.equalsIgnoreCase("-debug") || arg.equalsIgnoreCase("-debug2")) {
+				System.setProperty("sf.net.entDownloader.debug", "true");
 				System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
 				System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
 				System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.client", "debug");
