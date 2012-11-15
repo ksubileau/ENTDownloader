@@ -352,6 +352,10 @@ public final class ShellMain implements AuthenticationSucceededListener,
 				if (pg.isVisible()) {
 					pg.setVisible(false);
 				}
+
+				if(System.getProperty("sf.net.entDownloader.debug", "false").equals("true"))
+					e3.printStackTrace();
+
 				System.err
 						.println("ENTDownloader: Service indisponible: Votre connexion Internet semble rencontrer un problème. Assurez-vous que votre ordinateur est connecté à Internet.");
 				return;
