@@ -216,7 +216,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 
 		try {
 			writeStatusMessage("Connexion en cours...");
-			pg.setVisible(true);
+			if(System.getProperty("sf.net.entDownloader.debug", "false").equals("false"))
+				pg.setVisible(true);
 			if (!entd.login(login, password)) {
 				pg.setVisible(false);
 				System.err
@@ -716,7 +717,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 
 	@Override
 	public void onDirectoryChanging(DirectoryChangingEvent event) {
-		pg.setVisible(true);
+		if(System.getProperty("sf.net.entDownloader.debug", "false").equals("false"))
+			pg.setVisible(true);
 		String path = event.getDirectory().toString();
 		if (path.equals("..")) {
 			path = "parent";
@@ -770,7 +772,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	public void onStartUpload(StartUploadEvent e) {
 		uploadingFile = e.getFile();
 		pg.setDeterminate(true);
-		pg.setVisible(true);
+		if(System.getProperty("sf.net.entDownloader.debug", "false").equals("false"))
+			pg.setVisible(true);
 		writeStatusMessage("Envoi du fichier "
 				+ uploadingFile.getName() + " en cours...");
 	}
@@ -821,7 +824,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		if (isDeterminate) {
 			pg.setDeterminate(true);
 		}
-		if (isVisible) {
+		if (isVisible && System.getProperty("sf.net.entDownloader.debug", "false").equals("false")) {
 			pg.setVisible(true);
 		}
 	}
