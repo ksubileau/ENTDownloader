@@ -66,6 +66,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -145,6 +146,9 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem exit;
 	private JMenuItem createDir;
 	private JMenuItem rename;
+	private JMenuItem cut;
+	private JMenuItem copy;
+	private JMenuItem paste;
 	private JMenuItem delete;
 	private JMenuItem send;
 	private JMenu fileMenu;
@@ -152,6 +156,9 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JButton DownloadAll_tool;
 	private JButton createDir_tool;
 	private JButton rename_tool;
+	private JButton cut_tool;
+	private JButton copy_tool;
+	private JButton paste_tool;
 	private JButton delete_tool;
 	private JButton send_tool;
 	private JStatusBar statusBar;
@@ -168,6 +175,9 @@ public class MainFrame extends javax.swing.JFrame implements
 	private ParentDirAction parentDirAction;
 	private CreateDirAction createDirAction;
 	private RenameAction renameAction;
+	private CutAction cutAction;
+	private CopyAction copyAction;
+	private PasteAction pasteAction;
 	private JMenuItem parentMenuIt;
 	private PreviousDirAction prevDirAction;
 	private NextDirAction nextDirAction;
@@ -184,6 +194,9 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem prevDirMenuIt;
 	private JMenuItem createDirPopupIt;
 	private JMenuItem renamePopupIt;
+	private JMenuItem copyPopupIt;
+	private JMenuItem cutPopupIt;
+	private JMenuItem pastePopupIt;
 	private JMenuItem deletePopupIt;
 	private JMenuItem sendPopupIt;
 	private Action refreshAction;
@@ -588,6 +601,149 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	/**
+	 * Marque les éléments sélectionnés pour le déplacement.
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class CutAction extends AbstractAction {
+
+		private static final long serialVersionUID = -5274579601506811635L;
+
+		/**
+		 * Construit une nouvelle action RenameAction
+		 */
+		public CutAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Coupe l'élément sélectionné");
+			putValue(Action.NAME, "Couper");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("cut.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("cut16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (fileView == null || fileView.getSelectedFilesCount() == 0)
+				return;
+			FS_Element[] selectedFiles = fileView.getSelectedFiles();
+			String[] selectedFileNames = new String[selectedFiles.length];
+			int i=0;
+			for (FS_Element elem : selectedFiles) {
+				selectedFileNames[i] = elem.getName();
+			}
+
+			try {
+				entd.cut(selectedFileNames);
+				String s = selectedFiles.length>1?"s":"";
+				setTemporaryStatus("<html><b>"+selectedFiles.length + " élément"+s+" coupé"+s+"</b></html>", 4, dirInfos());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			pasteAction.setEnabled(entd.canPaste());
+		}
+
+	}
+
+	/**
+	 * Marque les éléments sélectionnés pour la copie.
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class CopyAction extends AbstractAction {
+
+		private static final long serialVersionUID = -8274519609506811625L;
+
+		/**
+		 * Construit une nouvelle action RenameAction
+		 */
+		public CopyAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Copie l'élément sélectionné");
+			putValue(Action.NAME, "Copier");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("copy.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("copy16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (fileView == null || fileView.getSelectedFilesCount() == 0)
+				return;
+			FS_Element[] selectedFiles = fileView.getSelectedFiles();
+			try {
+				entd.copy(selectedFiles);
+				String s = selectedFiles.length>1?"s":"";
+				setTemporaryStatus("<html><b>"+selectedFiles.length + " élément"+s+" copié"+s+"</b></html>", 4, dirInfos());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			pasteAction.setEnabled(entd.canPaste());
+		}
+
+	}
+
+	/**
+	 * Colle les éléments précédemment sélectionnés.
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class PasteAction extends AbstractAction {
+
+		private static final long serialVersionUID = -8256819600216811625L;
+
+		/**
+		 * Construit une nouvelle action RenameAction
+		 */
+		public PasteAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Colle les éléments précédemment sélectionnés.");
+			putValue(Action.NAME, "Coller");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("paste.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("paste16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (!entd.canPaste())
+				return;
+
+			try {
+				if(entd.paste()) {
+					updateFrameData();
+				}
+			} catch (ENTInvalidElementNameException e) {
+				JOptionPane
+				.showMessageDialog(
+						MainFrame.this,
+						"Impossible de coller la sélection : un fichier/dossier du même nom existe déjà.",
+						"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
 	 * Supprime les éléments sélectionnés du dossier courant
 	 *
 	 * @author Kévin Subileau
@@ -812,12 +968,12 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SHORT_DESCRIPTION,
 					"Copier le nom du fichier sélectionné dans le presse-papier.");
 			putValue(Action.NAME, "Copier le nom du fichier");
-			ImageIcon icon = Misc.loadIcon("clipboard.png");
+			ImageIcon icon = Misc.loadIcon("copyFilename.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					java.awt.event.KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+					java.awt.event.KeyEvent.VK_C, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		}
 
 		@Override
@@ -887,6 +1043,9 @@ public class MainFrame extends javax.swing.JFrame implements
 		homeDirAction = new HomeDirAction();
 		createDirAction = new CreateDirAction();
 		renameAction = new RenameAction();
+		copyAction = new CopyAction();
+		cutAction = new CutAction();
+		pasteAction = new PasteAction();
 		deleteAction = new DeleteAction();
 		parentDirAction = new ParentDirAction();
 		prevDirAction = new PreviousDirAction();
@@ -1242,6 +1401,24 @@ public class MainFrame extends javax.swing.JFrame implements
 						fileMenu.addSeparator();
 					}
 					{
+						copy = new JMenuItem();
+						copy.setAction(copyAction);
+						fileMenu.add(copy);
+					}
+					{
+						cut = new JMenuItem();
+						cut.setAction(cutAction);
+						fileMenu.add(cut);
+					}
+					{
+						paste = new JMenuItem();
+						paste.setAction(pasteAction);
+						fileMenu.add(paste);
+					}
+					{
+						fileMenu.addSeparator();
+					}
+					{
 						dld = new JMenuItem();
 						dld.setAction(dldAction);
 						fileMenu.add(dld);
@@ -1537,9 +1714,16 @@ public class MainFrame extends javax.swing.JFrame implements
 					send_tool = makeToolbarButton(sendAction);
 					createDir_tool = makeToolbarButton(createDirAction);
 					rename_tool = makeToolbarButton(renameAction);
+					copy_tool = makeToolbarButton(copyAction);
+					cut_tool = makeToolbarButton(cutAction);
+					paste_tool = makeToolbarButton(pasteAction);
 					delete_tool = makeToolbarButton(deleteAction);
 					toolBar.add(createDir_tool);
 					toolBar.add(rename_tool);
+					toolBar.addSeparator();
+					toolBar.add(copy_tool);
+					toolBar.add(cut_tool);
+					toolBar.add(paste_tool);
 					toolBar.addSeparator();
 					toolBar.add(Download_tool);
 					toolBar.add(DownloadAll_tool);
@@ -1575,6 +1759,24 @@ public class MainFrame extends javax.swing.JFrame implements
 					renamePopupIt = new JMenuItem();
 					renamePopupIt.setAction(renameAction);
 					PopupMenu.add(renamePopupIt);
+				}
+				{
+					PopupMenu.addSeparator();
+				}
+				{
+					copyPopupIt = new JMenuItem();
+					copyPopupIt.setAction(copyAction);
+					PopupMenu.add(copyPopupIt);
+				}
+				{
+					cutPopupIt = new JMenuItem();
+					cutPopupIt.setAction(cutAction);
+					PopupMenu.add(cutPopupIt);
+				}
+				{
+					pastePopupIt = new JMenuItem();
+					pastePopupIt.setAction(pasteAction);
+					PopupMenu.add(pastePopupIt);
 				}
 				{
 					PopupMenu.addSeparator();
@@ -1892,7 +2094,10 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	public void updatePopupMenu() {
-		dldAction.setEnabled(!fileView.getSelectionModel().isSelectionEmpty());
+		boolean isSelectionEmpty = fileView.getSelectionModel().isSelectionEmpty();
+		dldAction.setEnabled(!isSelectionEmpty);
+		copyAction.setEnabled(!isSelectionEmpty);
+		cutAction.setEnabled(!isSelectionEmpty);
 		deleteAction.setEnabled(dldAction.isEnabled());
 		if (fileView.getSelectedFilesCount() == 1) {
 			copyFilenameAction.setEnabled(true);
@@ -1924,6 +2129,29 @@ public class MainFrame extends javax.swing.JFrame implements
 	public void onDirectoryChanged(DirectoryChangedEvent event) {
 		updateFrameData();
 	}
+	
+	/**
+	 * Affiche un message d'état durant une durée déterminée.
+	 * 
+	 * @param message Le message temporaire à afficher
+	 * @param delay La durée d'exposition de ce message
+	 * @param after Le texte à afficher après le délai.
+	 * 				Si null, le précédent texte sera restauré.
+	 */
+	protected void setTemporaryStatus(String message, int delay, String after) {
+		if(after == null)
+			after = statusInfo.getText();
+		statusInfo.setText(message);
+		final String afterS = after;
+		Timer t = new Timer(delay*1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				statusInfo.setText(afterS);
+			}
+		});
+		t.setRepeats(false);
+		t.start();
+	}
 
 	/**
 	 * Recharge l'ensemble des informations affichées dans la fenêtre
@@ -1947,6 +2175,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		boolean isEmpty = entd.getDirectoryContent().size() == 0;
 		emptyDirLabel.setVisible(isEmpty);
 		dldAllAction.setEnabled(!isEmpty);
+		pasteAction.setEnabled(entd.canPaste());
 	}
 
 	/**

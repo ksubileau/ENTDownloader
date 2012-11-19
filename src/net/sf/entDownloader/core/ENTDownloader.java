@@ -131,6 +131,11 @@ public class ENTDownloader {
 	private String proxyFile = null;
 
 	/**
+	 * Indique si des fichiers sont présents dans le presse-papier.
+	 */
+	private boolean canPaste = false;
+
+	/**
 	 * Variables utilisées pour permettre l'interruption
 	 * des envois et téléchargements.
 	 */
@@ -1067,6 +1072,182 @@ public class ENTDownloader {
 	}
 
 	/**
+	 * Marque un ou plusieurs fichiers ou dossiers du répertoire courant
+	 * pour la copie.
+	 *
+	 * @param elems Liste des noms des dossiers ou fichiers à copier.
+	 *
+	 * @throws ENTFileNotFoundException Un élément spécifié est introuvable.
+	 *
+	 * @since 2.0.0
+	 */
+	public void cut(String[] elems) throws ParseException,
+			IOException {
+		copyCut(elems, true);
+	}
+
+	/**
+	 * Marque un ou plusieurs fichiers ou dossiers du répertoire courant
+	 * pour la copie.
+	 *
+	 * @param elems Liste des dossiers ou fichiers à copier.
+	 *
+	 * @throws ENTFileNotFoundException Un élément spécifié est introuvable.
+	 *
+	 * @since 2.0.0
+	 */
+	public void cut(FS_Element[] elems) throws ParseException,
+			IOException {
+		copyCut(elems, true);
+	}
+
+	/**
+	 * Marque un ou plusieurs fichiers ou dossiers du répertoire courant
+	 * pour le déplacement.
+	 *
+	 * @param elems Liste des noms des dossiers ou fichiers à déplacer.
+	 *
+	 * @throws ENTFileNotFoundException Un élément spécifié est introuvable.
+	 *
+	 * @since 2.0.0
+	 */
+	public void copy(String[] elems) throws ParseException,
+			IOException {
+		copyCut(elems, false);
+	}
+
+	/**
+	 * Marque un ou plusieurs fichiers ou dossiers du répertoire courant
+	 * pour le déplacement.
+	 *
+	 * @param elems Liste des dossiers ou fichiers à déplacer.
+	 *
+	 * @throws ENTFileNotFoundException Un élément spécifié est introuvable.
+	 *
+	 * @since 2.0.0
+	 */
+	public void copy(FS_Element[] elems) throws ParseException,
+			IOException {
+		copyCut(elems, false);
+	}
+
+	private void copyCut(FS_Element[] elems, boolean cutMode) throws ParseException, IOException {
+		String[] elementsNames = new String[elems.length];
+		int i=0;
+		for (FS_Element elem : elems) {
+			elementsNames[i] = elem.getName();
+		}
+		copyCut(elementsNames, cutMode);
+	}
+
+	private void copyCut(String[] elems, boolean cutMode) throws ParseException,
+			IOException {
+
+		if (!isLogged())
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.copyMoveURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		for (String name : elems) {
+			params.add(new BasicNameValuePair("listeFic", name));
+		}
+		params.add(new BasicNameValuePair("modeDav", cutMode?"set_clipboard_for_move_mode":"set_clipboard_for_copy_mode"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
+			isLogged = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = responseHandler.handleResponse(response);
+
+		if (Misc.preg_match(
+				"(?i)<font class=\"uportal-channel-strong\">Vous n'avez pas le droit d'acc&eacute;der &agrave; une des ressources s&eacute;lectionn&eacute;es</font>",
+				pageContent))
+			throw new ENTFileNotFoundException();
+
+		parsePage(pageContent);
+	}
+
+	/**
+	 * Indique si le presse-papier contient un ou plusieurs éléments ou non.
+	 *
+	 * @return True si des éléments ont été marqués pour
+	 * 		   la copie ou le déplacement.
+	 */
+	public boolean canPaste() {
+		return canPaste;
+	}
+
+	/**
+	 * Copie ou déplace les éléments précédemment marqués pour cette
+	 * opération.
+	 *
+	 * @since 2.0.0
+	 */
+	public boolean paste() throws ParseException,
+			IOException {
+
+			if (!isLogged())
+				throw new ENTUnauthenticatedUserException(
+						"Non-authenticated user.",
+						ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+			if(!canPaste)
+				return false;
+
+			HttpPost request = new HttpPost(urlBuilder(CoreConfig.pasteURL));
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("modeDav", "confirm_paste_mode"));
+
+			request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+			HttpResponse response = httpclient.execute(request);
+
+			if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+					&& response.getFirstHeader("Location").getValue()
+							.equals(CoreConfig.loginRequestURL)) {
+				isLogged = false;
+				throw new ENTUnauthenticatedUserException(
+						"Session expired, please login again.",
+						ENTUnauthenticatedUserException.SESSION_EXPIRED);
+			}
+
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+			String pageContent = responseHandler.handleResponse(response);
+
+			if (Misc.preg_match(
+					"(?i)<font class=\"uportal-channel-strong\">Impossible de (.*) :<br\\s?/?> ?un fichier/dossier du m&ecirc;me nom existe d&eacute;j&agrave;.<br\\s?/?></font>",
+					pageContent))
+				throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED);
+
+			request = new HttpPost(urlBuilder(CoreConfig.pasteURL));
+			params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("modeDav", "paste_mode"));
+			params.add(new BasicNameValuePair("Submit", "Valider"));
+
+			request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+			response = httpclient.execute(request);
+
+			pageContent = responseHandler.handleResponse(response);
+
+			parsePage(pageContent);
+
+			return true;
+	}
+
+	/**
 	 * Analyse le contenu de la page passé en paramètre afin de déterminer les
 	 * dossiers et fichiers contenus dans le dossier courant.
 	 * 
@@ -1082,6 +1263,8 @@ public class ENTDownloader {
 		} else {
 			directoryContent.clear();
 		}
+
+		canPaste = Misc.preg_match("<br>Coller</a>", pageContent, null);
 
 		Misc.preg_match_all(
 				"&nbsp;<a href=\"javascript:submit(File|Directory)\\('.+?'\\);\"\\s+class.*?nnel\">(.*?)</a></td><td class=\"uportal-crumbtrail\" align=\"right\">\\s+?&nbsp;([0-9][0-9]*\\.[0-9][0-9]? [MKGo]{1,2})?\\s*?</td><td class=\"uportal-crumbtrail\" align=\"right\">\\s+?&nbsp;([0-9]{2})-([0-9]{2})-([0-9]{4})&nbsp;([0-9]{2}):([0-9]{2})",

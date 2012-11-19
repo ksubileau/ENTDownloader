@@ -337,6 +337,42 @@ public final class ShellMain implements AuthenticationSucceededListener,
 						delete(elems);
 					} else if (command[0].equals("refresh")) {
 						cd(".");
+					} else if (command[0].equals("copy") || command[0].equals("cut")) {
+						String[] elems = null;
+						if (command.length > 1)
+						{
+							elems = Arrays.copyOfRange(command, 1, command.length);
+							try {
+								if(command[0].equals("copy"))
+									entd.copy(elems);
+								else
+									entd.cut(elems);
+							} catch (ENTFileNotFoundException e) {
+								System.err.println("ENTDownloader: "+command[0]+": Un fichier ou dossier spécifié est inexistant.");
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						else
+						{
+							System.err.println("ENTDownloader: "+command[0]+": Nom de fichier ou de dossier manquant.");
+						}
+					} else if (command[0].equals("paste")) {
+						if(entd.canPaste())
+						{
+							try {
+								entd.paste();
+							} catch (ENTInvalidElementNameException e) {
+								System.err.println("ENTDownloader: Impossible de coller la sélection : un fichier/dossier du même nom existe déjà.");
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						else
+							System.err.println("ENTDownloader: Le presse-papier est vide.");
+
 					} else if (command[0].equals("lpwd")) {
 						System.out.println(System.getProperty("user.dir"));
 					} else if (command[0].equals("info")) {
