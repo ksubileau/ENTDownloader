@@ -1835,7 +1835,21 @@ public class MainFrame extends javax.swing.JFrame implements
 					}
 				} catch (ENTUnauthenticatedUserException e1) {
 					// TODO Gestion Utilisateur non connecté
-					e1.printStackTrace();
+					if(e1.getType() == ENTUnauthenticatedUserException.UNALLOWED)
+					{
+						statusInfo.setText("Indisponible");
+						JOptionPane
+								.showMessageDialog(
+										MainFrame.this,
+										"<html>Vous n'avez actuellement accès à aucun espace de stockage sur l'ENT.<br>Vous ne pouvez donc malheureusement pas utiliser ce logiciel.</html>",
+										"ENTDownloader - Service indisponible",
+										JOptionPane.ERROR_MESSAGE);
+						new MainFrame.ExitAction().actionPerformed(null);
+						return null;
+					} else
+					{
+						e1.printStackTrace();
+					}
 				} catch (ENTDirectoryNotFoundException e1) {
 
 					//Rétablissement de la synchronisation vue <=> modèle.

@@ -36,6 +36,10 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 	 * Indique que la session de l'utilisateur a expiré.
 	 */
 	public static final int SESSION_EXPIRED = 1;
+	/**
+	 * Indique que l'utilisateur n'a pas accès à un espace de stockage.
+	 */
+	public static final int UNALLOWED = 2;
 	private int type = UNAUTHENTICATED;
 
 	/**
@@ -70,9 +74,7 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 	 */
 	public ENTUnauthenticatedUserException(String message, int type) {
 		super(message);
-		if (type == SESSION_EXPIRED) {
-			this.type = type;
-		}
+		setType(type);
 	}
 
 	/**
@@ -84,7 +86,19 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 	 */
 	public ENTUnauthenticatedUserException(int type) {
 		super();
-		if (type == SESSION_EXPIRED) {
+		setType(type);
+	}
+
+	/**
+	 * Définit le code d'erreur indiquant la nature de l'échec
+	 * d'authentification.
+	 * 
+	 * @see ENTUnauthenticatedUserException#UNAUTHENTICATED
+	 * @see ENTUnauthenticatedUserException#SESSION_EXPIRED
+	 * @see ENTUnauthenticatedUserException#UNALLOWED
+	 */
+	public void setType(int type) {
+		if (type == SESSION_EXPIRED || type == UNAUTHENTICATED || type == UNALLOWED) {
 			this.type = type;
 		}
 	}
@@ -95,6 +109,7 @@ public class ENTUnauthenticatedUserException extends IllegalStateException {
 	 * 
 	 * @see ENTUnauthenticatedUserException#UNAUTHENTICATED
 	 * @see ENTUnauthenticatedUserException#SESSION_EXPIRED
+	 * @see ENTUnauthenticatedUserException#UNALLOWED
 	 */
 	public int getType() {
 		return type;

@@ -480,8 +480,16 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		try {
 			entd.changeDirectory(name);
 		} catch (ENTUnauthenticatedUserException e) {
-			System.err
-					.println("La session a expirée, veuillez vous reconnectez en relançant le programme.");
+			if (pg.isVisible()) {
+				pg.setVisible(false);
+			}
+			if(e.getType() == ENTUnauthenticatedUserException.SESSION_EXPIRED)
+				System.err
+						.println("ENTDownloader: La session a expirée, veuillez vous reconnectez en relançant le programme.");
+			else
+				System.err
+						.println("ENTDownloader: Vous n'avez actuellement accès à aucun espace de stockage sur l'ENT.");
+
 			System.exit(1);
 		} catch (ENTDirectoryNotFoundException e) {
 			if (pg.isVisible()) {

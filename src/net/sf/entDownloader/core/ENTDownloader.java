@@ -1255,8 +1255,13 @@ public class ENTDownloader {
 	 *            Le contenu de la page à analyser
 	 * @throws ParseException
 	 *             Si l'analyse échoue
+	 * @throws ENTUnauthenticatedUserException
+	 *             L'utilisateur n'a pas accès à un espace de stockage.
 	 */
 	private void parsePage(String pageContent) throws ParseException {
+		if(Misc.preg_match("(?i)<font class=\"uportal-channel-strong\">Vous ne pouvez actuellement voir aucun espace.", pageContent))
+			throw new ENTUnauthenticatedUserException(ENTUnauthenticatedUserException.UNALLOWED);
+
 		List<List<String>> matches = new ArrayList<List<String>>();
 		if (directoryContent == null) {
 			directoryContent = new ArrayList<FS_Element>(50);
