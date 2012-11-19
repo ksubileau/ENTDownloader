@@ -22,10 +22,14 @@ package net.sf.entDownloader.gui.Components.filesViews.detailview;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.InputMap;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.TableCellRenderer;
 
 import net.sf.entDownloader.core.FS_Element;
@@ -43,6 +47,7 @@ public class DetailsTable extends JTable {
 	public DetailsTable() {
 		super();
 		setOtherProperties();
+	    removeDefaultKeys();
 		addMouseActions();
 	}
 
@@ -53,6 +58,14 @@ public class DetailsTable extends JTable {
 
 		//this.setColumnSelectionAllowed(false);
 		//this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	}
+
+	private void removeDefaultKeys() {
+		InputMap mainMap = this.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		
+		mainMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK) , "none");
+		mainMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK) , "none");
+		mainMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK) , "none");
 	}
 
 	@Override
