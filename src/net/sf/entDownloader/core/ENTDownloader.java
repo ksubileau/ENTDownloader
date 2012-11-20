@@ -56,8 +56,7 @@ import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartUploadEvent;
 import net.sf.entDownloader.core.events.UploadedBytesEvent;
-import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
-import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTElementNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
@@ -327,7 +326,7 @@ public class ENTDownloader {
 	 *            dossier parent, il permet donc de remonter dans
 	 *            l'arborescence. Enfin, le dossier / est la racine
 	 *            du service de stockage de l'utilisateur.
-	 * @throws ENTDirectoryNotFoundException
+	 * @throws ENTElementNotFoundException
 	 *             Si le répertoire demandé n'existe pas dans le dossier courant
 	 * @throws ENTInvalidFS_ElementTypeException
 	 *             Si le nom d'un fichier a été passé en paramètre.
@@ -341,7 +340,7 @@ public class ENTDownloader {
 	 */
 	public void changeDirectory(String path)
 			throws ENTUnauthenticatedUserException,
-			ENTDirectoryNotFoundException, ENTInvalidFS_ElementTypeException,
+			ENTElementNotFoundException, ENTInvalidFS_ElementTypeException,
 			ParseException, IOException {
 		if (path == null)
 			throw new NullPointerException();
@@ -414,7 +413,7 @@ public class ENTDownloader {
 	 *            l'arborescence. Enfin, le dossier / ou ~ est la racine
 	 *            du service de stockage de l'utilisateur. Si <code>name</code>
 	 *            est vide, le dossier / est chargé.
-	 * @throws ENTDirectoryNotFoundException
+	 * @throws ENTElementNotFoundException
 	 *             Si le répertoire demandé n'existe pas dans le dossier courant
 	 * @throws ENTInvalidFS_ElementTypeException
 	 *             Si le nom d'un fichier a été passé en paramètre.
@@ -428,7 +427,7 @@ public class ENTDownloader {
 	 *             Si le service est indisponible.
 	 */
 	private void submitDirectory(String name)
-			throws ENTDirectoryNotFoundException,
+			throws ENTElementNotFoundException,
 			ENTInvalidFS_ElementTypeException, ParseException,
 			ENTUnauthenticatedUserException, IOException {
 		if (!isLogged())
@@ -457,7 +456,7 @@ public class ENTDownloader {
 		} else {
 			int pos = indexOf(name);
 			if (pos == -1)
-				throw new ENTDirectoryNotFoundException(name);
+				throw new ENTElementNotFoundException(name);
 			else if (!directoryContent.get(pos).isDirectory())
 				throw new ENTInvalidFS_ElementTypeException(name);
 
@@ -492,7 +491,7 @@ public class ENTDownloader {
 				|| Misc.preg_match(
 						"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br\\s?/?></font>",
 						pageContent))
-			throw new ENTDirectoryNotFoundException(name);
+			throw new ENTElementNotFoundException(name);
 		parsePage(pageContent);
 
 		path.goTo(name);
@@ -544,7 +543,7 @@ public class ENTDownloader {
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
 		final int pos = indexOf(name);
 		if (pos == -1)
-			throw new ENTFileNotFoundException("File not found");
+			throw new ENTElementNotFoundException("File not found");
 		else if (!directoryContent.get(pos).isFile())
 			throw new ENTInvalidFS_ElementTypeException(name + " isn't a file");
 
@@ -958,7 +957,7 @@ public class ENTDownloader {
 		if(oldname.equals(newname))
 			return;
 		if (indexOf(oldname) == -1)
-			throw new ENTFileNotFoundException(oldname);
+			throw new ENTElementNotFoundException(oldname);
 		if (indexOf(newname) != -1)
 			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, newname);
 
@@ -998,7 +997,7 @@ public class ENTDownloader {
 		if (Misc.preg_match(
 						"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br\\s?/?></font>",
 						pageContent))
-			throw new ENTFileNotFoundException(oldname); //TODO Fusion ENTFileNotFoundException/ENTDirectoryNotFoundException ?
+			throw new ENTElementNotFoundException(oldname);
 		if (Misc.preg_match(
 						"(?i)<font class=\"uportal-channel-strong\">Impossible de traiter la requ&ecirc;te :<br\\s?/?> un fichier/dossier du m&ecirc;me nom existe d&eacute;j&agrave;.<br\\s?/?></font>",
 						pageContent))
@@ -1077,7 +1076,7 @@ public class ENTDownloader {
 	 *
 	 * @param elems Liste des noms des dossiers ou fichiers à copier.
 	 *
-	 * @throws ENTFileNotFoundException Un élément spécifié est introuvable.
+	 * @throws ENTElementNotFoundException Un élément spécifié est introuvable.
 	 *
 	 * @since 2.0.0
 	 */
@@ -1092,7 +1091,7 @@ public class ENTDownloader {
 	 *
 	 * @param elems Liste des dossiers ou fichiers à copier.
 	 *
-	 * @throws ENTFileNotFoundException Un élément spécifié est introuvable.
+	 * @throws ENTElementNotFoundException Un élément spécifié est introuvable.
 	 *
 	 * @since 2.0.0
 	 */
@@ -1107,7 +1106,7 @@ public class ENTDownloader {
 	 *
 	 * @param elems Liste des noms des dossiers ou fichiers à déplacer.
 	 *
-	 * @throws ENTFileNotFoundException Un élément spécifié est introuvable.
+	 * @throws ENTElementNotFoundException Un élément spécifié est introuvable.
 	 *
 	 * @since 2.0.0
 	 */
@@ -1122,7 +1121,7 @@ public class ENTDownloader {
 	 *
 	 * @param elems Liste des dossiers ou fichiers à déplacer.
 	 *
-	 * @throws ENTFileNotFoundException Un élément spécifié est introuvable.
+	 * @throws ENTElementNotFoundException Un élément spécifié est introuvable.
 	 *
 	 * @since 2.0.0
 	 */
@@ -1174,7 +1173,7 @@ public class ENTDownloader {
 		if (Misc.preg_match(
 				"(?i)<font class=\"uportal-channel-strong\">Vous n'avez pas le droit d'acc&eacute;der &agrave; une des ressources s&eacute;lectionn&eacute;es</font>",
 				pageContent))
-			throw new ENTFileNotFoundException();
+			throw new ENTElementNotFoundException();
 
 		parsePage(pageContent);
 	}

@@ -87,8 +87,7 @@ import net.sf.entDownloader.core.events.ElementRenamedEvent;
 import net.sf.entDownloader.core.events.ElementRenamedListener;
 import net.sf.entDownloader.core.events.ElementsDeletedEvent;
 import net.sf.entDownloader.core.events.ElementsDeletedListener;
-import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
-import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTElementNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
@@ -580,7 +579,7 @@ public class MainFrame extends javax.swing.JFrame implements
 										+ selectedFile.getName()
 										+ "\" : " + message,
 								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
-			} catch (ENTFileNotFoundException e) {
+			} catch (ENTElementNotFoundException e) {
 				JOptionPane
 						.showMessageDialog(
 								MainFrame.this,
@@ -1850,7 +1849,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						e1.printStackTrace();
 					}
-				} catch (ENTDirectoryNotFoundException e1) {
+				} catch (ENTElementNotFoundException e1) {
 
 					//Rétablissement de la synchronisation vue <=> modèle.
 					//En effet, le dossier courant peut avoir changer si, par

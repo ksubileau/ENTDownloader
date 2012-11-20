@@ -68,8 +68,7 @@ import net.sf.entDownloader.core.events.StartUploadEvent;
 import net.sf.entDownloader.core.events.StartUploadListener;
 import net.sf.entDownloader.core.events.UploadedBytesEvent;
 import net.sf.entDownloader.core.events.UploadedBytesListener;
-import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
-import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTElementNotFoundException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
@@ -348,7 +347,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 									entd.copy(elems);
 								else
 									entd.cut(elems);
-							} catch (ENTFileNotFoundException e) {
+							} catch (ENTElementNotFoundException e) {
 								System.err.println("ENTDownloader: "+command[0]+": Un fichier ou dossier spécifié est inexistant.");
 							} catch (ParseException e) {
 								// TODO Auto-generated catch block
@@ -492,7 +491,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 						.println("ENTDownloader: Vous n'avez actuellement accès à aucun espace de stockage sur l'ENT.");
 
 			System.exit(1);
-		} catch (ENTDirectoryNotFoundException e) {
+		} catch (ENTElementNotFoundException e) {
 			if (pg.isVisible()) {
 				pg.setVisible(false);
 			}
@@ -523,7 +522,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addFileAlreadyExistsListener(this);
 		try {
 			entd.getFile(name, destination);
-		} catch (ENTFileNotFoundException e) {
+		} catch (ENTElementNotFoundException e) {
 			System.err.println("ENTDownloader: " + name
 					+ ": Aucun fichier de ce type");
 		} catch (FileNotFoundException e1) {
@@ -621,7 +620,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 
 		try {
 			entd.rename(oldname, newname);
-		} catch (ENTFileNotFoundException e) {
+		} catch (ENTElementNotFoundException e) {
 			System.err.println("ENTDownloader: " + e.getMessage()
 					+ ": Aucun fichier ou dossier de ce type");
 		} catch (ENTInvalidElementNameException e) {

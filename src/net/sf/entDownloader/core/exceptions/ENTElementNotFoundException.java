@@ -1,7 +1,7 @@
 /*
- *  ENTFileNotFoundException.java
+ *  ENTElementNotFoundException.java
  *      
- *  Copyright 2010-2011 Kévin Subileau. 
+ *  Copyright 2010-2012 Kévin Subileau. 
  *
  *	This file is part of ENTDownloader.
  *    
@@ -23,27 +23,27 @@ package net.sf.entDownloader.core.exceptions;
 import java.io.FileNotFoundException;
 
 /**
- * Signal qu'une tentative d'ouverture d'un fichier stocké sur l'ENT a échoué.
+ * Signal qu'une tentative d'accès à un élément stocké sur l'ENT a échoué.
  */
-public class ENTFileNotFoundException extends FileNotFoundException {
+public class ENTElementNotFoundException extends FileNotFoundException {
 	private static final long serialVersionUID = 2543153762500385784L;
 
 	/**
-	 * Construit une exception ENTFileNotFoundException sans message
+	 * Construit une exception ENTElementNotFoundException sans message
 	 * d'information.
 	 */
-	public ENTFileNotFoundException() {
+	public ENTElementNotFoundException() {
 		super();
 	}
 
 	/**
-	 * Construit une exception ENTDirectoryNotFoundException avec le message
+	 * Construit une exception ENTElementNotFoundException avec le message
 	 * d'information spécifié. Le message d'erreur peut ensuite être retrouvé
 	 * grâce à la méthode getMessage().
 	 * 
 	 * @param message Le message d'erreur.
 	 */
-	public ENTFileNotFoundException(String message) {
+	public ENTElementNotFoundException(String message) {
 		super(message);
 	}
 }
