@@ -30,6 +30,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -70,6 +71,9 @@ public class Downloader extends SwingWorker<Void, Void> implements
 	private JFrame parent;
 	private int nbFilesDownloaded;
 	private long totalSizeDownloaded;
+	private boolean lastOverwriteChoice = false;
+	private boolean dontShowOverwriteConfirm = false;
+	private boolean isMultipleDownload;
 
 	public Downloader(JFrame owner) {
 		this(owner, (Collection<FS_Element>) null, null);
@@ -125,18 +129,19 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		ENTDownloader entd = ENTDownloader.getInstance();
 
 		boolean isThereDirectories = isThereDirectories();
-		boolean isMultiple = downList.size() > 1;
+		boolean isMultipleSelection = downList.size() > 1;
+		isMultipleDownload = isThereDirectories || isMultipleSelection;
 		/*	Pour optimisation, on considère que tout télécharger 
 		 *  dans un dossier contenant seulement un élément revient à un téléchargement unique,
 		 *  et non à un "télécharger tout"
 		 */
-		boolean isDownloadAll = (isMultiple && downList.size() == entd
+		boolean isDownloadAll = (isMultipleSelection && downList.size() == entd
 				.getDirectoryContent().size());
 
 		if (downList == null || downList.isEmpty())
 			return;
 
-		if (isMultiple || isThereDirectories) { //Sélection multiple ou un dossier seulement
+		if (isMultipleDownload) { //Sélection multiple ou un dossier seulement
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			fileChooser.setApproveButtonToolTipText("Enregistre sous le dossier sélectionné");
 			downloadFrame
@@ -211,7 +216,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		totalSizeDownloaded = nbFilesDownloaded = 0;
 
 		String savePath = saveas.getPath();
-		if (isMultiple
+		if (isMultipleSelection
 				&& !savePath.substring(savePath.length() - 1).equals(
 						System.getProperty("file.separator"))) {
 			savePath += System.getProperty("file.separator");
@@ -248,7 +253,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 		if (downloadFrame.openWhenFinished()) {
 			try {
-				if (isMultiple || isThereDirectories) {
+				if (isMultipleDownload) {
 					java.awt.Desktop.getDesktop().browse(saveas.toURI());
 				} else {
 					java.awt.Desktop.getDesktop().open(saveas);
@@ -319,17 +324,40 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 	@Override
 	public void onFileAlreadyExists(FileAlreadyExistsEvent e) {
-		//TODO Amélioration : Oui pour tous / non pour tous (ou case a cocher ne plus demander)
-		int choice = JOptionPane
-				.showConfirmDialog(
-						downloadFrame,
-						"<html>Un fichier portant le nom \""
-								+ e.getFile().getName()
-								+ "\" existe déjà à cet emplacement.<br>Voulez-vous écraser le fichier existant et le remplacer par le fichier en cours de téléchargement ?<b></html>",
-						"ENTDownloader - Téléchargement",
-						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-		e.abortDownload = (choice == JOptionPane.NO_OPTION);
+		int choice = JOptionPane.NO_OPTION;
+		JCheckBox checkbox = null;
+		if(!dontShowOverwriteConfirm)
+		{
+			Object[] options = {"Écraser", "Annuler"};
+			if (isMultipleDownload)
+			{
+				Object[] tmp = new Object[options.length + 1];
+				System.arraycopy(options, 0, tmp, 0, options.length);
+				tmp[options.length] = "Annuler tout";
+				tmp[1] = "Passer ce fichier";
+				options = tmp;
+				checkbox = new JCheckBox("Appliquer mon choix pour les prochains conflits.");
+			}
+			String message = "<html>Un fichier portant le nom \""
+				+ e.getFile().getName()
+				+ "\" existe déjà à cet emplacement.<br>Voulez-vous écraser le fichier existant et le remplacer par le fichier en cours de téléchargement ?<b><br></html>";  
+			Object[] params = {message, checkbox};
+			choice = JOptionPane
+					.showOptionDialog(
+							downloadFrame,
+							params,
+							"ENTDownloader - Téléchargement",
+							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+		}
+		e.abortDownload = dontShowOverwriteConfirm && !lastOverwriteChoice || !dontShowOverwriteConfirm && (choice != JOptionPane.YES_OPTION);
+		if(!dontShowOverwriteConfirm) {
+			if(choice == JOptionPane.CANCEL_OPTION)
+				onAbortTransferRequest(null);
+			else {
+				dontShowOverwriteConfirm = isMultipleDownload && checkbox.isSelected();
+				lastOverwriteChoice = (choice == JOptionPane.YES_OPTION);
+			}
+		}
 	}
 
 	@Override
