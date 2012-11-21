@@ -265,7 +265,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					} else if (command[0].equals("get")) {
 						get((command.length > 1) ? command[1] : "",
 								(command.length > 2) ? command[2] : null);
-					} else if (command[0].equals("getall")) { //TODO Creer un dossier eponyme au dossier courant comme destination si cette derniere n'est pas indiquée au lieu d'enregistrer directement dans le dossier courant local ??
+					} else if (command[0].equals("getall")) {
 						int maxdepth = 0;
 						String destination = null;
 						boolean overwrite = false;
@@ -648,7 +648,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			System.err.println("ENTDownloader: delete: Nom du fichier ou dossier manquant");
 			return;
 		}
-		//TODO Confirmation ? => option silencieuse ?
+
 		try {
 			entd.delete(elems);
 		} catch (ParseException e) {

@@ -797,6 +797,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			
 			try {
 				entd.delete(elementsNames.toArray(new String[nbtargets]));
+				//TODO Du boulot ICI !
 			/*} catch (ENTInvalidElementNameException e) {
 				String message;
 		 		switch (e.getType()) {
@@ -985,9 +986,8 @@ public class MainFrame extends javax.swing.JFrame implements
 				Toolkit.getDefaultToolkit().getSystemClipboard()
 						.setContents(ss, null);
 			} catch (IllegalStateException e) {
-				//TODO Exception à gérer
-				e.printStackTrace();
 				/** Le presse-papier n'est peut-être pas disponible */
+				JOptionPane.showMessageDialog(MainFrame.this, "Impossible de copier le nom du fichier : le presse papier n'est pas disponible.", "ENTDownloader", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
@@ -1833,7 +1833,6 @@ public class MainFrame extends javax.swing.JFrame implements
 						historyPush(entd.getDirectoryPath());
 					}
 				} catch (ENTUnauthenticatedUserException e1) {
-					// TODO Gestion Utilisateur non connecté
 					if(e1.getType() == ENTUnauthenticatedUserException.UNALLOWED)
 					{
 						statusInfo.setText("Indisponible");
@@ -1980,7 +1979,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							try {
 								dld.startDownload();
 							} catch (ENTUnauthenticatedUserException e) {
-								// TODO Gestion exception ENTUnauthenticatedUserException
+								// TODO Gestion expiration de session
 								e.printStackTrace();
 							}
 						}

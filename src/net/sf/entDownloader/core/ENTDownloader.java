@@ -869,7 +869,7 @@ public class ENTDownloader {
 						"(?i)<font class=\"uportal-channel-strong\">Il existe des caract&egrave;res non pris en charge dans le nom de votre ressource.<br\\s?/?></font>",
 						pageContent))
 			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, name);
-		//TODO Les exceptions empêche le lancement de l'événement de fin d'upload : génant ?
+
 		Broadcaster.fireEndUpload(new EndUploadEvent(file));
 	}
 
