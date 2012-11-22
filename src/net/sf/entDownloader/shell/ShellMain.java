@@ -22,9 +22,12 @@ package net.sf.entDownloader.shell;
 
 import static net.sf.entDownloader.core.Misc.addZeroBefore;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,18 +46,30 @@ import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangedListener;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingListener;
+import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
+import net.sf.entDownloader.core.events.DirectoryCreatedListener;
 import net.sf.entDownloader.core.events.DownloadAbortEvent;
 import net.sf.entDownloader.core.events.DownloadAbortListener;
 import net.sf.entDownloader.core.events.DownloadedBytesEvent;
 import net.sf.entDownloader.core.events.DownloadedBytesListener;
+import net.sf.entDownloader.core.events.ElementRenamedEvent;
+import net.sf.entDownloader.core.events.ElementRenamedListener;
+import net.sf.entDownloader.core.events.ElementsDeletedEvent;
+import net.sf.entDownloader.core.events.ElementsDeletedListener;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
 import net.sf.entDownloader.core.events.EndDownloadListener;
+import net.sf.entDownloader.core.events.EndUploadEvent;
+import net.sf.entDownloader.core.events.EndUploadListener;
 import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.FileAlreadyExistsListener;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartDownloadListener;
-import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
-import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
+import net.sf.entDownloader.core.events.StartUploadEvent;
+import net.sf.entDownloader.core.events.StartUploadListener;
+import net.sf.entDownloader.core.events.UploadedBytesEvent;
+import net.sf.entDownloader.core.events.UploadedBytesListener;
+import net.sf.entDownloader.core.exceptions.ENTElementNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.shell.progressBar.ProgressBar;
@@ -62,7 +77,11 @@ import net.sf.entDownloader.shell.progressBar.ProgressBar;
 public final class ShellMain implements AuthenticationSucceededListener,
 		DirectoryChangedListener, DirectoryChangingListener,
 		FileAlreadyExistsListener, StartDownloadListener,
-		DownloadedBytesListener, EndDownloadListener, DownloadAbortListener {
+		DownloadedBytesListener, EndDownloadListener, 
+		DownloadAbortListener, DirectoryCreatedListener,
+		EndUploadListener, StartUploadListener,
+		UploadedBytesListener,
+		ElementRenamedListener, ElementsDeletedListener {
 	private static String login;
 	private static final String productName = CoreConfig
 			.getString("ProductInfo.name");
@@ -77,8 +96,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	private ProgressBar pg;
 	private ENTDownloader entd;
 	private FS_File downloadingFile;
-	private long sizeDownloaded;
-
+	private File uploadingFile;
+	
 	public ShellMain(String[] args) {
 		System.out.println(productName + " v" + productVersion);
 		entd = ENTDownloader.getInstance();
@@ -90,7 +109,12 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addStartDownloadListener(this);
 		Broadcaster.addDownloadedBytesListener(this);
 		Broadcaster.addEndDownloadListener(this);
+		Broadcaster.addStartUploadListener(this);
+		Broadcaster.addUploadedBytesListener(this);
+		Broadcaster.addEndUploadListener(this);
 		Broadcaster.addDownloadAbortListener(this);
+		Broadcaster.addElementRenamedListener(this);
+		Broadcaster.addElementsDeletedListener(this);
 
 		//Analyse des arguments
 		for (int i = 0; i < args.length; i++) {
@@ -191,7 +215,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 
 		try {
 			writeStatusMessage("Connexion en cours...");
-			pg.setVisible(true);
+			if(System.getProperty("sf.net.entDownloader.debug", "false").equals("false"))
+				pg.setVisible(true);
 			if (!entd.login(login, password)) {
 				pg.setVisible(false);
 				System.err
@@ -240,7 +265,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 					} else if (command[0].equals("get")) {
 						get((command.length > 1) ? command[1] : "",
 								(command.length > 2) ? command[2] : null);
-					} else if (command[0].equals("getall")) { //TODO Creer un dossier eponyme au dossier courant comme destination si cette derniere n'est pas indiquée au lieu d'enregistrer directement dans le dossier courant local ??
+					} else if (command[0].equals("getall")) {
 						int maxdepth = 0;
 						String destination = null;
 						boolean overwrite = false;
@@ -293,13 +318,66 @@ public final class ShellMain implements AuthenticationSucceededListener,
 										.removeFileAlreadyExistsListener(this);
 							}
 						}
+					} else if (command[0].equals("mkdir")) {
+						mkdir((command.length > 1) ? command[1] : null);
+					} else if (command[0].equals("send")) {
+						send((command.length > 1) ? command[1] : "",
+								(command.length > 2) ? command[2] : null);
+					} else if (command[0].equals("rename")) {
+						rename((command.length > 1) ? command[1] : null,
+								(command.length > 2) ? command[2] : null);
+					} else if (command[0].equals("rm") || command[0].equals("delete") || command[0].equals("del")) {
+						String[] elems = null;
+						if (command.length > 1)
+						{
+							List<String> lst = new ArrayList<String>(Arrays.asList(command));
+							lst.remove(0);
+							elems = lst.toArray(new String[0]);
+						}
+						delete(elems);
 					} else if (command[0].equals("refresh")) {
 						cd(".");
+					} else if (command[0].equals("copy") || command[0].equals("cut")) {
+						String[] elems = null;
+						if (command.length > 1)
+						{
+							elems = Arrays.copyOfRange(command, 1, command.length);
+							try {
+								if(command[0].equals("copy"))
+									entd.copy(elems);
+								else
+									entd.cut(elems);
+							} catch (ENTElementNotFoundException e) {
+								System.err.println("ENTDownloader: "+command[0]+": Un fichier ou dossier spécifié est inexistant.");
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						else
+						{
+							System.err.println("ENTDownloader: "+command[0]+": Nom de fichier ou de dossier manquant.");
+						}
+					} else if (command[0].equals("paste")) {
+						if(entd.canPaste())
+						{
+							try {
+								entd.paste();
+							} catch (ENTInvalidElementNameException e) {
+								System.err.println("ENTDownloader: Impossible de coller la sélection : un fichier/dossier du même nom existe déjà.");
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						else
+							System.err.println("ENTDownloader: Le presse-papier est vide.");
+
 					} else if (command[0].equals("lpwd")) {
 						System.out.println(System.getProperty("user.dir"));
 					} else if (command[0].equals("info")) {
 						infos(entd);
-					} else if (command[0].equals("exit")) {
+					} else if (command[0].equals("exit") || command[0].equals("quit")) {
 						System.exit(0);
 					} else if (!command[0].isEmpty() || command.length != 1) {
 						System.err.println("ENTDownloader: " + command[0]
@@ -310,6 +388,10 @@ public final class ShellMain implements AuthenticationSucceededListener,
 				if (pg.isVisible()) {
 					pg.setVisible(false);
 				}
+
+				if(System.getProperty("sf.net.entDownloader.debug", "false").equals("true"))
+					e3.printStackTrace();
+
 				System.err
 						.println("ENTDownloader: Service indisponible: Votre connexion Internet semble rencontrer un problème. Assurez-vous que votre ordinateur est connecté à Internet.");
 				return;
@@ -398,10 +480,18 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		try {
 			entd.changeDirectory(name);
 		} catch (ENTUnauthenticatedUserException e) {
-			System.err
-					.println("La session a expirée, veuillez vous reconnectez en relançant le programme.");
+			if (pg.isVisible()) {
+				pg.setVisible(false);
+			}
+			if(e.getType() == ENTUnauthenticatedUserException.SESSION_EXPIRED)
+				System.err
+						.println("ENTDownloader: La session a expirée, veuillez vous reconnectez en relançant le programme.");
+			else
+				System.err
+						.println("ENTDownloader: Vous n'avez actuellement accès à aucun espace de stockage sur l'ENT.");
+
 			System.exit(1);
-		} catch (ENTDirectoryNotFoundException e) {
+		} catch (ENTElementNotFoundException e) {
 			if (pg.isVisible()) {
 				pg.setVisible(false);
 			}
@@ -432,7 +522,7 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		Broadcaster.addFileAlreadyExistsListener(this);
 		try {
 			entd.getFile(name, destination);
-		} catch (ENTFileNotFoundException e) {
+		} catch (ENTElementNotFoundException e) {
 			System.err.println("ENTDownloader: " + name
 					+ ": Aucun fichier de ce type");
 		} catch (FileNotFoundException e1) {
@@ -448,6 +538,127 @@ public final class ShellMain implements AuthenticationSucceededListener,
 			e3.getLocalizedMessage();
 		} finally {
 			Broadcaster.removeFileAlreadyExistsListener(this);
+		}
+	}
+
+	private void mkdir(String dirname) {
+		if (dirname == null || dirname.isEmpty()) {
+			System.err
+					.println("ENTDownloader: mkdir: Nom du dossier à créer manquant");
+			return;
+		}
+		Broadcaster.addDirectoryCreatedListener(this);
+		try {
+			entd.createDirectory(dirname);
+		} catch (ENTInvalidElementNameException e) {
+			if (e.getType() == ENTInvalidElementNameException.ALREADY_USED)
+				System.err
+						.println("ENTDownloader: Impossible de créer le répertoire \""
+								+ dirname + "\" : Le fichier existe.");
+			else if (e.getType() == ENTInvalidElementNameException.FORBIDDEN_CHAR)
+				System.err
+				.println("ENTDownloader: Impossible de créer le répertoire \""
+						+ dirname + "\" : Nom de dossier invalide.");
+			else
+				System.err
+				.println("ENTDownloader: Impossible de créer le répertoire \""
+						+ dirname + "\" : Erreur inconnue.");
+		} catch (IOException e3) {
+			e3.getLocalizedMessage();
+		} catch (ParseException e) {
+			if (pg.isVisible()) {
+				pg.setVisible(false);
+			}
+			System.err
+					.println("ENTDownloader: Une erreur est survenue lors de la création du répertoire");
+		} finally {
+			Broadcaster.removeDirectoryCreatedListener(this);
+		}
+	}
+
+	private void send(String filepath, String name) {
+		if (filepath == null || filepath.isEmpty()) {
+			System.err.println("ENTDownloader: send: Chemin du fichier manquant");
+			return;
+		}
+		//TODO Envoi multiple ?
+		try {
+			entd.sendFile(filepath, name);
+		} catch (FileNotFoundException e) {
+			System.err.println("ENTDownloader: send: Fichier introuvable ou inaccessible");
+			return;
+		} catch (ENTInvalidElementNameException e) {
+			uploadingFile = null;
+			pg.setVisible(false);
+			pg.setDeterminate(false);
+			if (e.getType() == ENTInvalidElementNameException.ALREADY_USED)
+				System.err
+						.println("ENTDownloader: Impossible d'envoyer le fichier \""
+								+ e.getMessage() + "\" : Le fichier existe.");
+			else if (e.getType() == ENTInvalidElementNameException.FORBIDDEN_CHAR)
+				System.err
+				.println("ENTDownloader: Impossible d'envoyer le fichier \""
+						+ e.getMessage() + "\" : Nom de fichier invalide.");
+		} catch (IOException e) {
+			System.err.println("ENTDownloader: send: " + e.getLocalizedMessage());
+			return;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void rename(String oldname, String newname) {
+		if (oldname == null || oldname.isEmpty()) {
+			System.err.println("ENTDownloader: rename: Nom du fichier ou dossier manquant");
+			return;
+		}
+		if (newname == null || newname.isEmpty()) {
+			System.err.println("ENTDownloader: rename: Nouveau nom manquant");
+			return;
+		}
+
+		try {
+			entd.rename(oldname, newname);
+		} catch (ENTElementNotFoundException e) {
+			System.err.println("ENTDownloader: " + e.getMessage()
+					+ ": Aucun fichier ou dossier de ce type");
+		} catch (ENTInvalidElementNameException e) {
+			if (e.getType() == ENTInvalidElementNameException.ALREADY_USED)
+				System.err
+						.println("ENTDownloader: Impossible de renommer \""
+								+ oldname + "\" en \""
+								+ newname + "\" : Le fichier existe.");
+			else if (e.getType() == ENTInvalidElementNameException.FORBIDDEN_CHAR)
+				System.err
+				.println("ENTDownloader: Impossible de renommer \""
+						+ oldname + "\" en \""
+						+ newname + "\" : Nouveau nom invalide.");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void delete(String[] elems) {
+		if (elems == null || elems.length == 0) {
+			System.err.println("ENTDownloader: delete: Nom du fichier ou dossier manquant");
+			return;
+		}
+
+		try {
+			entd.delete(elems);
+		} catch (ENTElementNotFoundException e) {
+			System.err.println("ENTDownloader: delete: Impossible de supprimer: Aucun fichier ou dossier de ce type.");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -507,7 +718,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 
 	@Override
 	public void onDirectoryChanging(DirectoryChangingEvent event) {
-		pg.setVisible(true);
+		if(System.getProperty("sf.net.entDownloader.debug", "false").equals("false"))
+			pg.setVisible(true);
 		String path = event.getDirectory().toString();
 		if (path.equals("..")) {
 			path = "parent";
@@ -523,9 +735,13 @@ public final class ShellMain implements AuthenticationSucceededListener,
 	}
 
 	@Override
+	public void onDirectoryCreated(DirectoryCreatedEvent event) {
+		writeStatusMessage("Création du dossier " + event.getName() + " réussie.");
+	}
+
+	@Override
 	public void onStartDownload(StartDownloadEvent e) {
 		downloadingFile = e.getFile();
-		sizeDownloaded = 0;
 		pg.setDeterminate(true);
 		writeStatusMessage("Téléchargement du fichier "
 				+ downloadingFile.getName() + " en cours...");
@@ -549,9 +765,31 @@ public final class ShellMain implements AuthenticationSucceededListener,
 
 	@Override
 	public void onDownloadedBytes(DownloadedBytesEvent e) {
-		sizeDownloaded += e.getBytesDownloaded();
-		pg.setValue((int) (((Long) sizeDownloaded) * 100 / downloadingFile
+		pg.setValue(Math.round(e.getTotalDownloaded() * 100f / downloadingFile
 				.getSize()));
+	}
+
+	@Override
+	public void onStartUpload(StartUploadEvent e) {
+		uploadingFile = e.getFile();
+		pg.setDeterminate(true);
+		if(System.getProperty("sf.net.entDownloader.debug", "false").equals("false"))
+			pg.setVisible(true);
+		writeStatusMessage("Envoi du fichier "
+				+ uploadingFile.getName() + " en cours...");
+	}
+
+	@Override
+	public void onEndUpload(EndUploadEvent e) {
+		uploadingFile = null;
+		pg.setVisible(false);
+		pg.setDeterminate(false);
+		writeStatusMessage("Envoi terminé.");
+	}
+
+	@Override
+	public void onUploadedBytes(UploadedBytesEvent e) {
+		pg.setValue(Math.round(e.getTotalUploaded() * 100f / uploadingFile.length()));
 	}
 
 	@Override
@@ -587,8 +825,21 @@ public final class ShellMain implements AuthenticationSucceededListener,
 		if (isDeterminate) {
 			pg.setDeterminate(true);
 		}
-		if (isVisible) {
+		if (isVisible && System.getProperty("sf.net.entDownloader.debug", "false").equals("false")) {
 			pg.setVisible(true);
 		}
+	}
+
+	@Override
+	public void onElementRenamed(ElementRenamedEvent e) {
+		writeStatusMessage("Le fichier " + e.getOldName() + " a été renommé.");
+	}
+
+	@Override
+	public void onElementsDeleted(ElementsDeletedEvent e) {
+		if(e.getTargets().length == 1)
+			writeStatusMessage("L'élément " + e.getTargets()[0] + " a été supprimé.");
+		else
+			writeStatusMessage("Eléments supprimés.");
 	}
 }

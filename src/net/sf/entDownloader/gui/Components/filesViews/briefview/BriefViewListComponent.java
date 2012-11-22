@@ -24,9 +24,13 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
 import net.sf.entDownloader.core.FS_Element;
 import net.sf.entDownloader.gui.events.DoubleClickOnRowEvent;
@@ -39,6 +43,7 @@ public class BriefViewListComponent extends JList {
 
 	public BriefViewListComponent() {
 		setFocusTraversalKeysEnabled(false);
+	    removeDefaultKeys();
 		addMouseActions();
 		setOtherProperties();
 	}
@@ -58,6 +63,14 @@ public class BriefViewListComponent extends JList {
 	public int getVisibleRowCount() {
 		//to fill the whole space
 		return -1;
+	}
+
+	private void removeDefaultKeys() {
+		InputMap mainMap = SwingUtilities.getUIInputMap(this, JComponent.WHEN_FOCUSED);
+
+		mainMap.remove(KeyStroke.getKeyStroke("ctrl C"));
+		mainMap.remove(KeyStroke.getKeyStroke("ctrl X"));
+		mainMap.remove(KeyStroke.getKeyStroke("ctrl V"));
 	}
 
 	@Override

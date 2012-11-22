@@ -26,9 +26,11 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -50,20 +52,28 @@ import net.sf.entDownloader.core.events.StartDownloadEvent;
 import net.sf.entDownloader.core.events.StartDownloadListener;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.gui.events.GuiBroadcaster;
-import net.sf.entDownloader.gui.events.RequestDownloadAbortEvent;
-import net.sf.entDownloader.gui.events.RequestDownloadAbortListener;
+import net.sf.entDownloader.gui.events.AbortTransferRequestEvent;
+import net.sf.entDownloader.gui.events.AbortTransferRequestListener;
 
+/**
+ * Gère le téléchargement simple ou multiple en mode graphique,
+ * et informe l'utilisateur de la progression de l'opération.
+ * 
+ * @author Kévin
+ */
 public class Downloader extends SwingWorker<Void, Void> implements
 		StartDownloadListener, DownloadedBytesListener, EndDownloadListener,
-		FileAlreadyExistsListener, RequestDownloadAbortListener {
+		FileAlreadyExistsListener, AbortTransferRequestListener {
 
 	private DownloadFrame downloadFrame;
 	private List<FS_Element> downList;
 	private JFileChooser fileChooser;
 	private JFrame parent;
-	private long currentFileDownloaded;
 	private int nbFilesDownloaded;
 	private long totalSizeDownloaded;
+	private boolean lastOverwriteChoice = false;
+	private boolean dontShowOverwriteConfirm = false;
+	private boolean isMultipleDownload;
 
 	public Downloader(JFrame owner) {
 		this(owner, (Collection<FS_Element>) null, null);
@@ -91,7 +101,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			JFileChooser saveasChooser) {
 		this.parent = owner;
 		downloadFrame = new DownloadFrame(owner);
-		GuiBroadcaster.addRequestDownloadAbortListener(this);
+		GuiBroadcaster.addAbortTransferRequestListener(this);
 
 		if (downloadList != null) {
 			downList = new ArrayList<FS_Element>(downloadList);
@@ -119,23 +129,26 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		ENTDownloader entd = ENTDownloader.getInstance();
 
 		boolean isThereDirectories = isThereDirectories();
-		boolean isMultiple = downList.size() > 1;
+		boolean isMultipleSelection = downList.size() > 1;
+		isMultipleDownload = isThereDirectories || isMultipleSelection;
 		/*	Pour optimisation, on considère que tout télécharger 
 		 *  dans un dossier contenant seulement un élément revient à un téléchargement unique,
 		 *  et non à un "télécharger tout"
 		 */
-		boolean isDownloadAll = (isMultiple && downList.size() == entd
+		boolean isDownloadAll = (isMultipleSelection && downList.size() == entd
 				.getDirectoryContent().size());
 
 		if (downList == null || downList.isEmpty())
 			return;
 
-		if (isMultiple || isThereDirectories) { //Sélection multiple ou un dossier seulement
+		if (isMultipleDownload) { //Sélection multiple ou un dossier seulement
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			fileChooser.setApproveButtonToolTipText("Enregistre sous le dossier sélectionné");
 			downloadFrame
 					.setOpenWhenFinishedText("Ouvrir le dossier à la fin du téléchargement");
 		} else { //Selection unique d'un fichier
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fileChooser.setApproveButtonToolTipText("Enregistre le fichier sélectionné");
 			downloadFrame
 					.setOpenWhenFinishedText("Ouvrir le fichier à la fin du téléchargement");
 			if (!isThereDirectories) {
@@ -183,11 +196,11 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			}
 			downloadFrame.setTotalInfos(nbFiles, totalsize);
 		} else {
-			downloadFrame.setTotalInfos(DownloadFrame.UNKNOWN,
-					DownloadFrame.UNKNOWN);
+			downloadFrame.setTotalInfos(DownloadFrame.UNDEFINED,
+					DownloadFrame.UNDEFINED);
 		}
 
-		downloadFrame.setTotalDownloaded(0, 0);
+		downloadFrame.setTotalTransferred(0, 0);
 		downloadFrame.setOpenWhenFinishedVisible(Desktop.isDesktopSupported()
 				&& Desktop.getDesktop().isSupported(
 						java.awt.Desktop.Action.BROWSE)
@@ -203,7 +216,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		totalSizeDownloaded = nbFilesDownloaded = 0;
 
 		String savePath = saveas.getPath();
-		if (isMultiple
+		if (isMultipleSelection
 				&& !savePath.substring(savePath.length() - 1).equals(
 						System.getProperty("file.separator"))) {
 			savePath += System.getProperty("file.separator");
@@ -213,6 +226,11 @@ public class Downloader extends SwingWorker<Void, Void> implements
 			entd.getAllFiles(savePath, -1);
 		} else { //Téléchargement unique ou partiel
 			for (Iterator<FS_Element> it = downList.iterator(); it.hasNext();) {
+				if(isCancelled()) {
+					dispose();
+					downloadFrame.dispose();
+					return;
+				}
 				FS_Element el = it.next();
 				if (el.isFile()) {
 					entd.getFile(el.getName(), savePath);
@@ -225,6 +243,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						dispose();
 					}
 				}
 			}
@@ -234,13 +253,19 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 		if (downloadFrame.openWhenFinished()) {
 			try {
-				if (isMultiple || isThereDirectories) {
+				if (isMultipleDownload) {
 					java.awt.Desktop.getDesktop().browse(saveas.toURI());
 				} else {
 					java.awt.Desktop.getDesktop().open(saveas);
 				}
+			} catch (IOException e) {
+				JOptionPane
+				.showMessageDialog(
+						parent,
+						"ENTDownloader ne peut pas ouvrir le fichier : aucun programme associé.",
+						"ENTDownloader", JOptionPane.WARNING_MESSAGE);
 			} catch (Exception e) {
-				System.err.println("Impossible d'ouvrir " + saveas.getPath());
+				e.printStackTrace();
 			}
 		}
 
@@ -252,7 +277,12 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		Broadcaster.removeStartDownloadListener(this);
 		Broadcaster.removeEndDownloadListener(this);
 		Broadcaster.removeFileAlreadyExistsListener(this);
-		GuiBroadcaster.removeRequestDownloadAbortListener(this);
+		try {
+			GuiBroadcaster.removeAbortTransferRequestListener(this);
+		} catch (ConcurrentModificationException e) {
+			e.printStackTrace();
+			//TODO: ConcurrentModificationException (suppresion d'un el de la liste en cours de parcours (fireRequestDownloadAbort->onRequestDownloadAbort->dispose)
+		}
 	}
 
 	private boolean isThereDirectories() {
@@ -270,7 +300,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				downloadFrame.setTotalDownloaded(nbFilesDownloaded,
+				downloadFrame.setTotalTransferred(nbFilesDownloaded,
 						totalSizeDownloaded);
 			}
 		});
@@ -278,45 +308,68 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 	@Override
 	public void onDownloadedBytes(final DownloadedBytesEvent e) {
-		currentFileDownloaded += e.getBytesDownloaded();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				downloadFrame.setCurrentFileDownloaded(currentFileDownloaded);
+				downloadFrame.setCurrentBytesTransferred(e.getTotalDownloaded());
 			}
 		});
 	}
 
 	@Override
 	public void onStartDownload(final StartDownloadEvent e) {
-		currentFileDownloaded = 0;
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				downloadFrame.setCurrentFileName(e.getFile().getName());
 				downloadFrame.setCurrentFileSize(e.getFile().getSize());
-				downloadFrame.setCurrentFileDownloaded(0);
+				downloadFrame.setCurrentBytesTransferred(0);
 			}
 		});
 	}
 
 	@Override
 	public void onFileAlreadyExists(FileAlreadyExistsEvent e) {
-		//TODO Amélioration : Oui pour tous / non pour tous (ou case a cocher ne plus demander)
-		int choice = JOptionPane
-				.showConfirmDialog(
-						downloadFrame,
-						"<html>Un fichier portant le nom \""
-								+ e.getFile().getName()
-								+ "\" existe déjà à cet emplacement.<br>Voulez-vous écraser le fichier existant et le remplacer par le fichier en cours de téléchargement ?<b></html>",
-						"ENTDownloader - Téléchargement",
-						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-		e.abortDownload = (choice == JOptionPane.NO_OPTION);
+		int choice = JOptionPane.NO_OPTION;
+		JCheckBox checkbox = null;
+		if(!dontShowOverwriteConfirm)
+		{
+			Object[] options = {"Écraser", "Annuler"};
+			if (isMultipleDownload)
+			{
+				Object[] tmp = new Object[options.length + 1];
+				System.arraycopy(options, 0, tmp, 0, options.length);
+				tmp[options.length] = "Annuler tout";
+				tmp[1] = "Passer ce fichier";
+				options = tmp;
+				checkbox = new JCheckBox("Appliquer mon choix pour les prochains conflits.");
+			}
+			String message = "<html>Un fichier portant le nom \""
+				+ e.getFile().getName()
+				+ "\" existe déjà à cet emplacement.<br>Voulez-vous écraser le fichier existant et le remplacer par le fichier en cours de téléchargement ?<b><br></html>";  
+			Object[] params = {message, checkbox};
+			choice = JOptionPane
+					.showOptionDialog(
+							downloadFrame,
+							params,
+							"ENTDownloader - Téléchargement",
+							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+		}
+		e.abortDownload = dontShowOverwriteConfirm && !lastOverwriteChoice || !dontShowOverwriteConfirm && (choice != JOptionPane.YES_OPTION);
+		if(!dontShowOverwriteConfirm) {
+			if(choice == JOptionPane.CANCEL_OPTION)
+				onAbortTransferRequest(null);
+			else {
+				dontShowOverwriteConfirm = isMultipleDownload && checkbox.isSelected();
+				lastOverwriteChoice = (choice == JOptionPane.YES_OPTION);
+			}
+		}
 	}
 
 	@Override
-	public void onRequestDownloadAbort(RequestDownloadAbortEvent event) {
+	public void onAbortTransferRequest(AbortTransferRequestEvent event) {
+		cancel(true);
+		ENTDownloader.getInstance().abortDownload();
 		downloadFrame.dispose();
 		dispose();
 	}

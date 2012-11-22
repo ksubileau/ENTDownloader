@@ -31,45 +31,69 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.swing.AbstractButton;
 import javax.swing.Icon;
-import javax.swing.UIManager;
+import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
 
 import net.sf.entDownloader.core.FS_Element;
 
 public class Misc {
-	private static Hashtable<String, Icon> fileIcons = new Hashtable<String, Icon>();
+	private static Hashtable<String, Icon[]> fileIcons = new Hashtable<String, Icon[]>();
 	private static Hashtable<String, String> fileDescription = new Hashtable<String, String>();
 
+	private static Icon[] dirIcon = new Icon[2];
+	private static Icon[] fileIcon = new Icon[2];
+
+	public static final int SMALL = 0;
+	public static final int MEDIUM = 1;
+
 	/**
-	 * Retrieves the icon to associate with this file. If the icon returned by
-	 * the file is <code>null</code> then
-	 * ask the UIManager to give us an icon (from the LookAndFeel)
+	 * Recherche et retourne l'icône associée à l'élément indiqué.
+	 * Si cette icône n'existe pas ou qu'une erreur survient, une icône
+	 * par défaut est retournée.
 	 * 
 	 * @param file
-	 *            The file for which we want get the icon
-	 * @return the icon associated with the file
+	 *            L'élément dont on recherche l'icône.
+	 * @param size
+	 * 			  La taille de l'icône souhaitée (SMALL ou MEDIUM)
+	 * @return L'icône associée au type de l'élément indiqué.
 	 */
-	public static Icon getIcon(FS_Element file) {
+	public static Icon getFileTypeIcon(FS_Element file, int size) {
 		Icon icon = null;
 		if (file.isDirectory()) {
-			icon = (Icon) UIManager.get("FileView.directoryIcon");
+			if(dirIcon[size] == null)
+				dirIcon[size] = loadIcon("folder"+(size==SMALL?"16":"")+".png");
+			icon = dirIcon[size];
 		} else if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
 			String extension = getExtension(file.getName());
-			if ((icon = fileIcons.get(extension)) == null) {
+			if (fileIcons.get(extension) == null)
+				fileIcons.put(extension, new Icon[2]);
+			if ((icon = fileIcons.get(extension)[size]) == null) {
 				File tempfile;
 				try {
 					tempfile = File.createTempFile("icon", "." + extension);
-					FileSystemView view = FileSystemView.getFileSystemView();
-					icon = view.getSystemIcon(tempfile);
+					if(size == SMALL) {
+						FileSystemView view = FileSystemView.getFileSystemView();
+						icon = view.getSystemIcon(tempfile);
+					} else {
+						// Get metadata and create an icon
+				        sun.awt.shell.ShellFolder sf =
+				                sun.awt.shell.ShellFolder.getShellFolder(tempfile);
+				        icon = new ImageIcon(sf.getIcon(true));
+					}
 					tempfile.delete();
-				} catch (IOException e) {
-					icon = (Icon) UIManager.get("FileView.fileIcon");
+				} catch (Exception e) {
+					if(fileIcon[size] == null)
+						fileIcon[size] = loadIcon("file"+(size==SMALL?"16":"")+".png");
+					icon = fileIcon[size];
 				}
-				fileIcons.put(extension, icon);
+				fileIcons.get(extension)[size] = icon;
 			}
 		} else {
-			icon = (Icon) UIManager.get("FileView.fileIcon");
+			if(fileIcon[size] == null)
+				fileIcon[size] = loadIcon("file"+(size==SMALL?"16":"")+".png");
+			icon = fileIcon[size];
 		}
 		return icon;
 	}
@@ -230,5 +254,49 @@ public class Misc {
 			}
 		} else
 			return false;
+	}
+
+	/**
+	 * Charge une icône à partir du fichier image indiqué.
+	 * 
+	 * @param imageName Nom du fichier image.
+	 * @param altText Une courte description de l'image.
+	 * @return L'instance de {@link #javax.swing.ImageIcon ImageIcon}
+	 * 		   représentant l'icône demandée.
+	 */
+	public static ImageIcon loadIcon(String imageName, String altText) {
+		String imgLocation = "net/sf/entDownloader/ressources/" + imageName;
+		URL imageURL = MainFrame.class.getClassLoader()
+				.getResource(imgLocation);
+		if (imageURL != null) //image found
+			return new ImageIcon(imageURL, altText);
+		else { //no image found
+			System.err.println("Resource not found: " + imgLocation);
+			return null;
+		}
+	}
+
+	/**
+	 * Charge une icône à partir du fichier image indiqué.
+	 * 
+	 * @param imageName Nom du fichier image.
+	 * @return L'instance de {@link #javax.swing.ImageIcon ImageIcon}
+	 * 		   représentant l'icône demandée.
+	 */
+	public static ImageIcon loadIcon(String imageName) {
+		return loadIcon(imageName, null);
+	}
+
+	/**
+	 * Définit l'icône du bouton à partir du fichier image indiqué.
+	 * 
+	 * @param btn Le bouton dont l'icône est à définir.
+	 * @param imageName Nom du fichier image.
+	 */
+	public static void setButtonIcon(AbstractButton btn, String imageName) {
+		ImageIcon icon = loadIcon(imageName);
+		if (icon != null) {
+			btn.setIcon(icon);
+		}
 	}
 }

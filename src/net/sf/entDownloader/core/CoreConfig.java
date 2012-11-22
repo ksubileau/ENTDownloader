@@ -58,6 +58,21 @@ public final class CoreConfig {
 	/** Adresse de téléchargement d'un fichier */
 	public static final String downloadFileURL = rootURL
 			+ "worker/download/worker.download.target.{uP_root}.uP";
+	/** Adresse d'envoi d'un fichier */
+	public static final String sendFileURL = rootURL
+			+ "render.userLayoutRootNode.target.{uP_root}.uP";
+	/** Adresse de renommage d'un élément */
+	public static final String renameURL = rootURL
+			+ "render.userLayoutRootNode.target.{uP_root}.uP";
+	/** Adresse de suppression d'un élément */
+	public static final String deleteURL = rootURL
+			+ "render.userLayoutRootNode.target.{uP_root}.uP";
+	/** Adresse de copie ou de déplacement d'un élément */
+	public static final String copyMoveURL = rootURL
+			+ "render.userLayoutRootNode.target.{uP_root}.uP";
+	/** Adresse de "collage" d'un élément */
+	public static final String pasteURL = rootURL
+			+ "render.userLayoutRootNode.target.{uP_root}.uP";
 	/** Adresse de retour dans le dossier parent */
 	public static final String directoryBackURL = rootURL
 			+ "render.userLayoutRootNode.target.{uP_root}.uP?modeDav=directory_back";
@@ -72,8 +87,6 @@ public final class CoreConfig {
 			+ "/checkUpdate.php?v={version}";
 
 	public static boolean optimizePath = true;
-
-	public static final boolean debug = false;
 
 	public CoreConfig() {
 	}

@@ -46,6 +46,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -89,7 +90,6 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 	private JTextField id;
 	private JLabel wait2;
 	private JLabel wait;
-	private JPanel jPanel1;
 	private JFadePanel overlay;
 	private JLabel imgPass;
 	private JLabel invalidCredentials;
@@ -98,7 +98,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 	private JPasswordField mdp;
 	private JLabel passLabel;
 	private JLabel idLabel;
-	private Thread loginThread;
+	private SwingWorker<Void, Void> loginThread;
 
 	/**
 	 * Auto-generated main method to display this JDialog
@@ -146,8 +146,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 				}
 				{
 					cancel = new JButton();
-					//FIXME Réactivation du bouton d'annulation de la connexion une fois le bug résolu.
-					//overlay.add(cancel);
+					overlay.add(cancel);
 					cancel.setText("Annuler");
 					cancel.setBounds(170, 118, 81, 29);
 					cancel.setMnemonic(java.awt.event.KeyEvent.VK_A);
@@ -160,22 +159,15 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 					passLabel.setText("Mot de passe :");
 				}
 				{
-					jPanel1 = new JPanel();
-					jPanel1.setLayout(null);
-					jPanel1.setSize(70, 70);
-					jPanel1.setOpaque(false);
-					{
-						imgPass = new JLabel();
-						jPanel1.add(imgPass, "Center"); //$NON-NLS-1$
-						imgPass.setIcon(new ImageIcon(
-								getClass()
-										.getClassLoader()
-										.getResource(
-												"net/sf/entDownloader/ressources/padlockandkeys.png"))); //$NON-NLS-1$
-						imgPass.setBounds(0, 0, 78, 74);
-						imgPass.setBackground(new java.awt.Color(255, 255, 255));
-						imgPass.setHorizontalAlignment(SwingConstants.CENTER);
-					}
+					imgPass = new JLabel();
+					imgPass.setIcon(new ImageIcon(
+							getClass()
+									.getClassLoader()
+									.getResource(
+											"net/sf/entDownloader/ressources/padlockandkeys.png"))); //$NON-NLS-1$
+					imgPass.setBounds(0, 0, 78, 74);
+					imgPass.setBackground(new java.awt.Color(255, 255, 255));
+					imgPass.setHorizontalAlignment(SwingConstants.CENTER);
 				}
 				{
 					invite = new JLabel();
@@ -229,19 +221,16 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 10, 5),
 							0, 0));
-					confirm.setText("OK");
+					confirm.setText("Connexion");
 					confirm.setBounds(0, 0, 100, 100);
 					confirm.setPreferredSize(new java.awt.Dimension(47, 23));
-					confirm.setMnemonic(java.awt.event.KeyEvent.VK_O);
+					confirm.setMnemonic(java.awt.event.KeyEvent.VK_C);
 					confirm.addActionListener(this);
 					confirm.setEnabled(false);
 				}
 				{
 					quit = new JButton();
-					getContentPane().add(quit, new GridBagConstraints(4, 5, 2, 1, 0.0,
-							0.0, GridBagConstraints.CENTER,
-							GridBagConstraints.NONE, new Insets(0, 5, 10, 3),
-							0, 0));
+					getContentPane().add(quit, new GridBagConstraints(4, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
 					getContentPane().add(id, new GridBagConstraints(2, 2, 3, 1, 0.0,
 							0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
@@ -258,9 +247,9 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 							0.0, 0.0, GridBagConstraints.EAST,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0,
 							0));
-					getContentPane().add(jPanel1, new GridBagConstraints(0, 1, 1, 4,
+					getContentPane().add(imgPass, new GridBagConstraints(0, 1, 1, 4,
 							0.0, 0.0, GridBagConstraints.CENTER,
-							GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0,
+							GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0,
 							0));
 					getContentPane().add(invalidCredentials, new GridBagConstraints(1,
 							1, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
@@ -275,7 +264,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						getContentPane().add(proxyBtn, new GridBagConstraints(0, 5, 1,
 								1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 								GridBagConstraints.NONE,
-								new Insets(0, 5, 5, 0), 0, 0));
+								new Insets(0, 10, 5, 0), 0, 0));
 						proxyBtn.setText("Proxy...");
 						proxyBtn.setMnemonic(java.awt.event.KeyEvent.VK_P);
 						proxyBtn.addActionListener(this);
@@ -318,13 +307,10 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 					}
 					quit.setAction(new MainFrame.ExitAction());
 				}
-				defaultLayout.rowWeights = new double[] { 0.03, 0.0, 0.01,
-						0.01, 0.1, 0.0 };
-				defaultLayout.rowHeights = new int[] { 7, 10, 7, 7, 20, 7 };
-				defaultLayout.columnWeights = new double[] { 0.0, 0.0, 0.1,
-						0.0, 0.0, 0.0, 0.0 };
-				defaultLayout.columnWidths = new int[] { 77, 130, 20, 7, 38,
-						20, 8 };
+				defaultLayout.rowWeights = new double[] {0.03, 0.0, 0.01, 0.0, 0.1, 0.0};
+				defaultLayout.rowHeights = new int[] {7, 14, 7, 39, 20, 7};
+				defaultLayout.columnWeights = new double[] {0.0, 0.0, 0.1, 0.0, 0.0, 0.0};
+				defaultLayout.columnWidths = new int[] {97, 95, 30, 7, 38, 15};
 			}
 			this.addWindowListener(new WindowAdapter() {
 				@Override
@@ -334,7 +320,6 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 			});
 			this.setIconImage(GuiMain.getAppIcon());
 			{
-				jPanel1.setBounds(18, 55, 78, 74);
 				invalidCredentials.setBounds(147, 55, 0, 0);
 				invalidCredentials
 						.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -359,7 +344,6 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 		wait2.setText("Authentification réussie. Initialisation en cours...");
 	}
 
-	//FIXME Le bouton annuler n'imterompt pas le thread : la connexion continue
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == confirm || 
@@ -367,22 +351,21 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 		{
 			wait2.setText("Connexion en cours, veuillez patientez...");
 			Broadcaster.addAuthenticationSucceededListener(this);
-			loginThread = new Thread() {
+			loginThread = new SwingWorker<Void, Void>() {
+				private boolean exceptionRaised  = false;
 				@Override
-				public void run() {
+				protected Void doInBackground() {
 					overlay.setVisible(true);
 					try {
-						if (ENTDownloader.getInstance().login(id.getText(), mdp.getPassword())) {
-							MainFrame mainFrame = (MainFrame) GuiMain.getMainFrame();
-							mainFrame.changeDirectory("/");
-							mainFrame.setExtendedState(mainFrame.getExtendedState()
-									| javax.swing.JFrame.MAXIMIZED_BOTH);;
-							mainFrame.setVisible(true);
-							dispose();
-						} else {
-							restartAfterFailed(true);
-						}
+						//TODO En cas d'annulation, la méthode login poursuit son execution inutilement.
+						//Des requêtes HTTP sont effectuées après l'annulation. Solution : Rendre la méthode
+						//login interruptible en ajoutant une logique d'arrêt dans la classe ENTDownloader.
+						//(Pb non critique)
+						ENTDownloader.getInstance().login(id.getText(), mdp.getPassword());
 					} catch (IOException e) {
+						if(isCancelled()) //Si la connexion a été annulée
+							return null; //On ignore l'erreur qui s'est produite post-annulation
+						exceptionRaised = true;
 						InetSocketAddress proxyAddress = 
 							(InetSocketAddress) ENTDownloader.getInstance().
 								getProxy().address();
@@ -393,7 +376,6 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						{
 							//L'erreur est due à une mauvaise configuration
 							//de proxy.
-							restartAfterFailed(false);
 							JOptionPane
 							.showMessageDialog(
 									LoginFrame.this,
@@ -416,16 +398,18 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						}
 						else //Une autre erreur, non liée au proxy.
 						{
-						JOptionPane
-								.showMessageDialog(
-										LoginFrame.this,
-										"Votre connexion Internet semble rencontrer un problème.\nAssurez-vous que votre ordinateur est connecté à Internet, "
-												+ "\net que vous avez correctement configuré les paramètres de proxy.",
-										"ENTDownloader - Service indisponible",
-										JOptionPane.ERROR_MESSAGE);
-						restartAfterFailed(false);
+							JOptionPane
+									.showMessageDialog(
+											LoginFrame.this,
+											"Votre connexion Internet semble rencontrer un problème.\nAssurez-vous que votre ordinateur est connecté à Internet, "
+													+ "\net que vous avez correctement configuré les paramètres de proxy.",
+											"ENTDownloader - Service indisponible",
+											JOptionPane.ERROR_MESSAGE);
 						}
 					} catch (ParseException e) {
+						if(isCancelled()) //Si la connexion a été annulée
+							return null; //On ignore l'erreur qui s'est produite post-annulation
+						exceptionRaised = true;
 						JOptionPane
 						.showMessageDialog(
 								LoginFrame.this,
@@ -438,11 +422,51 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						e.printStackTrace();
 						System.exit(1);
 					}
+					return null;
 				}
-	
+
+				@Override
+				protected void done() {
+					if(isCancelled())
+					{
+						//Sauvegarde la configuration de proxy
+						String pacFile = ENTDownloader.getInstance().getProxyFile();
+						java.net.Proxy proxy = null;
+						if(pacFile == null)
+							proxy = ENTDownloader.getInstance().getProxy();
+
+						//Réinitialise l'instance d'ENTDownloader
+						ENTDownloader.reset();
+
+						//Restaure la configuration de proxy
+						if(pacFile != null)
+							try {
+								ENTDownloader.getInstance().setProxy(pacFile);
+							} catch (Exception e) {
+								ENTDownloader.getInstance().setProxy(proxy);
+							}
+						else
+							ENTDownloader.getInstance().setProxy(proxy);
+
+						restartAfterFailed(false);
+					}
+					else
+					{
+						if (ENTDownloader.getInstance().isLogged()) {
+							MainFrame mainFrame = (MainFrame) GuiMain.getMainFrame();
+							mainFrame.updateENTDInstance();
+							mainFrame.changeDirectory("/");
+							mainFrame.setExtendedState(mainFrame.getExtendedState()
+									| javax.swing.JFrame.MAXIMIZED_BOTH);;
+							mainFrame.setVisible(true);
+							dispose();
+						} else {
+							restartAfterFailed(!exceptionRaised);
+						}
+					}
+				};
 			};
-			loginThread.setDaemon(true);
-			loginThread.start();
+			loginThread.execute();
 		} else if (e.getSource() == id && !id.getText().isEmpty()) {
 			mdp.requestFocus();
 		} else if (e.getSource() == proxyBtn) {
@@ -451,8 +475,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 			pxDial.setLocationRelativeTo(LoginFrame.this);
 			pxDial.setVisible(true);
 		} else if (e.getSource() == cancel) {
-			loginThread.stop();
-			restartAfterFailed(false);
+			loginThread.cancel(true);
 		}
 	}
 

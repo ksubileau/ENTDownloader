@@ -38,12 +38,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.LinkedList;
 
 import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -67,6 +65,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -81,7 +80,14 @@ import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangedListener;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingListener;
-import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
+import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
+import net.sf.entDownloader.core.events.DirectoryCreatedListener;
+import net.sf.entDownloader.core.events.ElementRenamedEvent;
+import net.sf.entDownloader.core.events.ElementRenamedListener;
+import net.sf.entDownloader.core.events.ElementsDeletedEvent;
+import net.sf.entDownloader.core.events.ElementsDeletedListener;
+import net.sf.entDownloader.core.exceptions.ENTElementNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 import net.sf.entDownloader.gui.Components.JStatusBar;
@@ -96,7 +102,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		DirectoryChangedListener {
 
 	private static final long serialVersionUID = 925222114370143696L;
-	private ENTDownloader entd = ENTDownloader.getInstance();
+	private ENTDownloader entd = null;
 
 	private JMenuItem dld;
 	private JMenu navigationMenu;
@@ -111,6 +117,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	private ButtonGroup affichGroup;
 	private JRadioButtonMenuItem DetailItem;
 	private JRadioButtonMenuItem ListItem;
+	private JMenuItem zoom;
 	private JMenu affichMenu;
 	private ListView fileView;
 	private JButton parentBtn;
@@ -135,9 +142,23 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JSeparator jSeparator2;
 	private JMenu help;
 	private JMenuItem exit;
+	private JMenuItem createDir;
+	private JMenuItem rename;
+	private JMenuItem cut;
+	private JMenuItem copy;
+	private JMenuItem paste;
+	private JMenuItem delete;
+	private JMenuItem send;
 	private JMenu fileMenu;
 	private JMenuBar jMenuBar;
 	private JButton DownloadAll_tool;
+	private JButton createDir_tool;
+	private JButton rename_tool;
+	private JButton cut_tool;
+	private JButton copy_tool;
+	private JButton paste_tool;
+	private JButton delete_tool;
+	private JButton send_tool;
 	private JStatusBar statusBar;
 	private JButton refreshBtn;
 	private JButton goDirBtn;
@@ -147,12 +168,19 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem openDir;
 	private DownloadAction dldAction;
 	private DownloadAction dldAllAction;
+	private UploadAction sendAction;
 	private HomeDirAction homeDirAction;
 	private ParentDirAction parentDirAction;
+	private CreateDirAction createDirAction;
+	private RenameAction renameAction;
+	private CutAction cutAction;
+	private CopyAction copyAction;
+	private PasteAction pasteAction;
 	private JMenuItem parentMenuIt;
 	private PreviousDirAction prevDirAction;
 	private NextDirAction nextDirAction;
 	private CopyFilenameAction copyFilenameAction;
+	private DeleteAction deleteAction;
 
 	private LinkedList<String> historyList;
 	/**
@@ -162,6 +190,13 @@ public class MainFrame extends javax.swing.JFrame implements
 	private JMenuItem homeMenuIt;
 	private JMenuItem nextDirMenuIt;
 	private JMenuItem prevDirMenuIt;
+	private JMenuItem createDirPopupIt;
+	private JMenuItem renamePopupIt;
+	private JMenuItem copyPopupIt;
+	private JMenuItem cutPopupIt;
+	private JMenuItem pastePopupIt;
+	private JMenuItem deletePopupIt;
+	private JMenuItem sendPopupIt;
 	private Action refreshAction;
 	private JMenuItem jMenuItem3;
 	private JMenuItem copyFilename;
@@ -184,7 +219,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SHORT_DESCRIPTION,
 					"Naviguer vers le dossier sélectionné.");
 			putValue(Action.NAME, "Ouvrir");
-			ImageIcon icon = loadIcon("folder-open.png");
+			ImageIcon icon = Misc.loadIcon("folder-open.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O);
@@ -221,7 +256,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public RefreshAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Actualiser");
 			putValue(Action.NAME, "Actualiser");
-			ImageIcon icon = loadIcon("refresh.png");
+			ImageIcon icon = Misc.loadIcon("refresh.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
@@ -252,7 +287,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public HomeDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Dossier racine");
 			putValue(Action.NAME, "Dossier racine");
-			ImageIcon icon = loadIcon("home.png");
+			ImageIcon icon = Misc.loadIcon("home.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
@@ -283,7 +318,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public ParentDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Dossier parent");
 			putValue(Action.NAME, "Dossier parent");
-			ImageIcon icon = loadIcon("parent.png");
+			ImageIcon icon = Misc.loadIcon("folder-parent.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
@@ -317,7 +352,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public PreviousDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Précédent");
 			putValue(Action.NAME, "Précédent");
-			ImageIcon icon = loadIcon("previous.png");
+			ImageIcon icon = Misc.loadIcon("previous.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
@@ -372,7 +407,7 @@ public class MainFrame extends javax.swing.JFrame implements
 		public NextDirAction() {
 			putValue(Action.SHORT_DESCRIPTION, "Suivant");
 			putValue(Action.NAME, "Suivant");
-			ImageIcon icon = loadIcon("next.png");
+			ImageIcon icon = Misc.loadIcon("next.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
@@ -403,6 +438,408 @@ public class MainFrame extends javax.swing.JFrame implements
 				prevDirAction.putValue(Action.SHORT_DESCRIPTION, "Retour à "
 						+ historyList.get(historyPos - 1));
 			}
+		}
+
+	}
+
+	/**
+	 * Créé un nouveau dossier dans le dossier courant
+	 * 
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class CreateDirAction extends AbstractAction {
+
+		private static final long serialVersionUID = 193366319192328568L;
+
+		/**
+		 * Construit une nouvelle action CreateDirAction
+		 */
+		public CreateDirAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Créer un nouveau dossier");
+			putValue(Action.NAME, "Nouveau dossier");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("folder-new.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("folder-new16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_V);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			String dirname = (String)JOptionPane.showInputDialog(
+                    MainFrame.this,
+                    "Nom du nouveau dossier :",
+                    "ENTDownloader - Nouveau dossier",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    null,
+                    "Nouveau dossier");
+
+			if ((dirname == null) || (dirname.length() == 0)) {
+			    return;
+			}
+
+			try {
+				entd.createDirectory(dirname);
+			} catch (ENTInvalidElementNameException e) {
+				String message;
+				switch (e.getType()) {
+				case ENTInvalidElementNameException.ALREADY_USED:
+					message = "Un fichier ou dossier porte le même nom.";
+					break;
+				case ENTInvalidElementNameException.FORBIDDEN_CHAR:
+					message = "Le nom spécifié contient un ou plusieurs caractères non autorisés.";
+					break;
+				default:
+					message = "Erreur inconnue.";
+					break;
+				}
+				JOptionPane
+						.showMessageDialog(
+								MainFrame.this,
+								"Impossible de créer le dossier \""
+										+ dirname
+										+ "\" : " + message,
+								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
+	 * Renomme un élément du dossier courant
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class RenameAction extends AbstractAction {
+
+		private static final long serialVersionUID = 193947319198628518L;
+
+		/**
+		 * Construit une nouvelle action RenameAction
+		 */
+		public RenameAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Renommer l'élément sélectionné");
+			putValue(Action.NAME, "Renommer");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("rename.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("rename16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_M);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (fileView == null || fileView.getSelectedFilesCount() != 1)
+				return;
+			FS_Element selectedFile = fileView.getSelectedFile();
+
+			String newname = (String)JOptionPane.showInputDialog(
+                    MainFrame.this,
+                    "Nouveau nom :",
+                    "ENTDownloader - Renommer",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    null,
+                    selectedFile.getName());
+
+			if ((newname == null) || (newname.length() == 0)) {
+			    return;
+			}
+
+			try {
+				entd.rename(selectedFile.getName(), newname);
+			} catch (ENTInvalidElementNameException e) {
+				String message;
+				switch (e.getType()) {
+				case ENTInvalidElementNameException.ALREADY_USED:
+					message = "Un fichier ou dossier porte le même nom.";
+					break;
+				case ENTInvalidElementNameException.FORBIDDEN_CHAR:
+					message = "Le nouveau nom spécifié contient un ou plusieurs caractères non autorisés.";
+					break;
+				default:
+					message = "Erreur inconnue.";
+					break;
+				}
+				JOptionPane
+						.showMessageDialog(
+								MainFrame.this,
+								"Impossible de renommer \""
+										+ selectedFile.getName()
+										+ "\" : " + message,
+								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+			} catch (ENTElementNotFoundException e) {
+				JOptionPane
+						.showMessageDialog(
+								MainFrame.this,
+								"Impossible de renommer \""
+										+ selectedFile.getName()
+										+ "\" : l'élément n'existe plus.",
+								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+				// Actualiser la liste des fichiers
+				changeDirectory(".");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
+	 * Marque les éléments sélectionnés pour le déplacement.
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class CutAction extends AbstractAction {
+
+		private static final long serialVersionUID = -5274579601506811635L;
+
+		/**
+		 * Construit une nouvelle action RenameAction
+		 */
+		public CutAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Coupe l'élément sélectionné");
+			putValue(Action.NAME, "Couper");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("cut.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("cut16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (fileView == null || fileView.getSelectedFilesCount() == 0)
+				return;
+			FS_Element[] selectedFiles = fileView.getSelectedFiles();
+			String[] selectedFileNames = new String[selectedFiles.length];
+			int i=0;
+			for (FS_Element elem : selectedFiles) {
+				selectedFileNames[i] = elem.getName();
+			}
+
+			try {
+				entd.cut(selectedFileNames);
+				String s = selectedFiles.length>1?"s":"";
+				setTemporaryStatus("<html><b>"+selectedFiles.length + " élément"+s+" coupé"+s+"</b></html>", 4, dirInfos());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			pasteAction.setEnabled(entd.canPaste());
+		}
+
+	}
+
+	/**
+	 * Marque les éléments sélectionnés pour la copie.
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class CopyAction extends AbstractAction {
+
+		private static final long serialVersionUID = -8274519609506811625L;
+
+		/**
+		 * Construit une nouvelle action RenameAction
+		 */
+		public CopyAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Copie l'élément sélectionné");
+			putValue(Action.NAME, "Copier");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("copy.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("copy16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (fileView == null || fileView.getSelectedFilesCount() == 0)
+				return;
+			FS_Element[] selectedFiles = fileView.getSelectedFiles();
+			try {
+				entd.copy(selectedFiles);
+				String s = selectedFiles.length>1?"s":"";
+				setTemporaryStatus("<html><b>"+selectedFiles.length + " élément"+s+" copié"+s+"</b></html>", 4, dirInfos());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			pasteAction.setEnabled(entd.canPaste());
+		}
+
+	}
+
+	/**
+	 * Colle les éléments précédemment sélectionnés.
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class PasteAction extends AbstractAction {
+
+		private static final long serialVersionUID = -8256819600216811625L;
+
+		/**
+		 * Construit une nouvelle action RenameAction
+		 */
+		public PasteAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Colle les éléments précédemment sélectionnés.");
+			putValue(Action.NAME, "Coller");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("paste.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("paste16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (!entd.canPaste())
+				return;
+
+			try {
+				if(entd.paste()) {
+					updateFrameData();
+				}
+			} catch (ENTInvalidElementNameException e) {
+				JOptionPane
+				.showMessageDialog(
+						MainFrame.this,
+						"Impossible de coller la sélection : un fichier/dossier du même nom existe déjà.",
+						"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
+	 * Supprime les éléments sélectionnés du dossier courant
+	 *
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class DeleteAction extends AbstractAction {
+
+		private static final long serialVersionUID = 123949354198628688L;
+
+		/**
+		 * Construit une nouvelle action DeleteAction
+		 */
+		public DeleteAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Supprimer l'élément sélectionné");
+			putValue(Action.NAME, "Supprimer");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("delete.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("delete16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_DELETE, 0));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			int nbtargets;
+			if (fileView == null || (nbtargets = fileView.getSelectedFilesCount()) == 0)
+				return;
+			FS_Element[] selectedElems = fileView.getSelectedFiles();
+			
+			String confirmMessage;
+			if(nbtargets == 1)
+			{
+				if(selectedElems[0].isFile())
+					confirmMessage = "Voulez-vous vraiment supprimer ce fichier de façon permanente ?";
+				else
+					confirmMessage = "Voulez-vous vraiment supprimer ce dossier de façon permanente ?";
+			}
+			else
+				confirmMessage = "Voulez-vous vraiment supprimer ces " + nbtargets + " éléments de façon permanente ?";
+
+			if(JOptionPane
+					.showConfirmDialog(
+							MainFrame.this,
+							confirmMessage,
+							"ENTDownloader", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+				return;
+
+			try {
+				entd.delete(selectedElems);
+			} catch (ENTElementNotFoundException e) {
+				String message = null;
+				if(selectedElems.length > 1 || e.getMessage() == null)
+					message = "Impossible de supprimer la sélection : un élément n'existe plus.";
+				else
+					message = "Impossible de supprimer \"" + e.getMessage() + "\" : l'élément n'existe plus.";
+				JOptionPane
+						.showMessageDialog(
+								MainFrame.this,message,
+								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
+				// Actualiser la liste des fichiers
+				changeDirectory(".");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
+	 * Demande l'envoi de un ou plusieurs fichiers
+	 * 
+	 * @author Kévin Subileau
+	 * @since 2.0.0
+	 */
+	private class UploadAction extends AbstractAction {
+
+		private static final long serialVersionUID = 2064025451072197209L;
+
+		/**
+		 * Construit une nouvelle action UploadAction
+		 */
+		public UploadAction() {
+			putValue(Action.SHORT_DESCRIPTION, "Envoyer un ou plusieurs fichiers");
+			putValue(Action.NAME, "Envoyer");
+			putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("upload.png"));
+			putValue(Action.SMALL_ICON, Misc.loadIcon("upload16.png"));
+			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					java.awt.event.KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			new Uploader(MainFrame.this, fileChooser).startUpload();
 		}
 
 	}
@@ -463,8 +900,8 @@ public class MainFrame extends javax.swing.JFrame implements
 						"Télécharger tous les dossiers et fichiers"
 								+ " du dossier courant");
 				putValue(Action.NAME, "Télécharger le dossier courant");
-				putValue(Action.LARGE_ICON_KEY, loadIcon("downall.png"));
-				putValue(Action.SMALL_ICON, loadIcon("downall16.png"));
+				putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("downall.png"));
+				putValue(Action.SMALL_ICON, Misc.loadIcon("downall16.png"));
 				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
 				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 						KeyEvent.VK_T, ActionEvent.CTRL_MASK
@@ -475,8 +912,8 @@ public class MainFrame extends javax.swing.JFrame implements
 						"Télécharger le(s) dossier(s) et fichier(s) "
 								+ "sélectionné(s)");
 				putValue(Action.NAME, "Télécharger la sélection");
-				putValue(Action.LARGE_ICON_KEY, loadIcon("down.png"));
-				putValue(Action.SMALL_ICON, loadIcon("down16.png"));
+				putValue(Action.LARGE_ICON_KEY, Misc.loadIcon("down.png"));
+				putValue(Action.SMALL_ICON, Misc.loadIcon("down16.png"));
 				putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 						KeyEvent.VK_T, ActionEvent.CTRL_MASK));
@@ -506,12 +943,12 @@ public class MainFrame extends javax.swing.JFrame implements
 			putValue(Action.SHORT_DESCRIPTION,
 					"Copier le nom du fichier sélectionné dans le presse-papier.");
 			putValue(Action.NAME, "Copier le nom du fichier");
-			ImageIcon icon = loadIcon("clipboard.png");
+			ImageIcon icon = Misc.loadIcon("copyFilename.png");
 			putValue(Action.LARGE_ICON_KEY, icon);
 			putValue(Action.SMALL_ICON, icon);
 			putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					java.awt.event.KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+					java.awt.event.KeyEvent.VK_C, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		}
 
 		@Override
@@ -524,9 +961,8 @@ public class MainFrame extends javax.swing.JFrame implements
 				Toolkit.getDefaultToolkit().getSystemClipboard()
 						.setContents(ss, null);
 			} catch (IllegalStateException e) {
-				//TODO Exception à gérer
-				e.printStackTrace();
 				/** Le presse-papier n'est peut-être pas disponible */
+				JOptionPane.showMessageDialog(MainFrame.this, "Impossible de copier le nom du fichier : le presse papier n'est pas disponible.", "ENTDownloader", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
@@ -557,10 +993,6 @@ public class MainFrame extends javax.swing.JFrame implements
 		}
 	}
 
-	/**
-	 * Auto-generated main method to display this JFrame
-	 */
-
 	public MainFrame() {
 		super();
 		openDirAction = new OpenSelectedDirectoryAction();
@@ -580,8 +1012,15 @@ public class MainFrame extends javax.swing.JFrame implements
 		});
 		dldAllAction = new DownloadAction(DownloadAction.ALL);
 		dldAction = new DownloadAction();
+		sendAction = new UploadAction();
 		refreshAction = new RefreshAction();
 		homeDirAction = new HomeDirAction();
+		createDirAction = new CreateDirAction();
+		renameAction = new RenameAction();
+		copyAction = new CopyAction();
+		cutAction = new CutAction();
+		pasteAction = new PasteAction();
+		deleteAction = new DeleteAction();
 		parentDirAction = new ParentDirAction();
 		prevDirAction = new PreviousDirAction();
 		copyFilenameAction = new CopyFilenameAction();
@@ -597,12 +1036,16 @@ public class MainFrame extends javax.swing.JFrame implements
 		setGuiEventsListener();
 	}
 
+	/**
+	 * @see javax.swing.JFrame#setVisible(boolean)
+	 */
 	@Override
-	public void setVisible(boolean arg0) throws ENTUnauthenticatedUserException {
-		if (arg0 && entd.getLogin() == null)
+	public void setVisible(boolean visibility) throws ENTUnauthenticatedUserException {
+		/* Empêche l'affichage de la fenêtre si l'utilisateur n'est pas connecté */
+		if (visibility && entd.getLogin() == null)
 			throw new ENTUnauthenticatedUserException(
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
-		super.setVisible(arg0);
+		super.setVisible(visibility);
 	}
 
 	private void initGUI() {
@@ -794,7 +1237,7 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					goDirBtn = new JButton();
-					setIcon(goDirBtn, "go.png");
+					Misc.setButtonIcon(goDirBtn, "go.png");
 					goDirBtn.setMargin(new Insets(0, 0, 0, 0));
 					goDirBtn.setToolTipText("Aller");
 					goDirBtn.setMinimumSize(new Dimension(24, 24));
@@ -815,7 +1258,7 @@ public class MainFrame extends javax.swing.JFrame implements
 				}
 				{
 					resetPathBtn = new JButton();
-					setIcon(resetPathBtn, "x.png");
+					Misc.setButtonIcon(resetPathBtn, "x.png");
 					resetPathBtn.setMargin(new Insets(0, 0, 0, 0));
 					resetPathBtn.setToolTipText("Annuler");
 					resetPathBtn.setMinimumSize(new Dimension(24, 24));
@@ -855,7 +1298,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
-					setIcon(listViewBtn, "listview.png");
+					Misc.setButtonIcon(listViewBtn, "listview.png");
 					listViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					listViewBtn.setToolTipText("Vue liste");
 					listViewBtn.setMinimumSize(new Dimension(24, 24));
@@ -880,7 +1323,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
-					setIcon(detailsViewBtn, "detailsview.png");
+					Misc.setButtonIcon(detailsViewBtn, "detailsview.png");
 					detailsViewBtn.setMargin(new Insets(0, 0, 0, 0));
 					detailsViewBtn.setToolTipText("Vue détails");
 					detailsViewBtn.setMinimumSize(new Dimension(24, 24));
@@ -919,6 +1362,34 @@ public class MainFrame extends javax.swing.JFrame implements
 						fileMenu.add(copyFilename);
 					}
 					{
+						createDir = new JMenuItem();
+						createDir.setAction(createDirAction);
+						fileMenu.add(createDir);
+					}
+					{
+						rename = new JMenuItem();
+						rename.setAction(renameAction);
+						fileMenu.add(rename);
+					}
+					{
+						fileMenu.addSeparator();
+					}
+					{
+						copy = new JMenuItem();
+						copy.setAction(copyAction);
+						fileMenu.add(copy);
+					}
+					{
+						cut = new JMenuItem();
+						cut.setAction(cutAction);
+						fileMenu.add(cut);
+					}
+					{
+						paste = new JMenuItem();
+						paste.setAction(pasteAction);
+						fileMenu.add(paste);
+					}
+					{
 						fileMenu.addSeparator();
 					}
 					{
@@ -932,13 +1403,26 @@ public class MainFrame extends javax.swing.JFrame implements
 						fileMenu.add(dldAll);
 					}
 					{
+						send = new JMenuItem();
+						send.setAction(sendAction);
+						fileMenu.add(send);
+					}
+					{
+						fileMenu.addSeparator();
+					}
+					{
+						delete = new JMenuItem();
+						delete.setAction(deleteAction);
+						fileMenu.add(delete);
+					}
+					{
 						fileMenu.addSeparator();
 					}
 					{
 						exit = new JMenuItem();
 						fileMenu.add(exit);
 						exit.setAction(new ExitAction());
-						setIcon(exit, "quit.png");
+						Misc.setButtonIcon(exit, "quit.png");
 					}
 				}
 				{
@@ -980,7 +1464,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						ListItem = new JRadioButtonMenuItem();
 						affichMenu.add(ListItem);
-						setIcon(ListItem, "listview.png");
+						Misc.setButtonIcon(ListItem, "listview.png");
 						ListItem.setText("Liste");
 						ListItem.addActionListener(new ActionListener() {
 							@Override
@@ -993,7 +1477,7 @@ public class MainFrame extends javax.swing.JFrame implements
 					{
 						DetailItem = new JRadioButtonMenuItem();
 						affichMenu.add(DetailItem);
-						setIcon(DetailItem, "detailsview.png");
+						Misc.setButtonIcon(DetailItem, "detailsview.png");
 						DetailItem.setText("Détails");
 						DetailItem.addActionListener(new ActionListener() {
 							@Override
@@ -1002,6 +1486,24 @@ public class MainFrame extends javax.swing.JFrame implements
 							}
 						});
 						affichGroup.add(DetailItem);
+					}
+					{
+						affichMenu.addSeparator();
+					}
+					{
+						zoom = new JMenuItem();
+						affichMenu.add(zoom);
+						zoom.setText("Zoom -");
+						zoom.setMnemonic(KeyEvent.VK_Z);
+						zoom.setAccelerator(KeyStroke.getKeyStroke(
+								java.awt.event.KeyEvent.VK_Z,ActionEvent.ALT_MASK));
+						Misc.setButtonIcon(zoom, "zoomout.png");
+						zoom.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								setZoomLevel((fileView.getZoomLevel()+1)%2);
+							}
+						});
 					}
 				}
 				{
@@ -1016,7 +1518,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						onlineHelp.setMnemonic(KeyEvent.VK_I);
 						onlineHelp.setAccelerator(KeyStroke.getKeyStroke(
 								KeyEvent.VK_F1, 0));
-						setIcon(onlineHelp, "help.png");
+						Misc.setButtonIcon(onlineHelp, "help.png");
 						onlineHelp.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -1040,7 +1542,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						help.add(website);
 						website.setText("Site Web");
 						website.setMnemonic(KeyEvent.VK_W);
-						setIcon(website, "website.png");
+						Misc.setButtonIcon(website, "website.png");
 						website.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -1054,7 +1556,7 @@ public class MainFrame extends javax.swing.JFrame implements
 						help.add(fbpage);
 						fbpage.setText("Page Facebook");
 						fbpage.setMnemonic(KeyEvent.VK_K);
-						setIcon(fbpage, "fb.png");
+						Misc.setButtonIcon(fbpage, "fb.png");
 						fbpage.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -1067,8 +1569,8 @@ public class MainFrame extends javax.swing.JFrame implements
 						checkUpdate = new JMenuItem();
 						help.add(checkUpdate);
 						checkUpdate.setText("Rechercher des mises à jour...");
-						checkUpdate.setMnemonic(KeyEvent.VK_M);
-						setIcon(checkUpdate, "checkUpdate.png");
+						checkUpdate.setMnemonic(KeyEvent.VK_J);
+						Misc.setButtonIcon(checkUpdate, "checkUpdate.png");
 						checkUpdate.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -1115,7 +1617,7 @@ public class MainFrame extends javax.swing.JFrame implements
 								new AboutBox(MainFrame.this);
 							}
 						});
-						setIcon(about, "info.png");
+						Misc.setButtonIcon(about, "info.png");
 					}
 				}
 			}
@@ -1183,8 +1685,25 @@ public class MainFrame extends javax.swing.JFrame implements
 				{
 					Download_tool = makeToolbarButton(dldAction);
 					DownloadAll_tool = makeToolbarButton(dldAllAction);
+					send_tool = makeToolbarButton(sendAction);
+					createDir_tool = makeToolbarButton(createDirAction);
+					rename_tool = makeToolbarButton(renameAction);
+					copy_tool = makeToolbarButton(copyAction);
+					cut_tool = makeToolbarButton(cutAction);
+					paste_tool = makeToolbarButton(pasteAction);
+					delete_tool = makeToolbarButton(deleteAction);
+					toolBar.add(createDir_tool);
+					toolBar.add(rename_tool);
+					toolBar.addSeparator();
+					toolBar.add(copy_tool);
+					toolBar.add(cut_tool);
+					toolBar.add(paste_tool);
+					toolBar.addSeparator();
 					toolBar.add(Download_tool);
 					toolBar.add(DownloadAll_tool);
+					toolBar.add(send_tool);
+					toolBar.addSeparator();
+					toolBar.add(delete_tool);
 				}
 			}
 			thisLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0 };
@@ -1206,6 +1725,34 @@ public class MainFrame extends javax.swing.JFrame implements
 					PopupMenu.add(jMenuItem3);
 				}
 				{
+					createDirPopupIt = new JMenuItem();
+					createDirPopupIt.setAction(createDirAction);
+					PopupMenu.add(createDirPopupIt);
+				}
+				{
+					renamePopupIt = new JMenuItem();
+					renamePopupIt.setAction(renameAction);
+					PopupMenu.add(renamePopupIt);
+				}
+				{
+					PopupMenu.addSeparator();
+				}
+				{
+					copyPopupIt = new JMenuItem();
+					copyPopupIt.setAction(copyAction);
+					PopupMenu.add(copyPopupIt);
+				}
+				{
+					cutPopupIt = new JMenuItem();
+					cutPopupIt.setAction(cutAction);
+					PopupMenu.add(cutPopupIt);
+				}
+				{
+					pastePopupIt = new JMenuItem();
+					pastePopupIt.setAction(pasteAction);
+					PopupMenu.add(pastePopupIt);
+				}
+				{
 					PopupMenu.addSeparator();
 				}
 				{
@@ -1217,6 +1764,19 @@ public class MainFrame extends javax.swing.JFrame implements
 					jMenuItem2 = new JMenuItem();
 					jMenuItem2.setAction(dldAllAction);
 					PopupMenu.add(jMenuItem2);
+				}
+				{
+					sendPopupIt = new JMenuItem();
+					sendPopupIt.setAction(sendAction);
+					PopupMenu.add(sendPopupIt);
+				}
+				{
+					PopupMenu.addSeparator();
+				}
+				{
+					deletePopupIt = new JMenuItem();
+					deletePopupIt.setAction(deleteAction);
+					PopupMenu.add(deletePopupIt);
 				}
 			}
 			{
@@ -1248,9 +1808,22 @@ public class MainFrame extends javax.swing.JFrame implements
 						historyPush(entd.getDirectoryPath());
 					}
 				} catch (ENTUnauthenticatedUserException e1) {
-					// TODO Gestion Utilisateur non connecté
-					e1.printStackTrace();
-				} catch (ENTDirectoryNotFoundException e1) {
+					if(e1.getType() == ENTUnauthenticatedUserException.UNALLOWED)
+					{
+						statusInfo.setText("Indisponible");
+						JOptionPane
+								.showMessageDialog(
+										MainFrame.this,
+										"<html>Vous n'avez actuellement accès à aucun espace de stockage sur l'ENT.<br>Vous ne pouvez donc malheureusement pas utiliser ce logiciel.</html>",
+										"ENTDownloader - Service indisponible",
+										JOptionPane.ERROR_MESSAGE);
+						new MainFrame.ExitAction().actionPerformed(null);
+						return null;
+					} else
+					{
+						e1.printStackTrace();
+					}
+				} catch (ENTElementNotFoundException e1) {
 
 					//Rétablissement de la synchronisation vue <=> modèle.
 					//En effet, le dossier courant peut avoir changer si, par
@@ -1301,7 +1874,7 @@ public class MainFrame extends javax.swing.JFrame implements
 			ActionListener listener, String actionCommand, String toolTipText,
 			String altText) {
 		//Look for the image.
-		ImageIcon icon = loadIcon(imageName, altText);
+		ImageIcon icon = Misc.loadIcon(imageName, altText);
 
 		//Create and initialize the button.
 		JButton button = new JButton();
@@ -1331,29 +1904,6 @@ public class MainFrame extends javax.swing.JFrame implements
 		return button;
 	}
 
-	protected static ImageIcon loadIcon(String imageName, String altText) {
-		String imgLocation = "net/sf/entDownloader/ressources/" + imageName;
-		URL imageURL = MainFrame.class.getClassLoader()
-				.getResource(imgLocation);
-		if (imageURL != null) //image found
-			return new ImageIcon(imageURL, altText);
-		else { //no image found
-			System.err.println("Resource not found: " + imgLocation);
-			return null;
-		}
-	}
-
-	protected static ImageIcon loadIcon(String imageName) {
-		return loadIcon(imageName, null);
-	}
-
-	protected static void setIcon(AbstractButton btn, String imageName) {
-		ImageIcon icon = loadIcon(imageName);
-		if (icon != null) {
-			btn.setIcon(icon);
-		}
-	}
-
 	private String dirInfos() {
 		return entd.getNbDossiers() + " Dossier(s), " + entd.getNbFiles()
 				+ " Fichier(s)";
@@ -1368,6 +1918,26 @@ public class MainFrame extends javax.swing.JFrame implements
 						statusInfo.setText("Chargement en cours...");
 					}
 				});
+		Broadcaster.addDirectoryCreatedListener(new DirectoryCreatedListener() {
+			@Override
+			public void onDirectoryCreated(DirectoryCreatedEvent event) {
+				updateFrameData();
+				//TODO Sélectionner le dossier nouvellement créé.
+			}
+		});
+		Broadcaster.addElementRenamedListener(new ElementRenamedListener() {
+			@Override
+			public void onElementRenamed(ElementRenamedEvent event) {
+				updateFrameData();
+				//TODO Sélectionner le dossier nouvellement renommé ?
+			}
+		});
+		Broadcaster.addElementsDeletedListener(new ElementsDeletedListener() {
+			@Override
+			public void onElementsDeleted(ElementsDeletedEvent event) {
+				updateFrameData();
+			}
+		});
 	}
 
 	private void setGuiEventsListener() {
@@ -1384,7 +1954,7 @@ public class MainFrame extends javax.swing.JFrame implements
 							try {
 								dld.startDownload();
 							} catch (ENTUnauthenticatedUserException e) {
-								// TODO Gestion exception ENTUnauthenticatedUserException
+								// TODO Gestion expiration de session
 								e.printStackTrace();
 							}
 						}
@@ -1413,9 +1983,11 @@ public class MainFrame extends javax.swing.JFrame implements
 	}
 
 	protected void setFileView(Class<? extends ListView> view) {
+		int zoom = Misc.MEDIUM; //Valeur de zoom par défaut
 		if (fileView != null && fileView.getClass() == view)
 			return;
 		if (fileView != null) {
+			zoom = fileView.getZoomLevel();
 			browserLayeredPane.remove(fileView);
 		}
 		try {
@@ -1423,11 +1995,16 @@ public class MainFrame extends javax.swing.JFrame implements
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		try {
-			fileView.browseDirectory(entd.getDirectoryContent());
-		} catch (IllegalStateException e) {
+		if(entd != null)
+		{
+			try {
+				fileView.browseDirectory(entd.getDirectoryContent());
+			} catch (IllegalStateException e) {
+			}
 		}
 
+		setZoomLevel(zoom);
+		
 		fileView.getViewInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 						"enterPressedAction");
@@ -1484,31 +2061,83 @@ public class MainFrame extends javax.swing.JFrame implements
 		updatePopupMenu();
 	}
 
+	protected void setZoomLevel(int zoom) {
+		if(fileView == null)
+			return;
+		if(zoom == Misc.MEDIUM) {
+			fileView.setZoomLevel(Misc.MEDIUM);
+			this.zoom.setText("Zoom -");
+			Misc.setButtonIcon(this.zoom, "zoomout.png");
+		}
+		else {
+			fileView.setZoomLevel(Misc.SMALL);
+			this.zoom.setText("Zoom +");
+			Misc.setButtonIcon(this.zoom, "zoomin.png");
+		}
+	}
+
 	public JPopupMenu getPopupMenu() {
 		return PopupMenu;
 	}
 
 	public void updatePopupMenu() {
-		dldAction.setEnabled(!fileView.getSelectionModel().isSelectionEmpty());
+		boolean isSelectionEmpty = fileView.getSelectionModel().isSelectionEmpty();
+		dldAction.setEnabled(!isSelectionEmpty);
+		copyAction.setEnabled(!isSelectionEmpty);
+		cutAction.setEnabled(!isSelectionEmpty);
+		deleteAction.setEnabled(dldAction.isEnabled());
 		if (fileView.getSelectedFilesCount() == 1) {
 			copyFilenameAction.setEnabled(true);
+			renameAction.setEnabled(true);
 			String type = (fileView.getSelectedFile().isDirectory()) ? "dossier"
 					: "fichier";
 			copyFilenameAction.putValue(Action.SHORT_DESCRIPTION,
 					"Copier le nom du " + type
-							+ " sélectionné dans le presse-papier.");
+							+ " sélectionné dans le presse-papier");
 			copyFilenameAction
 					.putValue(Action.NAME, "Copier le nom du " + type);
+			renameAction.putValue(Action.SHORT_DESCRIPTION,
+					"Renommer le " + type
+							+ " sélectionné");
+			deleteAction.putValue(Action.SHORT_DESCRIPTION,
+					"Supprimer le " + type
+							+ " sélectionné");
 			openDirAction.setEnabled(fileView.getSelectedFile().isDirectory());
 		} else {
 			copyFilenameAction.setEnabled(false);
 			openDirAction.setEnabled(false);
+			renameAction.setEnabled(false);
+			deleteAction.putValue(Action.SHORT_DESCRIPTION,
+					"Supprimer les éléments sélectionnés");
 		}
 	}
 
 	@Override
 	public void onDirectoryChanged(DirectoryChangedEvent event) {
 		updateFrameData();
+	}
+	
+	/**
+	 * Affiche un message d'état durant une durée déterminée.
+	 * 
+	 * @param message Le message temporaire à afficher
+	 * @param delay La durée d'exposition de ce message
+	 * @param after Le texte à afficher après le délai.
+	 * 				Si null, le précédent texte sera restauré.
+	 */
+	protected void setTemporaryStatus(String message, int delay, String after) {
+		if(after == null)
+			after = statusInfo.getText();
+		statusInfo.setText(message);
+		final String afterS = after;
+		Timer t = new Timer(delay*1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				statusInfo.setText(afterS);
+			}
+		});
+		t.setRepeats(false);
+		t.start();
 	}
 
 	/**
@@ -1521,7 +2150,7 @@ public class MainFrame extends javax.swing.JFrame implements
 	 * Veuillez noter que cette méthode <u>n'actualise pas ces informations
 	 * depuis l'ENT</u>, mais uniquement <u>localement depuis le modèle</u>.
 	 */
-	private void updateFrameData() {
+	public void updateFrameData() {
 		String dirPath = entd.getDirectoryPath();
 		adressField.setText(dirPath);
 		parentDirAction.setEnabled(!dirPath.equals("/"));
@@ -1530,7 +2159,18 @@ public class MainFrame extends javax.swing.JFrame implements
 		userNameLabel
 				.setText(entd.getUsername() + " (" + entd.getLogin() + ")");
 		fileView.browseDirectory(entd.getDirectoryContent());
-		emptyDirLabel.setVisible(entd.getDirectoryContent().size() == 0);
+		boolean isEmpty = entd.getDirectoryContent().size() == 0;
+		emptyDirLabel.setVisible(isEmpty);
+		dldAllAction.setEnabled(!isEmpty);
+		pasteAction.setEnabled(entd.canPaste());
+	}
+
+	/**
+	 * Recharge la référence à l'instance unique de
+	 * {@link net.sf.entDownloader.core.ENTDownloader ENTDownloader}.
+	 */
+	public void updateENTDInstance() {
+		entd = ENTDownloader.getInstance();
 	}
 
 	/**

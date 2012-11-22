@@ -43,26 +43,52 @@ public abstract class Event {
 	 */
 	public static final int CHANGED_DIR_TYPE = 3;
 	/**
+	 * Indique la création d'un répertoire.
+	 */
+	public static final int CREATED_DIR_TYPE = 4;
+	/**
 	 * Indique que des octets ont été reçus durant un téléchargement.
 	 */
-	public static final int DOWNLOADED_BYTES_TYPE = 4;
+	public static final int DOWNLOADED_BYTES_TYPE = 5;
 	/**
 	 * Indique le début d'un téléchargement.
 	 */
-	public static final int START_DOWNLOAD_TYPE = 5;
+	public static final int START_DOWNLOAD_TYPE = 6;
 	/**
 	 * Indique la fin d'un téléchargement.
 	 */
-	public static final int END_DOWNLOAD_TYPE = 6;
-	/**
-	 * Indique que le téléchargement d'un fichier vers l'emplacement sélectionné
-	 * risque d'écraser un fichier existant.
-	 */
-	public static final int FILE_ALREADY_EXISTS_TYPE = 7;
+	public static final int END_DOWNLOAD_TYPE = 7;
 	/**
 	 * Indique que le téléchargement d'un fichier a été annulé.
 	 */
 	public static final int DOWNLOAD_ABORT_TYPE = 8;
+	/**
+	 * Indique que des octets ont été reçus durant un téléchargement.
+	 */
+	public static final int UPLOADED_BYTES_TYPE = 9;
+	/**
+	 * Indique le début d'un téléchargement.
+	 */
+	public static final int START_UPLOAD_TYPE = 10;
+	/**
+	 * Indique la fin d'un téléchargement.
+	 */
+	public static final int END_UPLOAD_TYPE = 11;
+	/**
+	 * Indique que le téléchargement d'un fichier vers l'emplacement sélectionné
+	 * risque d'écraser un fichier existant.
+	 */
+	public static final int FILE_ALREADY_EXISTS_TYPE = 12;
+	/**
+	 * Indique qu'un élément du dossier courant a été renommé.
+	 */
+	public static final int ELEMENT_RENAMED_TYPE = 13;
+	/**
+	 * Indique qu'un ou plusieurs éléments du dossier courant
+	 * ont été supprimé.
+	 */
+	public static final int ELEMENTS_DELETED_TYPE = 14;
+
 
 	protected Event() {
 	}

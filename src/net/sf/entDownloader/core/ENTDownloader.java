@@ -22,9 +22,13 @@ package net.sf.entDownloader.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
@@ -36,30 +40,54 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import net.sf.entDownloader.core.CountingMultipartEntity.ProgressListener;
 import net.sf.entDownloader.core.events.AuthenticationSucceededEvent;
 import net.sf.entDownloader.core.events.Broadcaster;
 import net.sf.entDownloader.core.events.DirectoryChangedEvent;
 import net.sf.entDownloader.core.events.DirectoryChangingEvent;
+import net.sf.entDownloader.core.events.DirectoryCreatedEvent;
 import net.sf.entDownloader.core.events.DownloadAbortEvent;
+import net.sf.entDownloader.core.events.DownloadedBytesEvent;
+import net.sf.entDownloader.core.events.ElementRenamedEvent;
+import net.sf.entDownloader.core.events.ElementsDeletedEvent;
 import net.sf.entDownloader.core.events.EndDownloadEvent;
+import net.sf.entDownloader.core.events.EndUploadEvent;
 import net.sf.entDownloader.core.events.FileAlreadyExistsEvent;
 import net.sf.entDownloader.core.events.StartDownloadEvent;
-import net.sf.entDownloader.core.exceptions.ENTDirectoryNotFoundException;
-import net.sf.entDownloader.core.exceptions.ENTFileNotFoundException;
+import net.sf.entDownloader.core.events.StartUploadEvent;
+import net.sf.entDownloader.core.events.UploadedBytesEvent;
+import net.sf.entDownloader.core.exceptions.ENTElementNotFoundException;
+import net.sf.entDownloader.core.exceptions.ENTInvalidElementNameException;
 import net.sf.entDownloader.core.exceptions.ENTInvalidFS_ElementTypeException;
 import net.sf.entDownloader.core.exceptions.ENTUnauthenticatedUserException;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
 import com.ziesemer.utils.pacProxySelector.PacProxySelector;
 
-/* Bug possible :
- * Statut incorrect après une exception quelconque : cela peut poser problème.
- */
 /**
  * Classe principale de l'application, interface entre les classes externes et
  * l'ENT.<br>
  * <b>Classe singleton</b> : utilisez {@link ENTDownloader#getInstance()
- * getInstance()} pour
- * obtenir l'instance de la classe.
+ * getInstance()} pour obtenir l'instance de la classe.
  */
 public class ENTDownloader {
 
@@ -67,7 +95,7 @@ public class ENTDownloader {
 	private static ENTDownloader instance;
 
 	/** Flag indiquant si l'utilisateur est connecté ou non */
-	private boolean isLogin = false;
+	private boolean isLogged = false;
 
 	/** Liste des dossiers et des fichiers du dossier courant */
 	private List<FS_Element> directoryContent = null;
@@ -78,8 +106,6 @@ public class ENTDownloader {
 	private String uP_root;
 	/** Paramètre de l'URL de la page de stockage **/
 	private String tag;
-	/** Identifiant de connexion */
-	private String sessionid;
 	/** Nom de l'utilisateur */
 	private String username = "";
 	/** Login */
@@ -90,7 +116,8 @@ public class ENTDownloader {
 	private int capacity = -1;
 
 	/** Instance d'un navigateur utilisé pour la communication avec le serveur */
-	private Browser browser;
+	private DefaultHttpClient httpclient;
+	private Proxy proxy = Proxy.NO_PROXY;
 
 	/**
 	 * Enregistre le fichier PAC utilisé pour la configuration du proxy le
@@ -98,6 +125,18 @@ public class ENTDownloader {
 	 * provient pas d'un fichier PAC, cette variable vaut null.
 	 */
 	private String proxyFile = null;
+
+	/**
+	 * Indique si des fichiers sont présents dans le presse-papier.
+	 */
+	private boolean canPaste = false;
+
+	/**
+	 * Variables utilisées pour permettre l'interruption
+	 * des envois et téléchargements.
+	 */
+	private boolean transferAborted = false;
+	private HttpPost uploadRequest = null;
 
 	/**
 	 * Récupère l'instance unique de la classe ENTDownloader.<br>
@@ -110,8 +149,32 @@ public class ENTDownloader {
 		return instance;
 	}
 
+	/**
+	 * Supprime l'instance en cours d'ENTDownloader.
+	 * Le prochain appel à {@link ENTDownloader#getInstance() getInstance()}
+	 * construira une nouvelle instance.
+	 * 
+	 * @since 2.0.0
+	 */
+	public static void reset() {
+		instance = null;
+	}
+
 	private ENTDownloader() {
-		browser = new Browser();
+		httpclient = new DefaultHttpClient();
+
+		//Définition de l'User-Agent. Ajout de la version Java, habituellement
+		//automatiquement ajouté lorsque l'on utilise URLConnection.
+		HttpProtocolParams.setUserAgent(
+				httpclient.getParams(),
+				System.getProperty("http.agent") + " Java/"
+						+ System.getProperty("java.version"));
+
+		//Utilisation de la configuration proxy système (System.setProperty)
+		/*ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+				httpclient.getConnectionManager().getSchemeRegistry(),
+				ProxySelector.getDefault());
+		httpclient.setRoutePlanner(routePlanner);*/
 	}
 
 	/**
@@ -124,18 +187,15 @@ public class ENTDownloader {
 	 */
 	public boolean login(String login, char[] password)
 			throws java.io.IOException, ParseException {
-		if (isLogin == true)
+		if (isLogged())
 			return true;
 
-		browser.setUrl(CoreConfig.loginURL);
-		browser.setFollowRedirects(false);
+		//Chargement de la page de connexion.
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String loginPage = httpclient.execute(new HttpGet(CoreConfig.loginURL),
+				responseHandler);
 
-		String loginPage = browser.getPage();
-		if (browser.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-			browser.setUrl(browser.getHeaderField("Location"));
-			loginPage = browser.getPage();
-		}
-
+		//Lecture du ticket d'authentification.
 		List<String> ticket = new ArrayList<String>();
 		Misc.preg_match(
 				"input type=\"hidden\" name=\"lt\" value=\"([0-9a-zA-Z\\-]+)\" />",
@@ -146,41 +206,55 @@ public class ENTDownloader {
 				"input type=\"hidden\" name=\"execution\" value=\"([0-9a-zA-Z]+)\" />",
 				loginPage, execution);
 
-		browser.setMethod(Browser.Method.POST);
-		browser.setParam("_eventId", "submit");
-		browser.setParam("username", login);
-		browser.setParam("password", new String(password));
-		browser.setParam("lt", ticket.get(1).toString());
-		if (execution.size() > 1) {
-			browser.setParam("execution", execution.get(1).toString());
-		}
-		browser.setFollowRedirects(false);
-		loginPage = browser.getPage();
-		browser.setMethod(Browser.Method.GET);
+		//Envoi des informations d'identification
+		HttpPost postCredentials = new HttpPost(CoreConfig.loginURL);
 
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("_eventId", "submit"));
+		nvps.add(new BasicNameValuePair("username", login));
+		nvps.add(new BasicNameValuePair("password", new String(password)));
+		nvps.add(new BasicNameValuePair("lt", ticket.get(1).toString()));
+		if (execution.size() > 1) {
+			nvps.add(new BasicNameValuePair("execution", execution.get(1)
+					.toString()));
+		}
+
+		postCredentials.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+
+		HttpResponse loginResponse = httpclient.execute(postCredentials);
+		EntityUtils.consume(loginResponse.getEntity());
+
+		//Si l'authentification réussi, l'ENT renvoi une redirection 
+		//temporaire (302) vers une URL du type 
+		//http://ent.u-clermont1.fr/Login?ticket=XX-XX...
+		//Sinon la page de connexion est retournée.
+		if (loginResponse.getStatusLine().getStatusCode() != HttpURLConnection.HTTP_MOVED_TEMP)
+			return false;
+
+		//Autre vérification possible
+		/*
 		if (Misc.preg_match("<div id=\"erreur\">", loginPage))
 			return false;
+		*/
+
+		isLogged = true;
+		this.login = login;
 		Broadcaster
 				.fireAuthenticationSucceeded(new AuthenticationSucceededEvent(
 						login));
+		
+		EntityUtils.consume(loginResponse.getEntity());
 
-		browser.setUrl(browser.getHeaderField("Location"));
-		browser.clearParam();
-		browser.getPage();
-		browser.setUrl(browser.getHeaderField("Location"));
-		browser.clearParam();
-		browser.getPage();
-		sessionid = browser.getCookieValueByName("JSESSIONID");
+		//Obtention de la page http://ent.u-clermont1.fr/Login?ticket=XX-XX...
+		//Cette page renvoie un code 302 Moved Temporarily vers 
+		//http://ent.u-clermont1.fr/render.userLayoutRootNode.uP
+		//Dans le cas d'une requête GET, HttpClient suit cette redirection,
+		//on obtient donc le code source de la page principale en mode connectée.
+		loginResponse = httpclient.execute(new HttpGet(loginResponse
+				.getFirstHeader("Location").getValue()));
+		String rootPage = responseHandler.handleResponse(loginResponse);
 
-		isLogin = true;
-
-		browser.setFollowRedirects(true);
-		browser.setUrl(CoreConfig.rootURL);
-		browser.clearParam();
-		String rootPage = null;
-		rootPage = browser.getPage();
 		setStockageUrlParams(rootPage);
-		this.login = login;
 		setUserName(rootPage);
 		directoryContent = null;
 		path = null;
@@ -249,7 +323,7 @@ public class ENTDownloader {
 	 *            dossier parent, il permet donc de remonter dans
 	 *            l'arborescence. Enfin, le dossier / est la racine
 	 *            du service de stockage de l'utilisateur.
-	 * @throws ENTDirectoryNotFoundException
+	 * @throws ENTElementNotFoundException
 	 *             Si le répertoire demandé n'existe pas dans le dossier courant
 	 * @throws ENTInvalidFS_ElementTypeException
 	 *             Si le nom d'un fichier a été passé en paramètre.
@@ -263,7 +337,7 @@ public class ENTDownloader {
 	 */
 	public void changeDirectory(String path)
 			throws ENTUnauthenticatedUserException,
-			ENTDirectoryNotFoundException, ENTInvalidFS_ElementTypeException,
+			ENTElementNotFoundException, ENTInvalidFS_ElementTypeException,
 			ParseException, IOException {
 		if (path == null)
 			throw new NullPointerException();
@@ -329,14 +403,14 @@ public class ENTDownloader {
 	 * 
 	 * @param name
 	 *            Nom du dossier ou directive de parcours. Le dossier . est le
-	 *            dossier courant, appeler cette methode avec ce paramètre ne
+	 *            dossier courant, appeler cette méthode avec ce paramètre ne
 	 *            change donc pas le dossier courant
 	 *            mais permet de rafraîchir son contenu. Le dossier .. est le
 	 *            dossier parent, il permet donc de remonter dans
 	 *            l'arborescence. Enfin, le dossier / ou ~ est la racine
 	 *            du service de stockage de l'utilisateur. Si <code>name</code>
 	 *            est vide, le dossier / est chargé.
-	 * @throws ENTDirectoryNotFoundException
+	 * @throws ENTElementNotFoundException
 	 *             Si le répertoire demandé n'existe pas dans le dossier courant
 	 * @throws ENTInvalidFS_ElementTypeException
 	 *             Si le nom d'un fichier a été passé en paramètre.
@@ -350,57 +424,60 @@ public class ENTDownloader {
 	 *             Si le service est indisponible.
 	 */
 	private void submitDirectory(String name)
-			throws ENTDirectoryNotFoundException,
+			throws ENTElementNotFoundException,
 			ENTInvalidFS_ElementTypeException, ParseException,
 			ENTUnauthenticatedUserException, IOException {
-		if (isLogin == false)
+		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
 
-		browser.clearParam();
+		HttpUriRequest request;
+
 		if (name.equals("/") || name.equals("~") || name.isEmpty()) {
 			if (path == null) {
 				path = new ENTPath();
-				browser.setUrl(urlBuilder(CoreConfig.stockageURL));
+				request = new HttpGet(urlBuilder(CoreConfig.stockageURL));
 			} else {
 				path.clear();
-				browser.setUrl(urlBuilder("http://ent.u-clermont1.fr/render.userLayoutRootNode.target.{uP_root}.uP?link=0"));
+				request = new HttpGet(
+						urlBuilder("http://ent.u-clermont1.fr/render.userLayoutRootNode.target.{uP_root}.uP?link=0"));
 			}
 			name = "/";
-			browser.setMethod(Browser.Method.GET);
 		} else if (name.equals(".")) {
-			browser.setMethod(Browser.Method.GET);
-			browser.setUrl(urlBuilder(CoreConfig.refreshDirURL));
+			request = new HttpGet(urlBuilder(CoreConfig.refreshDirURL));
 		} else if (name.equals("..")) {
 			if (path.isRoot())
 				return; //Déjà à la racine
-			browser.setMethod(Browser.Method.GET);
-			browser.setUrl(urlBuilder(CoreConfig.directoryBackURL));
+			request = new HttpGet(urlBuilder(CoreConfig.directoryBackURL));
 		} else {
 			int pos = indexOf(name);
 			if (pos == -1)
-				throw new ENTDirectoryNotFoundException(name);
+				throw new ENTElementNotFoundException(name);
 			else if (!directoryContent.get(pos).isDirectory())
 				throw new ENTInvalidFS_ElementTypeException(name);
 
-			browser.setUrl(urlBuilder(CoreConfig.goIntoDirectoryURL));
-			browser.setMethod(Browser.Method.POST);
-			browser.setParam("targetDirectory", name);
-		}
-		browser.setFollowRedirects(false);
-		browser.setCookieField("JSESSIONID", sessionid);
-		String pageContent = null;
-		pageContent = browser.getPage();
+			request = new HttpPost(urlBuilder(CoreConfig.goIntoDirectoryURL));
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("targetDirectory", name));
 
-		if (browser.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP
-				&& browser.getHeaderField("Location").equals(
-						CoreConfig.loginRequestURL)) {
-			isLogin = false;
+			((HttpPost) request).setEntity(new UrlEncodedFormEntity(params,
+					HTTP.UTF_8));
+		}
+		String pageContent = null;
+		HttpResponse response = httpclient.execute(request);
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
+			isLogged = false;
 			throw new ENTUnauthenticatedUserException(
 					"Session expired, please login again.",
 					ENTUnauthenticatedUserException.SESSION_EXPIRED);
 		}
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		pageContent = responseHandler.handleResponse(response);
 
 		setStockageUrlParams(pageContent);
 		if (capacity < 0) {
@@ -411,7 +488,7 @@ public class ENTDownloader {
 				|| Misc.preg_match(
 						"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br\\s?/?></font>",
 						pageContent))
-			throw new ENTDirectoryNotFoundException(name);
+			throw new ENTElementNotFoundException(name);
 		parsePage(pageContent);
 
 		path.goTo(name);
@@ -444,20 +521,31 @@ public class ENTDownloader {
 	 *            Chemin de destination du fichier
 	 * @throws IOException
 	 * @see Misc#tildeToHome(String)
-	 * @see Browser#downloadFile(String)
 	 * @return <code>True</code> si le téléchargement du fichier s'est terminé
 	 *         normalement, <code>false</code> sinon.
 	 */
 	public boolean getFile(String name, String destination) throws IOException {
-		if (isLogin == false)
+		transferAborted = false;
+		return _getFile(name, destination);
+	}
+
+	/**
+	 * @see ENTDownloader#getFile(String, String)
+	 * @since 2.0.0
+	 */
+	private boolean _getFile(String name, String destination) throws IOException {
+		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
 		final int pos = indexOf(name);
 		if (pos == -1)
-			throw new ENTFileNotFoundException("File not found");
+			throw new ENTElementNotFoundException("File not found");
 		else if (!directoryContent.get(pos).isFile())
 			throw new ENTInvalidFS_ElementTypeException(name + " isn't a file");
+
+		if(transferAborted)
+			return false;
 
 		FS_File file = (FS_File) directoryContent.get(pos);
 
@@ -485,13 +573,42 @@ public class ENTDownloader {
 			}
 		}
 
-		browser.clearParam();
-		browser.setUrl(urlBuilder(CoreConfig.downloadFileURL));
-		browser.setMethod(Browser.Method.POST);
-		browser.setParam("downloadFile", name);
-		browser.setFollowRedirects(false);
-		browser.setCookieField("JSESSIONID", sessionid);
-		browser.downloadFile(destination);
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.downloadFileURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("downloadFile", name));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+		HttpEntity entity = response.getEntity();
+
+		String destinationPath = fpath.getPath();
+		File dpath = new File(fpath.getParent());
+		dpath.mkdirs();
+
+		InputStream responseContentStream = entity.getContent();
+		FileOutputStream writeFile = new FileOutputStream(destinationPath);
+
+		byte[] buffer = new byte[1024];
+		long totalDownloaded = 0;
+		int read;
+
+		while ((read = responseContentStream.read(buffer)) > 0) {
+			if(transferAborted)
+			{
+				writeFile.flush();
+				writeFile.close();
+				request.abort();
+				return false;
+			}
+			writeFile.write(buffer, 0, read);
+			totalDownloaded += read;
+			Broadcaster.fireDownloadedBytes(new DownloadedBytesEvent(read, totalDownloaded));
+		}
+		writeFile.flush();
+		writeFile.close();
+		EntityUtils.consume(entity);
+
 		Broadcaster.fireEndDownload(new EndDownloadEvent(file));
 		return true;
 	}
@@ -523,30 +640,6 @@ public class ENTDownloader {
 	 *            Dossier de destination des fichiers et dossiers téléchargés.
 	 *            Si null ou vide, ils seront enregistrés dans le répertoire
 	 *            courant.
-	 * @throws ENTInvalidFS_ElementTypeException
-	 *             Lancée lorsque le paramètre <i>destination</i> désigne un
-	 *             fichier existant.
-	 * @throws IOException
-	 * @see ENTDownloader#getFile(String, String)
-	 * @return Le nombre de fichiers téléchargés
-	 * @deprecated Remplacé par getAllFiles(String destination, int maxdepth)
-	 */
-	@Deprecated
-	public int getAllFiles(String destination) throws IOException {
-		return getAllFiles(destination, -1);
-	}
-
-	/**
-	 * Télécharge tous les fichiers contenus dans le dossier courant et ses sous
-	 * dossiers.
-	 * Les fichiers et dossiers seront enregistrés sous le dossier
-	 * <i>destination</i>, sous le même nom que celui sous lequel ils sont
-	 * stockés sur l'ENT.
-	 * 
-	 * @param destination
-	 *            Dossier de destination des fichiers et dossiers téléchargés.
-	 *            Si null ou vide, ils seront enregistrés dans le répertoire
-	 *            courant.
 	 * @param maxdepth
 	 *            Profondeur maximale de téléchargement. 0 (zéro) signifie que
 	 *            la méthode ne va télécharger que les fichiers du dossier
@@ -560,6 +653,15 @@ public class ENTDownloader {
 	 * @return Le nombre de fichiers téléchargés
 	 */
 	public int getAllFiles(String destination, int maxdepth) throws IOException {
+		transferAborted = false;
+		return _getAllFiles(destination, maxdepth);
+	}
+
+	/**
+	 * @see ENTDownloader#getAllFiles(String, int)
+	 * @since 2.0.0
+	 */
+	private int _getAllFiles(String destination, int maxdepth) throws IOException {
 		int i = 0;
 		if (directoryContent == null)
 			throw new IllegalStateException(
@@ -580,8 +682,12 @@ public class ENTDownloader {
 		List<FS_Element> directoryContentcp = new ArrayList<FS_Element>(
 				directoryContent);
 		for (FS_Element e : directoryContentcp)
+		{
+			if(transferAborted)
+				return i;
+
 			if (e.isFile()) {
-				if (getFile(e.getName(), destination)) {
+				if (_getFile(e.getName(), destination)) {
 					++i;
 				}
 			} else if (maxdepth != 0) {
@@ -594,7 +700,7 @@ public class ENTDownloader {
 						e2.printStackTrace();
 					}
 				}
-				i += getAllFiles(destination + e.getName(), maxdepth - 1);
+				i += _getAllFiles(destination + e.getName(), maxdepth - 1);
 				try {
 					submitDirectory("..");
 				} catch (ParseException e1) {
@@ -605,7 +711,546 @@ public class ENTDownloader {
 					}
 				}
 			}
+		}
 		return i;
+	}
+
+	/**
+	 * Indique à l'instance que le ou les téléchargements en cours doivent être
+	 * interrompus dès que possible.
+	 *
+	 * @since 2.0.0
+	 */
+	public void abortDownload() {
+		transferAborted  = true;
+	}
+
+	/**
+	 * Envoi le fichier local <i>filepath</i>. Le fichier sera enregistré
+	 * dans le dossier courant et sous le même nom que le fichier local.
+	 *
+	 * @param filepath
+	 *            Chemin du fichier local à envoyer.
+	 * @throws FileNotFoundException Le fichier source n'existe pas ou n'est
+	 * 			pas accessible.
+	 * @since 2.0.0
+	 */
+	public void sendFile(String filepath) throws IOException, ParseException {
+		sendFile(filepath, null);
+	}
+
+	/**
+	 * Envoi le fichier local <i>filepath</i>. Le fichier sera enregistré
+	 * dans le dossier courant et sous le nom spécifié dans le paramètre
+	 * <i>name</i>, ou sous le même nom que le fichier local d'origine
+	 * si le nouveau nom n'est pas indiqué dans<i>name</i>.
+	 *
+	 * @param filepath
+	 *            Chemin du fichier local à envoyer.
+	 * @param name
+	 *            Nom sous lequel le fichier doit être enregistré sur l'ENT.
+	 * @throws FileNotFoundException Le fichier source n'existe pas ou n'est
+	 * 			pas accessible.
+	 * @since 2.0.0
+	 */
+	public void sendFile(String filepath, String name) throws IOException, ParseException {
+		sendFile(new File(filepath), name);
+	}
+
+	/**
+	 * Envoi le fichier local <i>file</i>. Le fichier sera enregistré dans
+	 * le dossier courant et sous le même nom que le fichier local.
+	 *
+	 * @param file
+	 *            Fichier local à envoyer.
+	 * @throws FileNotFoundException Le fichier source n'existe pas ou n'est
+	 * 			pas accessible.
+	 * @since 2.0.0
+	 */
+	public void sendFile(File file) throws IOException, ParseException {
+		sendFile(file, null);
+	}
+
+	/**
+	 * Envoi le fichier local <i>file</i>. Le fichier sera enregistré
+	 * dans le dossier courant et sous le nom spécifié dans le paramètre
+	 * <i>name</i>, ou sous le même nom que le fichier local d'origine
+	 * si le nouveau nom n'est pas indiqué dans<i>name</i>.
+	 *
+	 * @param file
+	 *            Fichier local à envoyer.
+	 * @param name
+	 *            Nom sous lequel le fichier doit être enregistré sur l'ENT.
+	 * @throws FileNotFoundException Le fichier source n'existe pas ou n'est
+	 * 			pas accessible.
+	 * @since 2.0.0
+	 */
+	public void sendFile(File file, String name) throws IOException, ParseException {
+		//TODO Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi ?
+		transferAborted = false;
+		uploadRequest = null;
+
+		if (!isLogged())
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		//Vérification de l'existence d'un fichier portant le nom indiqué
+		if (!file.canRead()) {
+			throw new FileNotFoundException(file.getPath());
+		}
+
+		if (name == null || name.isEmpty())
+			name = file.getName();
+
+		if (indexOf(name) != -1)
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, name);
+		else if (!Misc.preg_match("[A-Za-z0-9 ()\\-'!°&#_àäâãéêèëîïìôöòõûüùçñÀÄÂÃÉÈËÊÌÏÎÒÖÔÕÙÜÛÇÑ.]+", name))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, name);
+
+		if(transferAborted)
+			return;
+
+		Broadcaster.fireStartUpload(new StartUploadEvent(file));
+
+		CountingMultipartEntity mpEntity = new CountingMultipartEntity(new ProgressListener() {
+			@Override
+			public void transferred(long last, long total) {
+				Broadcaster.fireUploadedBytes(new UploadedBytesEvent(last, total));
+			}
+		});
+	    mpEntity.addPart("modeDav", new StringBody("upload_mode"));
+	    mpEntity.addPart("Submit", new StringBody("Envoyer le fichier"));
+
+	    ContentBody cbFile = new FileBody(file, name, "application/octet-stream", "UTF-8");
+	    mpEntity.addPart("input_file", cbFile);
+
+		if(transferAborted)
+			return;
+
+	    uploadRequest = new HttpPost(urlBuilder(CoreConfig.sendFileURL));
+		uploadRequest.setEntity(mpEntity);
+
+		HttpResponse response = httpclient.execute(uploadRequest);
+
+		if(transferAborted || uploadRequest.isAborted())
+		{
+			uploadRequest = null;
+			return;
+		}
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+				.equals(CoreConfig.loginRequestURL)) {
+			isLogged = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = null;
+		pageContent = responseHandler.handleResponse(response);
+
+		uploadRequest = null;
+
+		parsePage(pageContent);
+
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Impossible de traiter la requ&ecirc;te :<br\\s?/?> un fichier/dossier du m&ecirc;me nom existe d&eacute;j&agrave;.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, name);
+
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Il existe des caract&egrave;res non pris en charge dans le nom de votre ressource.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, name);
+
+		Broadcaster.fireEndUpload(new EndUploadEvent(file));
+	}
+
+	/**
+	 * Indique à l'instance que l'envoi en cours doit être interrompu dès que possible.
+	 *
+	 * @since 2.0.0
+	 */
+	public void abortUpload() {
+		transferAborted = true;
+		if(uploadRequest != null)
+			uploadRequest.abort();
+	}
+
+	/**
+	 * Créé un nouveau dossier dans le répertoire courant.
+	 * 
+	 * @param dirname Nom du nouveau dossier
+	 * 
+	 * @since 2.0.0
+	 */
+	public void createDirectory(String dirname) throws ParseException,
+			IOException {
+		if (!isLogged())
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		if (indexOf(dirname) != -1)
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, dirname);
+
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.goIntoDirectoryURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("Submit", "Créer le dossier"));
+		params.add(new BasicNameValuePair("modeDav", "create_dir_mode"));
+		params.add(new BasicNameValuePair("new_dir", dirname));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
+			isLogged = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
+		
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = null;
+		pageContent = responseHandler.handleResponse(response);
+
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Impossible de traiter la requ&ecirc;te :<br\\s?/?> un fichier/dossier du m&ecirc;me nom existe d&eacute;j&agrave;.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, dirname);
+
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Il existe des caract&egrave;res non pris en charge dans le nom de votre ressource.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, dirname);
+
+		parsePage(pageContent);
+
+		Broadcaster.fireDirectoryCreated(new DirectoryCreatedEvent(dirname));
+	}
+
+	/**
+	 * Renomme un fichier ou dossier du répertoire courant.
+	 *
+	 * @param oldname Nom actuel du dossier ou fichier à renommer.
+	 * @param newname Nouveau nom du dossier ou fichier à renommer.
+	 *
+	 * @since 2.0.0
+	 */
+	public void rename(String oldname, String newname) throws ParseException,
+			IOException {
+		if (!isLogged())
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+		if(oldname.equals(newname))
+			return;
+		if (indexOf(oldname) == -1)
+			throw new ENTElementNotFoundException(oldname);
+		if (indexOf(newname) != -1)
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, newname);
+
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.renameURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("listeFic", oldname));
+		params.add(new BasicNameValuePair("modeDav", "set_name_for_rename_mode"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
+			isLogged = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = responseHandler.handleResponse(response);
+
+		request = new HttpPost(urlBuilder(CoreConfig.renameURL));
+		params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("new_name", newname));
+		params.add(new BasicNameValuePair("modeDav", "rename_mode"));
+		params.add(new BasicNameValuePair("Submit", "Renommer"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		response = httpclient.execute(request);
+
+		pageContent = responseHandler.handleResponse(response);
+
+		if (Misc.preg_match(
+						"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTElementNotFoundException(oldname);
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Impossible de traiter la requ&ecirc;te :<br\\s?/?> un fichier/dossier du m&ecirc;me nom existe d&eacute;j&agrave;.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED, newname);
+		if (Misc.preg_match(
+						"(?i)<font class=\"uportal-channel-strong\">Il existe des caract&egrave;res non pris en charge dans le nom de votre ressource.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTInvalidElementNameException(ENTInvalidElementNameException.FORBIDDEN_CHAR, newname);
+
+		parsePage(pageContent);
+
+		Broadcaster.fireElementRenamed(new ElementRenamedEvent(oldname, newname));
+	}
+
+	/**
+	 * Supprime un ou plusieurs fichiers ou dossiers du répertoire courant.
+	 *
+	 * @param elems Liste des dossiers ou fichiers à supprimer.
+	 *
+	 * @since 2.0.0
+	 */
+	public void delete(FS_Element[] elems) throws ParseException,
+			IOException {
+		delete(fsElemsToStrings(elems));
+	}
+
+	/**
+	 * Supprime un ou plusieurs fichiers ou dossiers du répertoire courant.
+	 *
+	 * @param elems Liste des noms des dossiers ou fichiers à supprimer.
+	 *
+	 * @since 2.0.0
+	 */
+	public void delete(String[] elems) throws ParseException,
+			IOException {
+		if (!isLogged())
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		for (String e : elems) {
+			if (indexOf(e) == -1)
+				throw new ENTElementNotFoundException(e);
+		}
+
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.deleteURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		for (String name : elems) {
+			params.add(new BasicNameValuePair("listeFic", name));
+		}
+		params.add(new BasicNameValuePair("modeDav", "confirm_delete_mode"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
+			isLogged = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = responseHandler.handleResponse(response);
+
+		request = new HttpPost(urlBuilder(CoreConfig.deleteURL));
+		params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("modeDav", "delete_mode"));
+		params.add(new BasicNameValuePair("Submit", "Valider la suppression"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		response = httpclient.execute(request);
+
+		pageContent = responseHandler.handleResponse(response);
+
+		parsePage(pageContent);
+
+		if (Misc.preg_match(
+						"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTElementNotFoundException(elems.length == 1?elems[0]:null);
+
+		Broadcaster.fireElementsDeleted(new ElementsDeletedEvent(elems));
+	}
+
+	/**
+	 * Marque un ou plusieurs fichiers ou dossiers du répertoire courant
+	 * pour la copie.
+	 *
+	 * @param elems Liste des noms des dossiers ou fichiers à copier.
+	 *
+	 * @throws ENTElementNotFoundException Un élément spécifié est introuvable.
+	 *
+	 * @since 2.0.0
+	 */
+	public void cut(String[] elems) throws ParseException,
+			IOException {
+		copyCut(elems, true);
+	}
+
+	/**
+	 * Marque un ou plusieurs fichiers ou dossiers du répertoire courant
+	 * pour la copie.
+	 *
+	 * @param elems Liste des dossiers ou fichiers à copier.
+	 *
+	 * @throws ENTElementNotFoundException Un élément spécifié est introuvable.
+	 *
+	 * @since 2.0.0
+	 */
+	public void cut(FS_Element[] elems) throws ParseException,
+			IOException {
+		copyCut(elems, true);
+	}
+
+	/**
+	 * Marque un ou plusieurs fichiers ou dossiers du répertoire courant
+	 * pour le déplacement.
+	 *
+	 * @param elems Liste des noms des dossiers ou fichiers à déplacer.
+	 *
+	 * @throws ENTElementNotFoundException Un élément spécifié est introuvable.
+	 *
+	 * @since 2.0.0
+	 */
+	public void copy(String[] elems) throws ParseException,
+			IOException {
+		copyCut(elems, false);
+	}
+
+	/**
+	 * Marque un ou plusieurs fichiers ou dossiers du répertoire courant
+	 * pour le déplacement.
+	 *
+	 * @param elems Liste des dossiers ou fichiers à déplacer.
+	 *
+	 * @throws ENTElementNotFoundException Un élément spécifié est introuvable.
+	 *
+	 * @since 2.0.0
+	 */
+	public void copy(FS_Element[] elems) throws ParseException,
+			IOException {
+		copyCut(elems, false);
+	}
+
+	private void copyCut(FS_Element[] elems, boolean cutMode) throws ParseException, IOException {
+		copyCut(fsElemsToStrings(elems), cutMode);
+	}
+
+	private void copyCut(String[] elems, boolean cutMode) throws ParseException,
+			IOException {
+
+		if (!isLogged())
+			throw new ENTUnauthenticatedUserException(
+					"Non-authenticated user.",
+					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		HttpPost request = new HttpPost(urlBuilder(CoreConfig.copyMoveURL));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		for (String name : elems) {
+			params.add(new BasicNameValuePair("listeFic", name));
+		}
+		params.add(new BasicNameValuePair("modeDav", cutMode?"set_clipboard_for_move_mode":"set_clipboard_for_copy_mode"));
+
+		request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+		HttpResponse response = httpclient.execute(request);
+
+		if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+				&& response.getFirstHeader("Location").getValue()
+						.equals(CoreConfig.loginRequestURL)) {
+			isLogged = false;
+			throw new ENTUnauthenticatedUserException(
+					"Session expired, please login again.",
+					ENTUnauthenticatedUserException.SESSION_EXPIRED);
+		}
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String pageContent = responseHandler.handleResponse(response);
+
+		if (Misc.preg_match(
+				"(?i)<font class=\"uportal-channel-strong\">Vous n'avez pas le droit d'acc&eacute;der &agrave; une des ressources s&eacute;lectionn&eacute;es</font>",
+				pageContent))
+			throw new ENTElementNotFoundException();
+
+		parsePage(pageContent);
+	}
+
+	/**
+	 * Indique si le presse-papier contient un ou plusieurs éléments ou non.
+	 *
+	 * @return True si des éléments ont été marqués pour
+	 * 		   la copie ou le déplacement.
+	 */
+	public boolean canPaste() {
+		return canPaste;
+	}
+
+	/**
+	 * Copie ou déplace les éléments précédemment marqués pour cette
+	 * opération.
+	 *
+	 * @since 2.0.0
+	 */
+	public boolean paste() throws ParseException,
+			IOException {
+
+			if (!isLogged())
+				throw new ENTUnauthenticatedUserException(
+						"Non-authenticated user.",
+						ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+			if(!canPaste)
+				return false;
+
+			HttpPost request = new HttpPost(urlBuilder(CoreConfig.pasteURL));
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("modeDav", "confirm_paste_mode"));
+
+			request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+			HttpResponse response = httpclient.execute(request);
+
+			if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_MOVED_TEMP
+					&& response.getFirstHeader("Location").getValue()
+							.equals(CoreConfig.loginRequestURL)) {
+				isLogged = false;
+				throw new ENTUnauthenticatedUserException(
+						"Session expired, please login again.",
+						ENTUnauthenticatedUserException.SESSION_EXPIRED);
+			}
+
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+			String pageContent = responseHandler.handleResponse(response);
+
+			if (Misc.preg_match(
+					"(?i)<font class=\"uportal-channel-strong\">Impossible de (.*) :<br\\s?/?> ?un fichier/dossier du m&ecirc;me nom existe d&eacute;j&agrave;.<br\\s?/?></font>",
+					pageContent))
+				throw new ENTInvalidElementNameException(ENTInvalidElementNameException.ALREADY_USED);
+
+			request = new HttpPost(urlBuilder(CoreConfig.pasteURL));
+			params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("modeDav", "paste_mode"));
+			params.add(new BasicNameValuePair("Submit", "Valider"));
+
+			request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+
+			response = httpclient.execute(request);
+
+			pageContent = responseHandler.handleResponse(response);
+
+			parsePage(pageContent);
+
+			return true;
 	}
 
 	/**
@@ -616,14 +1261,21 @@ public class ENTDownloader {
 	 *            Le contenu de la page à analyser
 	 * @throws ParseException
 	 *             Si l'analyse échoue
+	 * @throws ENTUnauthenticatedUserException
+	 *             L'utilisateur n'a pas accès à un espace de stockage.
 	 */
 	private void parsePage(String pageContent) throws ParseException {
+		if(Misc.preg_match("(?i)<font class=\"uportal-channel-strong\">Vous ne pouvez actuellement voir aucun espace.", pageContent))
+			throw new ENTUnauthenticatedUserException(ENTUnauthenticatedUserException.UNALLOWED);
+
 		List<List<String>> matches = new ArrayList<List<String>>();
 		if (directoryContent == null) {
 			directoryContent = new ArrayList<FS_Element>(50);
 		} else {
 			directoryContent.clear();
 		}
+
+		canPaste = Misc.preg_match("<br>Coller</a>", pageContent, null);
 
 		Misc.preg_match_all(
 				"&nbsp;<a href=\"javascript:submit(File|Directory)\\('.+?'\\);\"\\s+class.*?nnel\">(.*?)</a></td><td class=\"uportal-crumbtrail\" align=\"right\">\\s+?&nbsp;([0-9][0-9]*\\.[0-9][0-9]? [MKGo]{1,2})?\\s*?</td><td class=\"uportal-crumbtrail\" align=\"right\">\\s+?&nbsp;([0-9]{2})-([0-9]{2})-([0-9]{4})&nbsp;([0-9]{2}):([0-9]{2})",
@@ -669,6 +1321,18 @@ public class ENTDownloader {
 	private String urlBuilder(String url) {
 		return url.replaceAll("\\{tag\\}", tag).replaceAll("\\{uP_root\\}",
 				uP_root);
+	}
+
+	/**
+	 * Retourne la liste des noms d'éléments à partir de la liste des éléments.
+	 */
+	private String[] fsElemsToStrings(FS_Element[] elems) {
+		String[] elementsNames = new String[elems.length];
+		int i=0;
+		for (FS_Element elem : elems) {
+			elementsNames[i] = elem.getName();
+		}
+		return elementsNames;
 	}
 
 	/**
@@ -769,6 +1433,15 @@ public class ENTDownloader {
 	}
 
 	/**
+	 * Retourne vrai si l'utilisateur est connecté à l'ENT.
+	 * 
+	 * @since 2.0.0
+	 */
+	public boolean isLogged() {
+		return isLogged;
+	}
+
+	/**
 	 * Retourne l'index de la première occurrence de l'élément spécifié dans la
 	 * liste {@link net.sf.entDownloader.core.ENTDownloader#directoryContent
 	 * directoryContent}, ou -1 si la liste ne contient pas cet élément. Plus
@@ -803,7 +1476,7 @@ public class ENTDownloader {
 	 * @param port Le port du proxy.
 	 */
 	public void setProxy(String host, int port) {
-		browser.setHttpProxy(host, port);
+		setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port)));
 		proxyFile = null;
 	}
 
@@ -814,7 +1487,24 @@ public class ENTDownloader {
 	 * @see java.net.Proxy
 	 */
 	public void setProxy(Proxy proxy) {
-		browser.setHttpProxy(proxy);
+		if (proxy == null || proxy.equals(Proxy.NO_PROXY)) {
+			removeProxy();
+			return;
+		}
+
+		InetSocketAddress proxySocket = ((InetSocketAddress) proxy.address());
+		/*
+		System.setProperty("http.proxyHost", proxySocket.getHostName());
+		System.setProperty("http.proxyPort", proxySocket.getPort());
+		System.setProperty("https.proxyHost", proxySocket.getHostName());
+		System.setProperty("https.proxyPort", proxySocket.getPort());
+		*/
+		HttpHost proxyHost = new HttpHost(proxySocket.getHostName(),
+				proxySocket.getPort());
+		httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,
+				proxyHost);
+
+		this.proxy = proxy;
 		proxyFile = null;
 	}
 
@@ -824,7 +1514,7 @@ public class ENTDownloader {
 	 * @return Le proxy HTTP utilisé pour la connexion à l'ENT.
 	 */
 	public Proxy getProxy() {
-		return browser.getProxy();
+		return proxy;
 	}
 
 	/**
@@ -844,7 +1534,15 @@ public class ENTDownloader {
 	 * Supprime la configuration de proxy précédemment installé.
 	 */
 	public void removeProxy() {
-		browser.removeHttpProxy();
+		/*
+		System.setProperty("http.proxyHost", null);
+		System.setProperty("http.proxyPort", null);
+		System.setProperty("https.proxyHost", null);
+		System.setProperty("https.proxyPort", null);
+		*/
+		httpclient.getParams()
+				.setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
+		proxy = Proxy.NO_PROXY;
 		proxyFile = null;
 	}
 

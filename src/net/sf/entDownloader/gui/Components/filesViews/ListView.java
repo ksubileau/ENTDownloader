@@ -133,6 +133,18 @@ public abstract class ListView extends JPanel {
 	public abstract ListSelectionModel getSelectionModel();
 
 	/**
+	 * Sets the zoom level of the view.
+	 * @param zoom Zoom level
+	 */
+	public abstract void setZoomLevel(int zoom);
+
+	/**
+	 * Returns the current zoom level of the view.
+	 * @return the current zoom level of the view.
+	 */
+	public abstract int getZoomLevel();
+
+	/**
 	 * Adds the specified key listener to receive key events from the view
 	 * component (JTable or a JList). If keyListener is null, no exception
 	 * is thrown and no action is performed.
