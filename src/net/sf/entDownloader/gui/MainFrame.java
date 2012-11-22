@@ -570,7 +570,6 @@ public class MainFrame extends javax.swing.JFrame implements
 					message = "Erreur inconnue.";
 					break;
 				}
-				//TODO Clarté des messages d'erreur.
 				JOptionPane
 						.showMessageDialog(
 								MainFrame.this,

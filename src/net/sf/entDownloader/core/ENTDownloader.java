@@ -83,9 +83,6 @@ import org.apache.http.util.EntityUtils;
 
 import com.ziesemer.utils.pacProxySelector.PacProxySelector;
 
-/* Bug possible :
- * Statut incorrect après une exception quelconque : cela peut poser problème.
- */
 /**
  * Classe principale de l'application, interface entre les classes externes et
  * l'ENT.<br>
@@ -406,7 +403,7 @@ public class ENTDownloader {
 	 * 
 	 * @param name
 	 *            Nom du dossier ou directive de parcours. Le dossier . est le
-	 *            dossier courant, appeler cette methode avec ce paramètre ne
+	 *            dossier courant, appeler cette méthode avec ce paramètre ne
 	 *            change donc pas le dossier courant
 	 *            mais permet de rafraîchir son contenu. Le dossier .. est le
 	 *            dossier parent, il permet donc de remonter dans
@@ -790,7 +787,6 @@ public class ENTDownloader {
 	 */
 	public void sendFile(File file, String name) throws IOException, ParseException {
 		//TODO Vérifier présence chaine "Le fichier a bien été envoyé" dans pageContent pour valider l'envoi ?
-		// Test (envoi/réception, vérifier intégrité des données)
 		transferAborted = false;
 		uploadRequest = null;
 
@@ -949,7 +945,6 @@ public class ENTDownloader {
 	 */
 	public void rename(String oldname, String newname) throws ParseException,
 			IOException {
-		//TODO Test
 		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
@@ -1065,8 +1060,6 @@ public class ENTDownloader {
 
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		String pageContent = responseHandler.handleResponse(response);
-
-		//TODO vérification intermédiaire ?
 
 		request = new HttpPost(urlBuilder(CoreConfig.deleteURL));
 		params = new ArrayList<NameValuePair>();
