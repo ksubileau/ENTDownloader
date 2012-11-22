@@ -258,8 +258,14 @@ public class Downloader extends SwingWorker<Void, Void> implements
 				} else {
 					java.awt.Desktop.getDesktop().open(saveas);
 				}
+			} catch (IOException e) {
+				JOptionPane
+				.showMessageDialog(
+						parent,
+						"ENTDownloader ne peut pas ouvrir le fichier : aucun programme associé.",
+						"ENTDownloader", JOptionPane.WARNING_MESSAGE);
 			} catch (Exception e) {
-				System.err.println("Impossible d'ouvrir " + saveas.getPath());
+				e.printStackTrace();
 			}
 		}
 
