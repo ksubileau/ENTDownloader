@@ -1015,19 +1015,33 @@ public class ENTDownloader {
 	/**
 	 * Supprime un ou plusieurs fichiers ou dossiers du répertoire courant.
 	 *
+	 * @param elems Liste des dossiers ou fichiers à supprimer.
+	 *
+	 * @since 2.0.0
+	 */
+	public void delete(FS_Element[] elems) throws ParseException,
+			IOException {
+		delete(fsElemsToStrings(elems));
+	}
+
+	/**
+	 * Supprime un ou plusieurs fichiers ou dossiers du répertoire courant.
+	 *
 	 * @param elems Liste des noms des dossiers ou fichiers à supprimer.
 	 *
 	 * @since 2.0.0
 	 */
 	public void delete(String[] elems) throws ParseException,
 			IOException {
-		//TODO Gestion des erreurs post et pré envoi (un des éléments n'existe pas entre autres).
-		// Test
-		// Vérifier présence chaine "La sélection a été supprimée" dans pageContent pour valider la suppression
 		if (!isLogged())
 			throw new ENTUnauthenticatedUserException(
 					"Non-authenticated user.",
 					ENTUnauthenticatedUserException.UNAUTHENTICATED);
+
+		for (String e : elems) {
+			if (indexOf(e) == -1)
+				throw new ENTElementNotFoundException(e);
+		}
 
 		HttpPost request = new HttpPost(urlBuilder(CoreConfig.deleteURL));
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -1066,6 +1080,11 @@ public class ENTDownloader {
 		pageContent = responseHandler.handleResponse(response);
 
 		parsePage(pageContent);
+
+		if (Misc.preg_match(
+						"<font class=\"uportal-channel-strong\">La ressource sp&eacute;cifi&eacute;e n'existe pas.<br\\s?/?></font>",
+						pageContent))
+			throw new ENTElementNotFoundException(elems.length == 1?elems[0]:null);
 
 		Broadcaster.fireElementsDeleted(new ElementsDeletedEvent(elems));
 	}
@@ -1131,12 +1150,7 @@ public class ENTDownloader {
 	}
 
 	private void copyCut(FS_Element[] elems, boolean cutMode) throws ParseException, IOException {
-		String[] elementsNames = new String[elems.length];
-		int i=0;
-		for (FS_Element elem : elems) {
-			elementsNames[i] = elem.getName();
-		}
-		copyCut(elementsNames, cutMode);
+		copyCut(fsElemsToStrings(elems), cutMode);
 	}
 
 	private void copyCut(String[] elems, boolean cutMode) throws ParseException,
@@ -1314,6 +1328,18 @@ public class ENTDownloader {
 	private String urlBuilder(String url) {
 		return url.replaceAll("\\{tag\\}", tag).replaceAll("\\{uP_root\\}",
 				uP_root);
+	}
+
+	/**
+	 * Retourne la liste des noms d'éléments à partir de la liste des éléments.
+	 */
+	private String[] fsElemsToStrings(FS_Element[] elems) {
+		String[] elementsNames = new String[elems.length];
+		int i=0;
+		for (FS_Element elem : elems) {
+			elementsNames[i] = elem.getName();
+		}
+		return elementsNames;
 	}
 
 	/**

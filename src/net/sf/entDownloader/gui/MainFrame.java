@@ -39,7 +39,6 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.AbstractAction;
@@ -587,7 +586,8 @@ public class MainFrame extends javax.swing.JFrame implements
 										+ selectedFile.getName()
 										+ "\" : l'élément n'existe plus.",
 								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
-				//TODO Actualiser ou proposer d'actualiser ?
+				// Actualiser la liste des fichiers
+				changeDirectory(".");
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -771,7 +771,6 @@ public class MainFrame extends javax.swing.JFrame implements
 			if (fileView == null || (nbtargets = fileView.getSelectedFilesCount()) == 0)
 				return;
 			FS_Element[] selectedElems = fileView.getSelectedFiles();
-			ArrayList<String> elementsNames = new ArrayList<String>(nbtargets);
 			
 			String confirmMessage;
 			if(nbtargets == 1)
@@ -791,43 +790,20 @@ public class MainFrame extends javax.swing.JFrame implements
 							"ENTDownloader", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
 				return;
 
-			for (FS_Element el : selectedElems) {
-				elementsNames.add(el.getName());
-			}
-			
 			try {
-				entd.delete(elementsNames.toArray(new String[nbtargets]));
-				//TODO Du boulot ICI !
-			/*} catch (ENTInvalidElementNameException e) {
-				String message;
-		 		switch (e.getType()) {
-				case ENTInvalidElementNameException.ALREADY_USED:
-					message = "Un fichier ou dossier porte le même nom.";
-					break;
-				case ENTInvalidElementNameException.FORBIDDEN_CHAR:
-					message = "Le nouveau nom spécifié contient un ou plusieurs caractères non autorisés.";
-					break;
-				default:
-					message = "Erreur inconnue.";
-					break;
-				}
-				//TODO Clarté des messages d'erreur.
+				entd.delete(selectedElems);
+			} catch (ENTElementNotFoundException e) {
+				String message = null;
+				if(selectedElems.length > 1 || e.getMessage() == null)
+					message = "Impossible de supprimer la sélection : un élément n'existe plus.";
+				else
+					message = "Impossible de supprimer \"" + e.getMessage() + "\" : l'élément n'existe plus.";
 				JOptionPane
 						.showMessageDialog(
-								MainFrame.this,
-								"Impossible de renommer \""
-										+ selectedFile.getName()
-										+ "\" : " + message,
+								MainFrame.this,message,
 								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
-			} catch (ENTFileNotFoundException e) {
-				JOptionPane
-						.showMessageDialog(
-								MainFrame.this,
-								"Impossible de renommer \""
-										+ selectedFile.getName()
-										+ "\" : l'élément n'existe plus.",
-								"ENTDownloader", JOptionPane.ERROR_MESSAGE);
-				//TODO Actualiser ou proposer d'actualiser ?*/
+				// Actualiser la liste des fichiers
+				changeDirectory(".");
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

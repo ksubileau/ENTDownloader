@@ -651,6 +651,8 @@ public final class ShellMain implements AuthenticationSucceededListener,
 
 		try {
 			entd.delete(elems);
+		} catch (ENTElementNotFoundException e) {
+			System.err.println("ENTDownloader: delete: Impossible de supprimer: Aucun fichier ou dossier de ce type.");
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
