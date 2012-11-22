@@ -71,16 +71,16 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 	private JPanel fbPromoPanel;
 	private JLabel fbPromoLink;
 	private String[] fbMessages = {
-			"Toutes vos remarques sur notre page",
-			"Suivez l'actualité du logiciel sur notre page",
-			"Soyez averti des mises à jour sur notre page",
-			"Encouragez le développement sur la page",
-			"Vous aimez ce logiciel? Dites-le sur sa page",
-			"1 J'aime = 1 Merci. Rejoignez notre page",
+			"Toutes vos remarques sur notre",
+			"Suivez l'actualité du logiciel sur notre",
+			"Soyez averti des mises à jour sur",
+			"Encouragez le développement sur",
+			"Vous aimez ce logiciel? Dites-le sur",
+			"1 J'aime = 1 Merci. Rejoignez notre",
 			"1 J'aime = 1 Encouragement.<br>Rejoignez notre page",
-			"Une question? Une idée? Visitez notre page",
-			"Un bug ? Prévenez-nous sur notre page",
-			"Partagez et commentez sur notre page"
+			"Une question? Une idée? Visitez notre",
+			"Un bug ? Prévenez-nous sur notre",
+			"Partagez et commentez sur notre"
 		};
 	private JButton proxyBtn;
 	/**
@@ -273,14 +273,14 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 						fbPromoPanel = new JPanel();
 						BoxLayout jPanel2Layout = new BoxLayout(fbPromoPanel, javax.swing.BoxLayout.Y_AXIS);
 						fbPromoPanel.setLayout(jPanel2Layout);
-						getContentPane().add(fbPromoPanel, new GridBagConstraints(1, 4, 2, 2, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 8, 0), 0, 0));
+						getContentPane().add(fbPromoPanel, new GridBagConstraints(1, 4, 2, 2, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(0, -18, 8, 0), 0, 0));
 						{
 							java.util.Random generator = new java.util.Random();
 							fbPromoIntro = new JLabel();
 							fbPromoPanel.add(fbPromoIntro);
 							fbPromoIntro.setText("<html><p align=\"center\">" + fbMessages[generator.nextInt(fbMessages.length)] + "</p></html>");
 							fbPromoIntro.setHorizontalAlignment(SwingConstants.CENTER);
-							fbPromoIntro.setFont(new java.awt.Font("Segoe UI",0,11));
+							fbPromoIntro.setFont(new java.awt.Font("Segoe UI",0,10));
 							fbPromoIntro.setVerticalAlignment(SwingConstants.TOP);
 							fbPromoIntro.setIconTextGap(1);
 						}
@@ -289,7 +289,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 							fbPromoPanel.add(fbPromoLink);
 							fbPromoLink.setText("<html><p align=\"center\"><a style=\"margin: 40px;\" href=" + CoreConfig.getString("ProductInfo.fbpage") + "\">Facebook.</a></p></html>");
 							fbPromoLink.setHorizontalAlignment(SwingConstants.CENTER);
-							fbPromoLink.setFont(new java.awt.Font("Segoe UI",0,11));
+							fbPromoLink.setFont(new java.awt.Font("Segoe UI",0,10));
 							fbPromoLink.setVerticalAlignment(SwingConstants.TOP);
 							fbPromoLink.setIconTextGap(1);
 							fbPromoLink.setIcon(new ImageIcon(getClass().getClassLoader().getResource("net/sf/entDownloader/ressources/fb.png")));
@@ -333,7 +333,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener, Au
 			}
 
 			pack();
-			this.setSize(438, 200);
+			this.setSize(450, 200);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
