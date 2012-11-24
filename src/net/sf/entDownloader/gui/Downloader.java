@@ -251,7 +251,7 @@ public class Downloader extends SwingWorker<Void, Void> implements
 
 		downloadFrame.setVisible(false);
 
-		if (downloadFrame.openWhenFinished()) {
+		if (downloadFrame.openWhenFinished() && !isCancelled()) {
 			try {
 				if (isMultipleDownload) {
 					java.awt.Desktop.getDesktop().browse(saveas.toURI());
