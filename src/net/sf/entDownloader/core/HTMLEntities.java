@@ -5,13 +5,12 @@ import java.util.Hashtable;
 /**
  * Collection of static methods to convert special and extended
  * characters into HTML entities and vice versa.<br/>
- * <br/>
  * Copyright (c) 2004-2005 Tecnick.com S.r.l (www.tecnick.com) Via Ugo Foscolo
  * n.19 - 09045 Quartu Sant'Elena (CA) - ITALY - www.tecnick.com -
  * info@tecnick.com<br/>
  * Project homepage: <a href="http://htmlentities.sourceforge.net"
  * target="_blank">http://htmlentities.sourceforge.net</a><br/>
- * License: http://www.gnu.org/copyleft/lesser.html LGPL
+ * License: <a href="http://www.gnu.org/copyleft/lesser.html">LGPL</a>
  * 
  * @author Nicola Asuni [www.tecnick.com].
  * @version 1.0.004 (edited by Kevin Subileau to remove warnings.)
