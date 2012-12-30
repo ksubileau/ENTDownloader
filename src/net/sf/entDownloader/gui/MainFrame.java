@@ -1547,7 +1547,9 @@ public class MainFrame extends javax.swing.JFrame implements
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								Misc.browse(CoreConfig
-										.getString("ProductInfo.website"));
+										.getString("ProductInfo.website") 
+										+ "?utm_campaign=entd&utm_term="
+										+ CoreConfig.getString("ProductInfo.version"));
 							}
 						});
 					}

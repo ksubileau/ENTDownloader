@@ -175,7 +175,9 @@ public class AboutBox extends javax.swing.JDialog {
 			productSite.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					Misc.browse(CoreConfig.getString("ProductInfo.website"));
+					Misc.browse(CoreConfig.getString("ProductInfo.website") 
+							+ "?utm_campaign=entd&utm_term="
+							+ CoreConfig.getString("ProductInfo.version"));
 				}
 			});
 		}
