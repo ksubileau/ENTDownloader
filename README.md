@@ -1,5 +1,5 @@
-ENTDownloader
-=============
+<p align="center"><a href="http://entdownloader.kevinsubileau.fr"><img src="http://entdownloader.kevinsubileau.fr/ENTDImgs/ENTDownloader.png" alt="ENTDownloader" height="200px"/></a></p>
+
 **Pour plus d'informations et pour télécharger ENTDownloader, rendez-vous sur [le site officiel](http://entdownloader.kevinsubileau.fr).**
 
 > N'ayant plus accès à l'ENT de l'Université d'Auvergne, le développement d'ENTDownloader est suspendu. En effet, je n'ai plus la possibilité de tester son fonctionnement. Pour pouvoir continuer à mettre à jour ce logiciel, j'ai maintenant besoin de votre aide.<br>
